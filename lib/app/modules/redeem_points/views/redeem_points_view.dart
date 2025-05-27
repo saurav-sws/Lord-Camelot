@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../utils/responsive_size.dart';
-import '../../../utils/typography.dart';
+
 import '../controllers/redeem_points_controller.dart';
 
 class RedeemPointsView extends GetView<RedeemPointsController> {
@@ -122,10 +122,7 @@ SizedBox(height: 30,),
                   ),
                 ],
               ),
-
               SizedBox(height: ResponsiveSize.height(16)),
-
-
               Expanded(
                 child: Obx(
                   () => ListView.builder(
@@ -136,7 +133,7 @@ SizedBox(height: 30,),
                         margin: ResponsiveSize.margin(bottom: 12),
                         padding: ResponsiveSize.padding(all: 12),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF121212),
+                          color:  Color(0xFF121212),
                           borderRadius: BorderRadius.circular(
                             ResponsiveSize.radius(8),
                           ),
@@ -199,8 +196,6 @@ SizedBox(height: 30,),
                                 ],
                               ),
                             ),
-
-
                             Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -222,13 +217,11 @@ SizedBox(height: 30,),
                                     width: ResponsiveSize.width(24),
                                     height: ResponsiveSize.height(24),
                                     decoration: BoxDecoration(
-                                      color:
-                                          entry.isRedeemed
+                                      color: entry.isRedeemed
                                               ? Colors.green
                                               : Colors.transparent,
                                       border: Border.all(
-                                        color:
-                                            entry.isRedeemed
+                                        color: entry.isRedeemed
                                                 ? Colors.green
                                                 : Colors.grey,
                                         width: 1.5,

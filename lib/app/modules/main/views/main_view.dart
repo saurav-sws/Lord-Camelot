@@ -8,7 +8,7 @@ class MainView extends GetView<MainController> {
 
   @override
   Widget build(BuildContext context) {
-    // Get the controller
+
     final mainController = Get.put(MainController());
 
     return Scaffold(
