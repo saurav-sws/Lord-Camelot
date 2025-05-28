@@ -5,9 +5,12 @@ import '../../../utils/dialog_helper.dart';
 
 class LoginController extends GetxController {
 
-  final cardNumberController = TextEditingController();
-  final phoneNumberController = TextEditingController();
-
+  Rx<TextEditingController?> cardNumberController = Rx<TextEditingController?>(
+    null,
+  );
+  Rx<TextEditingController?> phoneNumberController = Rx<TextEditingController?>(
+    null,
+  );
 
   final RxBool isLoading = false.obs;
   final RxBool isCardNumberValid = false.obs;
@@ -16,25 +19,30 @@ class LoginController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+
+    cardNumberController.value = TextEditingController();
+    phoneNumberController.value = TextEditingController();
   }
 
   @override
   void onClose() {
-    cardNumberController.dispose();
-    phoneNumberController.dispose();
+
+    cardNumberController.value?.dispose();
+    phoneNumberController.value = null;
+
+    phoneNumberController.value?.dispose();
+    phoneNumberController.value = null;
+
     super.onClose();
   }
-
 
   void validateCardNumber(String value) {
     isCardNumberValid.value = value.isNotEmpty;
   }
 
-
   void validatePhoneNumber(String value) {
     isPhoneNumberValid.value = value.isNotEmpty;
   }
-
 
   void login() {
     if (!isCardNumberValid.value || !isPhoneNumberValid.value) {
@@ -45,14 +53,10 @@ class LoginController extends GetxController {
       return;
     }
 
-
     DialogHelper.showLoading(message: 'Logging in...');
 
     Future.delayed(const Duration(seconds: 2), () {
-
       DialogHelper.hideLoading();
-
-
       Get.offAllNamed(Routes.MAIN);
     });
   }
@@ -66,22 +70,19 @@ class LoginController extends GetxController {
       return;
     }
 
-
     DialogHelper.showLoading(message: 'Sending OTP...');
 
-
     Future.delayed(const Duration(seconds: 2), () {
-
       DialogHelper.hideLoading();
 
+      final phoneNumber = phoneNumberController.value?.text ?? '';
 
       Get.toNamed(
         Routes.OTP_VERIFICATION,
-        arguments: {'phoneNumber': phoneNumberController.text},
+        arguments: {'phoneNumber': phoneNumber},
       );
     });
   }
-
 
   void goToSignUp() {
     Get.toNamed(Routes.SIGNUP);

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:pinput/pinput.dart';
+import 'package:pin_code_fields/pin_code_fields.dart';
+
+import '../../../controllers/language_controller.dart';
 import '../../../utils/responsive_size.dart';
 import '../../../utils/typography.dart';
 import '../controllers/otp_verification_controller.dart';
@@ -10,28 +12,8 @@ class OtpVerificationView extends GetView<OtpVerificationController> {
 
   @override
   Widget build(BuildContext context) {
-    // Get phone number from arguments or use a default
-    final String phoneNumber = Get.arguments?['phoneNumber'] ?? '09056738654';
 
-    // Initialize the controller with phone number
-    final otpController = Get.put(
-      OtpVerificationController(phoneNumber: phoneNumber),
-    );
-
-    // Custom PIN theme for Pinput
-    final defaultPinTheme = PinTheme(
-      width: ResponsiveSize.width(60),
-      height: ResponsiveSize.height(60),
-      textStyle: TextStyle(
-        fontSize: ResponsiveSize.fontSize(22),
-        color: Colors.white,
-        fontWeight: FontWeight.w600,
-      ),
-      decoration: BoxDecoration(
-        color: Colors.grey.shade900,
-        borderRadius: BorderRadius.circular(ResponsiveSize.radius(12)),
-      ),
-    );
+    final languageController = Get.find<LanguageController>();
 
     return Scaffold(
       body: Container(
@@ -49,8 +31,10 @@ class OtpVerificationView extends GetView<OtpVerificationController> {
             padding: ResponsiveSize.padding(horizontal: 30),
             child: Column(
               children: [
-                SizedBox(height: ResponsiveSize.height(100)),
-                // Logo
+                SizedBox(height: ResponsiveSize.height(60)),
+
+
+
                 Center(
                   child: Image.asset(
                     'assets/images/Splash.png',
@@ -58,7 +42,6 @@ class OtpVerificationView extends GetView<OtpVerificationController> {
                   ),
                 ),
                 SizedBox(height: ResponsiveSize.height(50)),
-                // OTP Verification Container
                 Container(
                   padding: ResponsiveSize.padding(all: 20),
                   decoration: BoxDecoration(
@@ -68,76 +51,65 @@ class OtpVerificationView extends GetView<OtpVerificationController> {
                     ),
                   ),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Title
-                      Text("OTP Verification", style: AppTextStyles.heading),
-                      SizedBox(height: ResponsiveSize.height(15)),
-                      // Subtitle with phone number
-                      Text(
-                        "Enter the verification code sent to\n$phoneNumber",
-                        textAlign: TextAlign.center,
-                        style: AppTextStyles.subheading,
+                      Center(
+                        child: Text(
+                          'verify_otp'.tr,
+                          style: AppTextStyles.heading,
+                        ),
+                      ),
+                      SizedBox(height: ResponsiveSize.height(10)),
+                      Center(
+                        child: Text(
+                          'enter_code'.tr,
+                          style: AppTextStyles.subheading,
+                        ),
                       ),
                       SizedBox(height: ResponsiveSize.height(40)),
-
-                      // OTP Input
-                      Pinput(
-                        controller: otpController.pinController,
-                        focusNode: otpController.focusNode,
-                        length: 4,
-                        defaultPinTheme: defaultPinTheme,
-                        focusedPinTheme: defaultPinTheme.copyWith(
-                          decoration: defaultPinTheme.decoration?.copyWith(
-                            border: Border.all(color: Colors.green, width: 2),
-                          ),
-                        ),
-                        submittedPinTheme: defaultPinTheme.copyWith(
-                          decoration: defaultPinTheme.decoration?.copyWith(
-                            color: Colors.grey.shade800,
-                          ),
-                        ),
-                        pinputAutovalidateMode: PinputAutovalidateMode.onSubmit,
-                        showCursor: true,
-                        onCompleted: (pin) => otpController.verifyOTP(),
-                      ),
-
-                      SizedBox(height: ResponsiveSize.height(30)),
-
-                      // Resend OTP Option
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "Dont received code?",
-                            style: AppTextStyles.grayLabel,
-                          ),
-                          const SizedBox(width: 8),
-                          Obx(
-                            () => GestureDetector(
-                              onTap:
-                                  otpController.isResending.value
-                                      ? null
-                                      : otpController.resendOTP,
-                              child: Text(
-                                otpController.isResending.value
-                                    ? "Sending..."
-                                    : "Re-Send",
-                                style: AppTextStyles.linkText,
-                              ),
+                      Center(
+                        child: Obx(
+                          () => Text(
+                            controller.formattedPhoneNumber.value,
+                            style: AppTextStyles.heading.copyWith(
+                              fontSize: ResponsiveSize.fontSize(20),
                             ),
                           ),
-                        ],
+                        ),
                       ),
-
+                      SizedBox(height: ResponsiveSize.height(30)),
+                      Padding(
+                        padding: ResponsiveSize.padding(horizontal: 20),
+                        child: PinCodeTextField(
+                          appContext: context,
+                          length: 6,
+                          onChanged: controller.updatePin,
+                          pinTheme: PinTheme(
+                            shape: PinCodeFieldShape.box,
+                            borderRadius: BorderRadius.circular(
+                              ResponsiveSize.radius(10),
+                            ),
+                            fieldHeight: ResponsiveSize.height(56),
+                            fieldWidth: ResponsiveSize.width(45),
+                            activeFillColor: Colors.grey.shade900,
+                            inactiveFillColor: Colors.grey.shade900,
+                            selectedFillColor: Colors.grey.shade900,
+                            activeColor: Colors.white70,
+                            inactiveColor: Colors.grey.shade800,
+                            selectedColor: Colors.white,
+                          ),
+                          cursorColor: Colors.white,
+                          enableActiveFill: true,
+                          keyboardType: TextInputType.number,
+                          textStyle: AppTextStyles.inputText,
+                        ),
+                      ),
                       SizedBox(height: ResponsiveSize.height(35)),
-
-                      // Verify Button
                       SizedBox(
                         width: double.infinity,
                         height: ResponsiveSize.height(50),
                         child: ElevatedButton(
-                          onPressed: otpController.verifyOTP,
+                          onPressed: controller.verifyOTP,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.green,
                             shape: RoundedRectangleBorder(
@@ -146,17 +118,115 @@ class OtpVerificationView extends GetView<OtpVerificationController> {
                               ),
                             ),
                           ),
-                          child: const Text(
-                            "Verify",
+                          child: Text(
+                            'verify_otp'.tr,
                             style: AppTextStyles.buttonText,
                           ),
+                        ),
+                      ),
+                      SizedBox(height: ResponsiveSize.height(15)),
+                      Center(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'no_otp_received'.tr,
+                              style: AppTextStyles.grayLabel,
+                            ),
+                            SizedBox(width: ResponsiveSize.width(2)),
+                            Obx(
+                              () => TextButton(
+                                onPressed:
+                                    controller.canResend.value
+                                        ? controller.resendOTP
+                                        : null,
+                                child: Text(
+                                  controller.canResend.value
+                                      ? 'resend'.tr
+                                      : '${controller.resendTimer.value} ${'seconds'.tr}',
+                                  style: AppTextStyles.linkText.copyWith(
+                                    color:
+                                        controller.canResend.value
+                                            ? Colors.orange
+                                            : Colors.grey,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
                   ),
                 ),
                 SizedBox(height: ResponsiveSize.height(30)),
+                Container(
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF1E1E1E),
+                    borderRadius: BorderRadius.circular(
+                      ResponsiveSize.radius(10),
+                    ),
+                    border: Border.all(color: Colors.orange),
+                  ),
+                  height: ResponsiveSize.height(40),
+                  width: ResponsiveSize.width(127.9),
+                  child: Obx(
+                        () => Row(
+                      children: [
+                        _buildLanguageToggleOption(
+                          'EN',
+                          languageController.isEnglish.value,
+                              () {
+                            if (!languageController.isEnglish.value) {
+                              languageController.toggleLanguage();
+                            }
+                          },
+                        ),
+                        _buildLanguageToggleOption(
+                          'JP',
+                          !languageController.isEnglish.value,
+                              () {
+                            if (languageController.isEnglish.value) {
+                              languageController.toggleLanguage();
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+
+  Widget _buildLanguageToggleOption(
+    String language,
+    bool isSelected,
+    Function() onTap,
+  ) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: ResponsiveSize.width(63),
+        decoration: BoxDecoration(
+          color: isSelected ? const Color(0xFFFFA500) : Colors.transparent,
+          borderRadius: BorderRadius.horizontal(
+            left: Radius.circular(10),
+            right: Radius.circular(10),
+          ),
+        ),
+        child: Center(
+          child: Text(
+            language,
+            style: TextStyle(
+              color: isSelected ? Colors.white70 : Colors.yellow.shade400,
+              fontSize: ResponsiveSize.fontSize(14),
+              fontWeight: FontWeight.w500,
             ),
           ),
         ),

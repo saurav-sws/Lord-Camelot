@@ -12,7 +12,7 @@ class AppTextStyles {
 
   static const subheading = TextStyle(
     fontFamily: 'Montserrat',
-    fontSize: 15,
+    fontSize: 14.5,
     color: Colors.white70,
     fontWeight: FontWeight.w500
 

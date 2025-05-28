@@ -8,7 +8,6 @@ class MainView extends GetView<MainController> {
 
   @override
   Widget build(BuildContext context) {
-
     final mainController = Get.put(MainController());
 
     return Scaffold(
@@ -18,83 +17,81 @@ class MainView extends GetView<MainController> {
           color: Colors.black,
           border: Border(top: BorderSide(color: Color(0xFF151515), width: 1.0)),
         ),
-        child: BottomNavigationBar(
-          backgroundColor: Colors.black,
-          type: BottomNavigationBarType.fixed,
-          currentIndex: mainController.currentIndex.value,
-          onTap: mainController.changePage,
-          selectedItemColor: Colors.green,
-          unselectedItemColor: Colors.white,
-          selectedLabelStyle: TextStyle(
-            fontSize: ResponsiveSize.fontSize(12),
-            fontWeight: FontWeight.w600,
+        child: Obx(
+          () => BottomNavigationBar(
+            backgroundColor: Colors.black,
+            type: BottomNavigationBarType.fixed,
+            currentIndex: mainController.currentIndex.value,
+            onTap: mainController.changePage,
+            selectedItemColor:  Color(0xFF288c25),
+            unselectedItemColor: Colors.white70,
+            selectedLabelStyle: TextStyle(
+              fontSize: ResponsiveSize.fontSize(12),
+              fontWeight: FontWeight.w600,
+            ),
+            unselectedLabelStyle: TextStyle(
+              fontSize: ResponsiveSize.fontSize(12),
+              fontWeight: FontWeight.w600,
+            ),
+            items: [
+              BottomNavigationBarItem(
+                icon: Padding(
+                  padding: ResponsiveSize.padding(top: 10, bottom: 5),
+                  child: Icon(
+                    Icons.newspaper,
+                    color:
+                        mainController.currentIndex.value == 0
+                            ?   Color(0xFF288c25)
+                            : Colors.white70,
+                    size: ResponsiveSize.width(24),
+                  ),
+                ),
+                label: 'News',
+              ),
+              BottomNavigationBarItem(
+                icon: Padding(
+                  padding: ResponsiveSize.padding(top: 10, bottom: 5),
+                  child: Icon(
+                    Icons.card_giftcard,
+                    color:
+                        mainController.currentIndex.value == 1
+                            ? Color(0xFF288c25)
+                            : Colors.white70,
+                    size: ResponsiveSize.width(24),
+                  ),
+                ),
+                label: 'My Points',
+              ),
+              BottomNavigationBarItem(
+                icon: Padding(
+                  padding: ResponsiveSize.padding(top: 10, bottom: 5),
+                  child: Icon(
+                    Icons.redeem,
+                    color:
+                        mainController.currentIndex.value == 2
+                            ? Color(0xFF288c25)
+                            : Colors.white70,
+                    size: ResponsiveSize.width(24),
+                  ),
+                ),
+                label: 'Redeem Points',
+              ),
+              BottomNavigationBarItem(
+                icon: Padding(
+                  padding: ResponsiveSize.padding(top: 10, bottom: 5),
+                  child: Icon(
+                    Icons.history,
+                    color:
+                        mainController.currentIndex.value == 3
+                            ? Color(0xFF288c25)
+                            : Colors.white70,
+                    size: ResponsiveSize.width(24),
+                  ),
+                ),
+                label: 'History',
+              ),
+            ],
           ),
-          unselectedLabelStyle: TextStyle(
-            fontSize: ResponsiveSize.fontSize(12),
-            fontWeight: FontWeight.w600,
-          ),
-          items: [
-            BottomNavigationBarItem(
-              icon: Padding(
-                padding: ResponsiveSize.padding(top: 10, bottom: 5),
-                child: Image.asset(
-                  'assets/images/Splash.png',
-                  width: ResponsiveSize.width(24),
-                  height: ResponsiveSize.height(24),
-                  color:
-                      mainController.currentIndex.value == 0
-                          ? Colors.green
-                          : Colors.white,
-                ),
-              ),
-              label: 'News',
-            ),
-            BottomNavigationBarItem(
-              icon: Padding(
-                padding: ResponsiveSize.padding(top: 10, bottom: 5),
-                child: Image.asset(
-                  'assets/images/Splash.png',
-                  width: ResponsiveSize.width(24),
-                  height: ResponsiveSize.height(24),
-                  color:
-                      mainController.currentIndex.value == 1
-                          ? Colors.green
-                          : Colors.white,
-                ),
-              ),
-              label: 'My Points',
-            ),
-            BottomNavigationBarItem(
-              icon: Padding(
-                padding: ResponsiveSize.padding(top: 10, bottom: 5),
-                child: Image.asset(
-                  'assets/images/Splash.png',
-                  width: ResponsiveSize.width(24),
-                  height: ResponsiveSize.height(24),
-                  color:
-                      mainController.currentIndex.value == 2
-                          ? Colors.green
-                          : Colors.white,
-                ),
-              ),
-              label: 'Redeem Points',
-            ),
-            BottomNavigationBarItem(
-              icon: Padding(
-                padding: ResponsiveSize.padding(top: 10, bottom: 5),
-                child: Image.asset(
-                  'assets/images/Splash.png',
-                  width: ResponsiveSize.width(24),
-                  height: ResponsiveSize.height(24),
-                  color:
-                      mainController.currentIndex.value == 3
-                          ? Colors.green
-                          : Colors.white,
-                ),
-              ),
-              label: 'History',
-            ),
-          ],
         ),
       ),
     );

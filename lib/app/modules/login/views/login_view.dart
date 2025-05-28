@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../controllers/language_controller.dart';
 import '../../../utils/responsive_size.dart';
 import '../../../utils/typography.dart';
 import '../controllers/login_controller.dart';
@@ -11,6 +12,8 @@ class LoginView extends GetView<LoginController> {
   @override
   Widget build(BuildContext context) {
     final loginController = Get.put(LoginController());
+
+    final languageController = Get.put(LanguageController());
 
     return Scaffold(
       body: Container(
@@ -28,7 +31,9 @@ class LoginView extends GetView<LoginController> {
             padding: ResponsiveSize.padding(horizontal: 30),
             child: Column(
               children: [
-                SizedBox(height: ResponsiveSize.height(100)),
+                SizedBox(height: ResponsiveSize.height(60)),
+
+
                 Center(
                   child: Image.asset(
                     'assets/images/Splash.png',
@@ -40,8 +45,6 @@ class LoginView extends GetView<LoginController> {
                   padding: ResponsiveSize.padding(all: 20),
                   decoration: BoxDecoration(
                     color: Color(0XFF0F0F0F).withOpacity(0.6),
-
-                    // Colors.black.withOpacity(0.3),
                     borderRadius: BorderRadius.circular(
                       ResponsiveSize.radius(20),
                     ),
@@ -50,73 +53,74 @@ class LoginView extends GetView<LoginController> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Center(
-                        child: Text(
-                          "Sign in to your Account",
-                          style: AppTextStyles.heading,
-                        ),
+                        child: Text('sign_in'.tr, style: AppTextStyles.heading),
                       ),
                       SizedBox(height: ResponsiveSize.height(10)),
-                      Text(
-                        "Enter your Card-No and phone-No to log in",
-                        style: AppTextStyles.subheading,
-                      ),
+                      Text('login_desc'.tr, style: AppTextStyles.subheading),
                       SizedBox(height: ResponsiveSize.height(40)),
-                      TextField(
-                        controller: loginController.cardNumberController,
-                        onChanged: loginController.validateCardNumber,
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Colors.grey.shade900,
-                          hintText: 'Enter your Card Number',
-                          hintStyle: AppTextStyles.inputHint,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(
-                              ResponsiveSize.radius(10),
+                      Obx(
+                        () => TextField(
+                          controller:
+                              loginController.cardNumberController.value,
+                          onChanged: loginController.validateCardNumber,
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Colors.grey.shade900,
+                            hintText: 'enter_card'.tr,
+                            hintStyle: AppTextStyles.inputHint,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(
+                                ResponsiveSize.radius(10),
+                              ),
+                              borderSide: BorderSide.none,
                             ),
-                            borderSide: BorderSide.none,
+                            contentPadding: ResponsiveSize.padding(
+                              horizontal: 16,
+                              vertical: 14,
+                            ),
                           ),
-                          contentPadding: ResponsiveSize.padding(
-                            horizontal: 16,
-                            vertical: 14,
-                          ),
+                          style: AppTextStyles.inputText,
                         ),
-                        style: AppTextStyles.inputText,
                       ),
                       SizedBox(height: ResponsiveSize.height(15)),
-                      TextField(
-                        controller: loginController.phoneNumberController,
-                        onChanged: loginController.validatePhoneNumber,
-                        keyboardType: TextInputType.number,
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Colors.grey.shade900,
-                          hintText: 'Enter Your Phone Number',
-                          hintStyle: AppTextStyles.inputHint,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(
-                              ResponsiveSize.radius(10),
+                      Obx(
+                        () => TextField(
+                          controller:
+                              loginController.phoneNumberController.value,
+                          onChanged: loginController.validatePhoneNumber,
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Colors.grey.shade900,
+                            hintText: 'enter_phone'.tr,
+                            hintStyle: AppTextStyles.inputHint,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(
+                                ResponsiveSize.radius(10),
+                              ),
+                              borderSide: BorderSide.none,
                             ),
-                            borderSide: BorderSide.none,
+                            contentPadding: ResponsiveSize.padding(
+                              horizontal: 16,
+                              vertical: 14,
+                            ),
                           ),
-                          contentPadding: ResponsiveSize.padding(
-                            horizontal: 16,
-                            vertical: 14,
-                          ),
+                          style: AppTextStyles.inputText,
                         ),
-                        style: AppTextStyles.inputText,
                       ),
                       SizedBox(height: ResponsiveSize.height(25)),
                       Row(
                         children: [
                           Text(
-                            "Forget Your Card Number?",
+                            'forget_card'.tr,
                             style: AppTextStyles.grayLabel,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          const SizedBox(width: 8),
+                          SizedBox(width: ResponsiveSize.width(5)),
                           GestureDetector(
                             onTap: loginController.getOtp,
                             child: Text(
-                              "Get OTP",
+                              'get_otp'.tr,
                               style: AppTextStyles.linkText,
                             ),
                           ),
@@ -136,8 +140,8 @@ class LoginView extends GetView<LoginController> {
                               ),
                             ),
                           ),
-                          child: const Text(
-                            "LogIn",
+                          child: Text(
+                            'login'.tr,
                             style: AppTextStyles.buttonText,
                           ),
                         ),
@@ -146,15 +150,12 @@ class LoginView extends GetView<LoginController> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Text(
-                            "Don't have an account?",
-                            style: AppTextStyles.grayLabel,
-                          ),
+                          Text('no_account'.tr, style: AppTextStyles.grayLabel),
                           const SizedBox(width: 8),
                           GestureDetector(
                             onTap: loginController.goToSignUp,
-                            child: const Text(
-                              "Sign Up",
+                            child: Text(
+                              'sign_upl'.tr,
                               style: AppTextStyles.linkText,
                             ),
                           ),
@@ -163,8 +164,74 @@ class LoginView extends GetView<LoginController> {
                     ],
                   ),
                 ),
-                SizedBox(height: ResponsiveSize.height(30)),
+                SizedBox(height: ResponsiveSize.height(15)),
+                Container(
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF1E1E1E),
+                    borderRadius: BorderRadius.circular(
+                      ResponsiveSize.radius(10),
+                    ),
+                    border: Border.all(color: Colors.orange),
+                  ),
+                  height: ResponsiveSize.height(40),
+                  width: ResponsiveSize.width(127.9),
+                  child: Obx(
+                        () => Row(
+                      children: [
+                        _buildLanguageToggleOption(
+                          'EN',
+                          languageController.isEnglish.value,
+                              () {
+                            if (!languageController.isEnglish.value) {
+                              languageController.toggleLanguage();
+                            }
+                          },
+                        ),
+                        _buildLanguageToggleOption(
+                          'JP',
+                          !languageController.isEnglish.value,
+                              () {
+                            if (languageController.isEnglish.value) {
+                              languageController.toggleLanguage();
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+
+  Widget _buildLanguageToggleOption(
+    String language,
+    bool isSelected,
+    Function() onTap,
+  ) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: ResponsiveSize.width(63),
+        decoration: BoxDecoration(
+          color: isSelected ? const Color(0xFFFFA500) : Colors.transparent,
+          borderRadius: BorderRadius.horizontal(
+            left: Radius.circular(10),
+            right: Radius.circular(10),
+          ),
+        ),
+        child: Center(
+          child: Text(
+            language,
+            style: TextStyle(
+              color: isSelected ? Colors.white70 : Colors.yellow.shade400,
+              fontSize: ResponsiveSize.fontSize(14),
+              fontWeight: FontWeight.w500,
             ),
           ),
         ),

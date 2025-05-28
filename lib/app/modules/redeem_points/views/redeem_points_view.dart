@@ -9,62 +9,65 @@ class RedeemPointsView extends GetView<RedeemPointsController> {
 
   @override
   Widget build(BuildContext context) {
-
     final redeemController = Get.put(RedeemPointsController());
 
     return Scaffold(
-      backgroundColor: Colors.black,
       body: Container(
         width: double.infinity,
         height: double.infinity,
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Colors.black,Colors.black54 ,Color(0xFF002A20),],
-            begin: Alignment.topLeft,
-         end: Alignment.bottomRight
-
+            colors: [
+              Color(0xFF000000),
+              Color(0xFF000000),
+              Color(0xFF000000),
+              Color(0xFF001e16),
+            ],
+            begin: Alignment.bottomRight,
+            end: Alignment.topRight,
           ),
         ),
         child: Padding(
-          padding: ResponsiveSize.padding(vertical: 16,horizontal: 16),
+          padding: ResponsiveSize.padding(vertical: 16, horizontal: 10),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-SizedBox(height: 30,),
+              SizedBox(height: 30),
               Container(
-
-                width: double.infinity,
-                height: ResponsiveSize.height(80),
+                height: ResponsiveSize.height(60),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF121212),
-                  borderRadius: BorderRadius.circular(ResponsiveSize.radius(22)),
+                  color: Color(0xFF0f0f0f),
+                  borderRadius: BorderRadius.circular(
+                    ResponsiveSize.radius(20),
+                  ),
                 ),
                 child: Center(
                   child: Text(
-                    'Redeem points',
+                    'redeem_points'.tr,
                     style: TextStyle(
-                      color: Colors.white,
+                      color: Colors.white70,
                       fontSize: ResponsiveSize.fontSize(18),
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),
               ),
-
-              SizedBox(height: 30,),
+              SizedBox(height: 30),
               Container(
                 padding: ResponsiveSize.padding(vertical: 15, horizontal: 15),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF121212),
-                  borderRadius: BorderRadius.circular(ResponsiveSize.radius(15)),
+                  color: Color(0xFF0f0f0f),
+                  borderRadius: BorderRadius.circular(
+                    ResponsiveSize.radius(20),
+                  ),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Card Number ${redeemController.cardNumber}',
+                      'card_number'.tr + ' ${redeemController.cardNumber}',
                       style: TextStyle(
-                        color: Colors.white,
+                        color: Colors.white70,
                         fontSize: ResponsiveSize.fontSize(14),
                         fontWeight: FontWeight.w500,
                       ),
@@ -72,7 +75,7 @@ SizedBox(height: 30,),
                     OutlinedButton(
                       onPressed: redeemController.goToProfile,
                       style: OutlinedButton.styleFrom(
-                        side: const BorderSide(color: Colors.green),
+                        side: const BorderSide(color: Color(0xFF288c25)),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(
                             ResponsiveSize.radius(20),
@@ -80,14 +83,14 @@ SizedBox(height: 30,),
                         ),
                         minimumSize: Size(
                           ResponsiveSize.width(100),
-                          ResponsiveSize.height(36),
+                          ResponsiveSize.height(45),
                         ),
                       ),
                       child: Text(
-                        'My Profile',
+                        'my_profile'.tr,
                         style: TextStyle(
-                          color: Colors.green,
-                          fontSize: ResponsiveSize.fontSize(13),
+                          color: Color(0xFF288c25),
+                          fontSize: ResponsiveSize.fontSize(14),
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -97,14 +100,15 @@ SizedBox(height: 30,),
               ),
 
               SizedBox(height: ResponsiveSize.height(16)),
-
-
               Row(
                 children: [
                   Text(
-                    'Redeem Minimum ${redeemController.minimumPoints} points at a time:',
+                    'redeem_minimum'.tr.replaceFirst(
+                      '5',
+                      '${redeemController.minimumPoints}',
+                    ),
                     style: TextStyle(
-                      color: Colors.white,
+                      color: Colors.white70,
                       fontSize: ResponsiveSize.fontSize(14),
                       fontWeight: FontWeight.w500,
                     ),
@@ -114,15 +118,15 @@ SizedBox(height: 30,),
                     () => Text(
                       '${redeemController.availablePoints.value}',
                       style: TextStyle(
-                        color: Colors.green,
-                        fontSize: ResponsiveSize.fontSize(16),
+                        color: Color(0xFF288c25),
+                        fontSize: ResponsiveSize.fontSize(25),
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
                 ],
               ),
-              SizedBox(height: ResponsiveSize.height(16)),
+
               Expanded(
                 child: Obx(
                   () => ListView.builder(
@@ -133,9 +137,9 @@ SizedBox(height: 30,),
                         margin: ResponsiveSize.margin(bottom: 12),
                         padding: ResponsiveSize.padding(all: 12),
                         decoration: BoxDecoration(
-                          color:  Color(0xFF121212),
+                          color: Color(0xFF0f0f0f),
                           borderRadius: BorderRadius.circular(
-                            ResponsiveSize.radius(8),
+                            ResponsiveSize.radius(10),
                           ),
                         ),
                         child: Row(
@@ -144,7 +148,7 @@ SizedBox(height: 30,),
                               child: Column(
                                 children: [
                                   _buildEntryField(
-                                    label: 'Dealer Number:',
+                                    label: 'dealer_number'.tr,
                                     value: entry.dealerNumber,
                                     onChanged:
                                         (value) =>
@@ -154,7 +158,7 @@ SizedBox(height: 30,),
                                             ),
                                   ),
                                   _buildEntryField(
-                                    label: 'Date:',
+                                    label: 'date'.tr,
                                     value: entry.date,
                                     onChanged:
                                         (value) =>
@@ -164,7 +168,7 @@ SizedBox(height: 30,),
                                             ),
                                   ),
                                   _buildEntryField(
-                                    label: 'Item Code:',
+                                    label: 'item_code'.tr,
                                     value: entry.itemCode,
                                     onChanged:
                                         (value) =>
@@ -174,7 +178,7 @@ SizedBox(height: 30,),
                                             ),
                                   ),
                                   _buildEntryField(
-                                    label: 'Total:',
+                                    label: 'total'.tr,
                                     value: entry.total,
                                     onChanged:
                                         (value) =>
@@ -184,7 +188,7 @@ SizedBox(height: 30,),
                                             ),
                                   ),
                                   _buildEntryField(
-                                    label: 'Point Receive:',
+                                    label: 'point_receive'.tr,
                                     value: entry.pointsReceive,
                                     onChanged:
                                         (value) =>
@@ -199,46 +203,49 @@ SizedBox(height: 30,),
                             Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Text(
-                                  'Redeemed',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: ResponsiveSize.fontSize(12),
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                                SizedBox(height: ResponsiveSize.height(4)),
-                                GestureDetector(
-                                  onTap:
-                                      () => redeemController.toggleRedeemed(
-                                        index,
-                                      ),
-                                  child: Container(
-                                    width: ResponsiveSize.width(24),
-                                    height: ResponsiveSize.height(24),
-                                    decoration: BoxDecoration(
-                                      color: entry.isRedeemed
-                                              ? Colors.green
-                                              : Colors.transparent,
-                                      border: Border.all(
-                                        color: entry.isRedeemed
-                                                ? Colors.green
-                                                : Colors.grey,
-                                        width: 1.5,
-                                      ),
-                                      borderRadius: BorderRadius.circular(
-                                        ResponsiveSize.radius(4),
+                                Row(
+                                  children: [
+                                    Text(
+                                      'redeeme'.tr,
+                                      style: TextStyle(
+                                        color: Colors.white70,
+                                        fontSize: ResponsiveSize.fontSize(12),
+                                        fontWeight: FontWeight.w600,
                                       ),
                                     ),
-                                    child:
-                                        entry.isRedeemed
-                                            ? const Icon(
-                                              Icons.check,
-                                              color: Colors.white,
-                                              size: 18,
-                                            )
-                                            : null,
-                                  ),
+                                    SizedBox(width: 5),
+                                    GestureDetector(
+                                      onTap:
+                                          () => redeemController.toggleRedeemed(
+                                            index,
+                                          ),
+                                      child: Container(
+                                        width: ResponsiveSize.width(24),
+                                        height: ResponsiveSize.height(24),
+                                        decoration: BoxDecoration(
+                                          color:
+                                              entry.isRedeemed
+                                                  ? Color(0xFF288c25)
+                                                  : Colors.transparent,
+                                          border: Border.all(
+                                            color:
+                                                entry.isRedeemed
+                                                    ? Color(0xFF288c25)
+                                                    : Colors.grey,
+                                            width: 1.5,
+                                          ),
+                                        ),
+                                        child:
+                                            entry.isRedeemed
+                                                ? const Icon(
+                                                  Icons.check,
+                                                  color: Colors.white,
+                                                  size: 18,
+                                                )
+                                                : null,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
@@ -256,7 +263,6 @@ SizedBox(height: 30,),
     );
   }
 
-
   Widget _buildEntryField({
     required String label,
     required String value,
@@ -267,37 +273,12 @@ SizedBox(height: 30,),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SizedBox(
-            width: ResponsiveSize.width(90),
-            child: Text(
-              label,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: ResponsiveSize.fontSize(13),
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
-          Expanded(
-            child: TextField(
-              controller: TextEditingController(text: value),
-              onChanged: onChanged,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: ResponsiveSize.fontSize(13),
-              ),
-              decoration: InputDecoration(
-                isDense: true,
-                contentPadding: ResponsiveSize.padding(
-                  vertical: 6,
-                  horizontal: 8,
-                ),
-                border: InputBorder.none,
-                enabledBorder: InputBorder.none,
-                focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.green, width: 1),
-                ),
-              ),
+          Text(
+            label,
+            style: TextStyle(
+              color: Colors.white70,
+              fontSize: ResponsiveSize.fontSize(13),
+              fontWeight: FontWeight.w500,
             ),
           ),
         ],

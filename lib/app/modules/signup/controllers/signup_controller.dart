@@ -4,10 +4,16 @@ import '../../../routes/app_pages.dart';
 import '../../../utils/dialog_helper.dart';
 
 class SignupController extends GetxController {
-  // Text editing controllers
-  final fullNameController = TextEditingController();
-  final cardNumberController = TextEditingController();
-  final phoneNumberController = TextEditingController();
+  // We'll create these controllers when they're needed
+  Rx<TextEditingController?> fullNameController = Rx<TextEditingController?>(
+    null,
+  );
+  Rx<TextEditingController?> cardNumberController = Rx<TextEditingController?>(
+    null,
+  );
+  Rx<TextEditingController?> phoneNumberController = Rx<TextEditingController?>(
+    null,
+  );
 
   // Observable variables
   final RxBool isLoading = false.obs;
@@ -18,13 +24,24 @@ class SignupController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    // Initialize controllers
+    fullNameController.value = TextEditingController();
+    cardNumberController.value = TextEditingController();
+    phoneNumberController.value = TextEditingController();
   }
 
   @override
   void onClose() {
-    fullNameController.dispose();
-    cardNumberController.dispose();
-    phoneNumberController.dispose();
+    // Safely dispose controllers
+    fullNameController.value?.dispose();
+    fullNameController.value = null;
+
+    cardNumberController.value?.dispose();
+    cardNumberController.value = null;
+
+    phoneNumberController.value?.dispose();
+    phoneNumberController.value = null;
+
     super.onClose();
   }
 
@@ -63,10 +80,12 @@ class SignupController extends GetxController {
       // Hide loading dialog
       DialogHelper.hideLoading();
 
+      final phoneNumber = phoneNumberController.value?.text ?? '';
+
       // Navigate to OTP verification screen
       Get.toNamed(
         Routes.OTP_VERIFICATION,
-        arguments: {'phoneNumber': phoneNumberController.text},
+        arguments: {'phoneNumber': phoneNumber},
       );
     });
   }

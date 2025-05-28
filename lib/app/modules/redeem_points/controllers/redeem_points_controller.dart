@@ -2,22 +2,16 @@ import 'package:get/get.dart';
 import '../../../utils/dialog_helper.dart';
 
 class RedeemPointsController extends GetxController {
-  // Card number
   final String cardNumber = '678543';
-
-  // Minimum points required
   final int minimumPoints = 5;
-
-  // Current points available to redeem
   final RxInt availablePoints = 2.obs;
 
-  // List of dealer entries (observable)
   final RxList<DealerEntry> dealerEntries = <DealerEntry>[].obs;
 
   @override
   void onInit() {
     super.onInit();
-    // Initialize with three dealer entries
+
     dealerEntries.addAll([
       DealerEntry(
         dealerNumber: '',
@@ -35,31 +29,16 @@ class RedeemPointsController extends GetxController {
         pointsReceive: '',
         isRedeemed: true,
       ),
-      DealerEntry(
-        dealerNumber: '',
-        date: '',
-        itemCode: '',
-        total: '',
-        pointsReceive: '',
-        isRedeemed: false,
-      ),
     ]);
   }
 
-  // Navigate to profile page
   void goToProfile() {
-    DialogHelper.showInfoDialog(
-      title: 'Profile',
-      message: 'Profile functionality will be available soon',
-    );
+    Get.toNamed('/profile');
   }
 
-  // Toggle the redeemed status
   void toggleRedeemed(int index) {
     if (index < dealerEntries.length) {
       final entry = dealerEntries[index];
-
-      // Only allow redemption if we have filled all fields
       if (entry.dealerNumber.isEmpty ||
           entry.date.isEmpty ||
           entry.itemCode.isEmpty ||
@@ -72,12 +51,10 @@ class RedeemPointsController extends GetxController {
         return;
       }
 
-      // Toggle the status
       dealerEntries[index] = entry.copyWith(isRedeemed: !entry.isRedeemed);
     }
   }
 
-  // Update dealer entry fields
   void updateDealerEntry(
     int index, {
     String? dealerNumber,
@@ -99,7 +76,6 @@ class RedeemPointsController extends GetxController {
   }
 }
 
-// Model class for dealer entries
 class DealerEntry {
   final String dealerNumber;
   final String date;
@@ -117,7 +93,6 @@ class DealerEntry {
     required this.isRedeemed,
   });
 
-  // Create a copy with some changes
   DealerEntry copyWith({
     String? dealerNumber,
     String? date,

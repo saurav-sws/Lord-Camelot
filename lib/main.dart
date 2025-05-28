@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lordcamelot_point/services/firebase_options.dart';
 import 'app/routes/app_pages.dart';
+import 'app/translations/app_translations.dart';
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -40,12 +41,13 @@ Future<void> initializeFCM() async {
   String? token = await messaging.getToken();
   print('FCM Token: $token');
 
-  FirebaseMessaging.instance.onTokenRefresh.listen((fcmToken) {
-    print('FCM Token refreshed: $fcmToken');
-    // TODO: Send the token to your server
-  }).onError((err) {
-    print('Error refreshing FCM token: $err');
-  });
+  FirebaseMessaging.instance.onTokenRefresh
+      .listen((fcmToken) {
+        print('FCM Token refreshed: $fcmToken');
+      })
+      .onError((err) {
+        print('Error refreshing FCM token: $err');
+      });
 
   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
     print('Got a message whilst in the foreground!');
@@ -56,19 +58,19 @@ Future<void> initializeFCM() async {
     }
   });
 
-  // Handle notification tap when app is in background
+
   FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
     print('A new onMessageOpenedApp event was published!');
     print('Message data: ${message.data}');
-    // Navigate to specific screen if needed
+
   });
 
-  // Check if app was opened from a terminated state via notification
+
   RemoteMessage? initialMessage = await messaging.getInitialMessage();
   if (initialMessage != null) {
     print('App opened from terminated state via notification');
     print('Initial message data: ${initialMessage.data}');
-    // Handle navigation here
+
   }
 }
 
@@ -89,6 +91,11 @@ class MyApp extends StatelessWidget {
             fontFamily: 'Montserrat',
             scaffoldBackgroundColor: Colors.black,
           ),
+          // Translations
+          translations: AppTranslations(),
+          locale: Get.deviceLocale,
+          fallbackLocale: const Locale('en', 'US'),
+
           initialRoute: AppPages.INITIAL,
           getPages: AppPages.routes,
         );

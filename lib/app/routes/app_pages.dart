@@ -1,8 +1,12 @@
 import 'package:get/get.dart';
-import '../modules/home/views/home_view.dart';
+import '../modules/about_points/views/about_points_view.dart';
+import '../modules/history/views/history_view.dart';
 import '../modules/login/views/login_view.dart';
 import '../modules/main/views/main_view.dart';
+import '../modules/my_points/views/my_points_view.dart';
+import '../modules/otp_verification/bindings/otp_verification_binding.dart';
 import '../modules/otp_verification/views/otp_verification_view.dart';
+import '../modules/profile/views/profile_view.dart';
 import '../modules/signup/views/signup_view.dart';
 import '../modules/splash/views/splash_view.dart';
 
@@ -35,6 +39,7 @@ class AppPages {
     GetPage(
       name: Routes.OTP_VERIFICATION,
       page: () => const OtpVerificationView(),
+      binding: OtpVerificationBinding(),
       transition: Transition.rightToLeft,
       transitionDuration: const Duration(milliseconds: 300),
     ),
@@ -45,8 +50,26 @@ class AppPages {
       transitionDuration: const Duration(milliseconds: 300),
     ),
     GetPage(
-      name: Routes.HOME,
-      page: () => const HomeView(),
+      name: Routes.PROFILE,
+      page: () => const ProfileView(),
+      transition: Transition.rightToLeft,
+      transitionDuration: const Duration(milliseconds: 300),
+    ),
+    GetPage(
+      name: Routes.ABOUT_POINTS,
+      page: () => const AboutPointsView(),
+      transition: Transition.rightToLeft,
+      transitionDuration: const Duration(milliseconds: 300),
+    ),
+    GetPage(
+      name: Routes.MY_POINTS,
+      page: () => const MyPointsView(),
+      transition: Transition.rightToLeft,
+      transitionDuration: const Duration(milliseconds: 300),
+    ),
+    GetPage(
+      name: Routes.HISTORY,
+      page: () => const HistoryView(),
       transition: Transition.rightToLeft,
       transitionDuration: const Duration(milliseconds: 300),
     ),

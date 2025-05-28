@@ -9,4 +9,9 @@ abstract class Routes {
   static const OTP_VERIFICATION = '/otp-verification';
   static const HOME = '/home';
   static const MAIN = '/main';
+  static const PROFILE = '/profile';
+  static const ABOUT_POINTS = '/about-points';
+  static const MY_POINTS = '/my-points';
+  static const HISTORY = '/history';
+  static const REDEEM_POINTS = '/redeem-points';
 }

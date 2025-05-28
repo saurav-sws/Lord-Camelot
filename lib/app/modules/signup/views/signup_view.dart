@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../controllers/language_controller.dart';
 import '../../../utils/responsive_size.dart';
 import '../../../utils/typography.dart';
 import '../controllers/signup_controller.dart';
@@ -11,6 +12,7 @@ class SignupView extends GetView<SignupController> {
   @override
   Widget build(BuildContext context) {
     final signupController = Get.put(SignupController());
+    final languageController = Get.find<LanguageController>();
 
     return Scaffold(
       body: Container(
@@ -28,7 +30,7 @@ class SignupView extends GetView<SignupController> {
             padding: ResponsiveSize.padding(horizontal: 30),
             child: Column(
               children: [
-                SizedBox(height: ResponsiveSize.height(100)),
+                SizedBox(height: ResponsiveSize.height(60)),
                 Center(
                   child: Image.asset(
                     'assets/images/Splash.png',
@@ -48,87 +50,90 @@ class SignupView extends GetView<SignupController> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Center(
-                        child: Text(
-                          "Sign Up to Lord Camelot",
-                          style: AppTextStyles.heading,
-                        ),
+                        child: Text('sign_up'.tr, style: AppTextStyles.heading),
                       ),
                       SizedBox(height: ResponsiveSize.height(10)),
-                      Center(
-                        child: Text(
-                          "Enter your Card-No and phone-No to Sign Up",
-                          style: AppTextStyles.subheading,
-                        ),
+                      Text(
+                        'signup_desc'.tr,
+                        style: AppTextStyles.subheading,
                       ),
                       SizedBox(height: ResponsiveSize.height(40)),
 
-                      TextField(
-                        controller: signupController.fullNameController,
-                        onChanged: signupController.validateFullName,
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Colors.grey.shade900,
-                          hintText: 'Enter your Full Name',
-                          hintStyle: AppTextStyles.inputHint,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(
-                              ResponsiveSize.radius(10),
+                      Obx(
+                        () => TextField(
+                          controller: signupController.fullNameController.value,
+                          onChanged: signupController.validateFullName,
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Colors.grey.shade900,
+                            hintText: 'enter_name'.tr,
+                            hintStyle: AppTextStyles.inputHint,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(
+                                ResponsiveSize.radius(10),
+                              ),
+                              borderSide: BorderSide.none,
                             ),
-                            borderSide: BorderSide.none,
+                            contentPadding: ResponsiveSize.padding(
+                              horizontal: 16,
+                              vertical: 14,
+                            ),
                           ),
-                          contentPadding: ResponsiveSize.padding(
-                            horizontal: 16,
-                            vertical: 14,
-                          ),
+                          style: AppTextStyles.inputText,
                         ),
-                        style: AppTextStyles.inputText,
                       ),
                       SizedBox(height: ResponsiveSize.height(15)),
 
-                      TextField(
-                        controller: signupController.cardNumberController,
-                        onChanged: signupController.validateCardNumber,
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Colors.grey.shade900,
-                          hintText: 'Enter your Card Number',
-                          hintStyle: AppTextStyles.inputHint,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(
-                              ResponsiveSize.radius(10),
+                      Obx(
+                        () => TextField(
+                          controller:
+                              signupController.cardNumberController.value,
+                          onChanged: signupController.validateCardNumber,
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Colors.grey.shade900,
+                            hintText: 'enter_card'.tr,
+                            hintStyle: AppTextStyles.inputHint,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(
+                                ResponsiveSize.radius(10),
+                              ),
+                              borderSide: BorderSide.none,
                             ),
-                            borderSide: BorderSide.none,
+                            contentPadding: ResponsiveSize.padding(
+                              horizontal: 16,
+                              vertical: 14,
+                            ),
                           ),
-                          contentPadding: ResponsiveSize.padding(
-                            horizontal: 16,
-                            vertical: 14,
-                          ),
+                          style: AppTextStyles.inputText,
                         ),
-                        style: AppTextStyles.inputText,
                       ),
                       SizedBox(height: ResponsiveSize.height(15)),
 
-                      TextField(
-                        controller: signupController.phoneNumberController,
-                        onChanged: signupController.validatePhoneNumber,
-                        keyboardType: TextInputType.number,
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Colors.grey.shade900,
-                          hintText: 'Enter Your Phone Number',
-                          hintStyle: AppTextStyles.inputHint,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(
-                              ResponsiveSize.radius(10),
+                      Obx(
+                        () => TextField(
+                          controller:
+                              signupController.phoneNumberController.value,
+                          onChanged: signupController.validatePhoneNumber,
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Colors.grey.shade900,
+                            hintText: 'enter_phone'.tr,
+                            hintStyle: AppTextStyles.inputHint,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(
+                                ResponsiveSize.radius(10),
+                              ),
+                              borderSide: BorderSide.none,
                             ),
-                            borderSide: BorderSide.none,
+                            contentPadding: ResponsiveSize.padding(
+                              horizontal: 16,
+                              vertical: 14,
+                            ),
                           ),
-                          contentPadding: ResponsiveSize.padding(
-                            horizontal: 16,
-                            vertical: 14,
-                          ),
+                          style: AppTextStyles.inputText,
                         ),
-                        style: AppTextStyles.inputText,
                       ),
                       SizedBox(height: ResponsiveSize.height(35)),
 
@@ -138,15 +143,15 @@ class SignupView extends GetView<SignupController> {
                         child: ElevatedButton(
                           onPressed: signupController.getOTP,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.green,
+                            backgroundColor:   Color(0xFF288c25),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(
                                 ResponsiveSize.radius(14),
                               ),
                             ),
                           ),
-                          child: const Text(
-                            "Get OTP",
+                          child: Text(
+                            'get_otp'.tr,
                             style: AppTextStyles.buttonText,
                           ),
                         ),
@@ -156,15 +161,15 @@ class SignupView extends GetView<SignupController> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Text(
-                            "Already have an account?",
+                          Text(
+                            'have_account'.tr,
                             style: AppTextStyles.grayLabel,
                           ),
                           const SizedBox(width: 8),
                           GestureDetector(
                             onTap: signupController.goToLogin,
-                            child: const Text(
-                              "Log In",
+                            child: Text(
+                              'login'.tr,
                               style: AppTextStyles.linkText,
                             ),
                           ),
@@ -173,8 +178,74 @@ class SignupView extends GetView<SignupController> {
                     ],
                   ),
                 ),
-                SizedBox(height: ResponsiveSize.height(30)),
+                SizedBox(height: ResponsiveSize.height(20)),
+                Container(
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF1E1E1E),
+                    borderRadius: BorderRadius.circular(
+                      ResponsiveSize.radius(10),
+                    ),
+                    border: Border.all(color: Colors.orange),
+                  ),
+                  height: ResponsiveSize.height(40),
+                  width: ResponsiveSize.width(127.9),
+                  child: Obx(
+                        () => Row(
+                      children: [
+                        _buildLanguageToggleOption(
+                          'EN',
+                          languageController.isEnglish.value,
+                              () {
+                            if (!languageController.isEnglish.value) {
+                              languageController.toggleLanguage();
+                            }
+                          },
+                        ),
+                        _buildLanguageToggleOption(
+                          'JP',
+                          !languageController.isEnglish.value,
+                              () {
+                            if (languageController.isEnglish.value) {
+                              languageController.toggleLanguage();
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+
+  Widget _buildLanguageToggleOption(
+    String language,
+    bool isSelected,
+    Function() onTap,
+  ) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: ResponsiveSize.width(63),
+        decoration: BoxDecoration(
+          color: isSelected ? const Color(0xFFFFA500) : Colors.transparent,
+          borderRadius: BorderRadius.horizontal(
+            left: Radius.circular(10),
+            right: Radius.circular(10),
+          ),
+        ),
+        child: Center(
+          child: Text(
+            language,
+            style: TextStyle(
+              color: isSelected ? Colors.white70 : Colors.yellow.shade400,
+              fontSize: ResponsiveSize.fontSize(14),
+              fontWeight: FontWeight.w500,
             ),
           ),
         ),
