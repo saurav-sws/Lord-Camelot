@@ -40,7 +40,47 @@ class LoginView extends GetView<LoginController> {
                     width: ResponsiveSize.width(90),
                   ),
                 ),
-                SizedBox(height: ResponsiveSize.height(50)),
+                SizedBox(height: ResponsiveSize.height(20)),
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: Container(
+                    margin: EdgeInsets.only(left: 20),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF1E1E1E),
+                      borderRadius: BorderRadius.circular(
+                        ResponsiveSize.radius(10),
+                      ),
+                      border: Border.all(color: Colors.orange),
+                    ),
+                    height: ResponsiveSize.height(40),
+                    width: ResponsiveSize.width(128.9),
+                    child: Obx(
+                          () => Row(
+                        children: [
+                          _buildLanguageToggleOption(
+                            'EN',
+                            languageController.isEnglish.value,
+                                () {
+                              if (!languageController.isEnglish.value) {
+                                languageController.toggleLanguage();
+                              }
+                            },
+                          ),
+                          _buildLanguageToggleOption(
+                            'JP',
+                            !languageController.isEnglish.value,
+                                () {
+                              if (languageController.isEnglish.value) {
+                                languageController.toggleLanguage();
+                              }
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: ResponsiveSize.height(10)),
                 Container(
                   padding: ResponsiveSize.padding(all: 20),
                   decoration: BoxDecoration(
@@ -165,41 +205,8 @@ class LoginView extends GetView<LoginController> {
                   ),
                 ),
                 SizedBox(height: ResponsiveSize.height(15)),
-                Container(
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF1E1E1E),
-                    borderRadius: BorderRadius.circular(
-                      ResponsiveSize.radius(10),
-                    ),
-                    border: Border.all(color: Colors.orange),
-                  ),
-                  height: ResponsiveSize.height(40),
-                  width: ResponsiveSize.width(127.9),
-                  child: Obx(
-                        () => Row(
-                      children: [
-                        _buildLanguageToggleOption(
-                          'EN',
-                          languageController.isEnglish.value,
-                              () {
-                            if (!languageController.isEnglish.value) {
-                              languageController.toggleLanguage();
-                            }
-                          },
-                        ),
-                        _buildLanguageToggleOption(
-                          'JP',
-                          !languageController.isEnglish.value,
-                              () {
-                            if (languageController.isEnglish.value) {
-                              languageController.toggleLanguage();
-                            }
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+
+
               ],
             ),
           ),

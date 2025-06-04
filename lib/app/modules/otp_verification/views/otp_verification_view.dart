@@ -31,7 +31,7 @@ class OtpVerificationView extends GetView<OtpVerificationController> {
             padding: ResponsiveSize.padding(horizontal: 30),
             child: Column(
               children: [
-                SizedBox(height: ResponsiveSize.height(60)),
+                SizedBox(height: ResponsiveSize.height(50)),
 
 
 
@@ -41,7 +41,7 @@ class OtpVerificationView extends GetView<OtpVerificationController> {
                     width: ResponsiveSize.width(90),
                   ),
                 ),
-                SizedBox(height: ResponsiveSize.height(50)),
+                SizedBox(height: ResponsiveSize.height(20)),
                 Container(
                   padding: ResponsiveSize.padding(all: 20),
                   decoration: BoxDecoration(
@@ -169,7 +169,7 @@ class OtpVerificationView extends GetView<OtpVerificationController> {
                     border: Border.all(color: Colors.orange),
                   ),
                   height: ResponsiveSize.height(40),
-                  width: ResponsiveSize.width(127.9),
+                  width: ResponsiveSize.width(128.9),
                   child: Obx(
                         () => Row(
                       children: [
@@ -195,6 +195,7 @@ class OtpVerificationView extends GetView<OtpVerificationController> {
                     ),
                   ),
                 ),
+                SizedBox(height: ResponsiveSize.height(30)),
               ],
             ),
           ),

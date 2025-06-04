@@ -1,5 +1,4 @@
 final Map<String, String> jaJP = {
-
   'sign_in': 'アカウントにサインイン',
   'login_desc': 'カード番号と電話番号を入力してログインしてください',
   'enter_card': 'カード番号を入力',
@@ -52,4 +51,29 @@ final Map<String, String> jaJP = {
   'reach_points': '5ポイント未使用で貯まると、以下の特典がもらえます：',
   'tracking_start': 'このアプリでのポイント管理は2025年7月1日から開始されます。',
   'before_date': 'それ以前のご購入分は引き続き物理会員カードで管理されます。',
+
+  // Logout confirmation
+  'logout_confirmation': 'ログアウトしてもよろしいですか？',
+  'yes_logout': 'はい、ログアウトします',
+
+  // Error messages
+  'missing_information': '情報が不足しています',
+  'enter_both': 'カード番号と電話番号の両方を入力してください',
+  'enter_phone_first': '先に電話番号を入力してください',
+  'fill_all_fields': 'すべての項目を入力してください',
+  'invalid_otp': '無効な認証コード',
+  'enter_valid_otp': '有効な6桁の認証コードを入力してください',
+
+  // Loading messages
+  'logging_in': 'ログイン中...',
+  'sending_otp': '認証コードを送信中...',
+  'processing_request': 'リクエスト処理中...',
+  'verifying_otp': '認証コードを確認中...',
+
+  // Success messages
+  'success': '成功',
+  'otp_verified': '認証コードが正常に確認されました',
+  'continue': '続ける',
+  'otp_resent': '認証コード再送信',
+  'new_otp_sent': '新しい認証コードが電話番号に送信されました',
 };

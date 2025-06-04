@@ -16,12 +16,10 @@ class ProfileController extends GetxController {
   void onInit() {
     super.onInit();
 
-
     fullName.value = 'John Doe';
     cardNumber.value = '678543';
     mobileNumber.value = '+81 90-1234-5678';
     birthDate.value = '1990-01-01';
-
 
     final locale = Get.locale;
     isEnglish.value = locale == null || locale.languageCode == 'en';
@@ -29,7 +27,6 @@ class ProfileController extends GetxController {
 
   void toggleLanguage() {
     isEnglish.value = !isEnglish.value;
-
 
     if (isEnglish.value) {
       Get.updateLocale(const Locale('en', 'US'));
@@ -59,9 +56,9 @@ class ProfileController extends GetxController {
 
   void logout() {
     DialogHelper.showWarningDialog(
-      title: 'Log Out',
-      message: 'Are you sure you want to log out?',
-      buttonText: 'Yes, Log Out',
+      title: 'log_out'.tr,
+      message: 'logout_confirmation'.tr,
+      buttonText: 'yes_logout'.tr,
       onConfirm: () {
         Get.offAll(() => const LoginView());
       },

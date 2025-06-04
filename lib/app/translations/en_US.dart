@@ -1,5 +1,4 @@
 final Map<String, String> enUS = {
-
   'sign_in': 'Sign in to your Account',
   'login_desc': 'Enter your Card-No and phone-No to log in',
   'enter_card': 'Enter your Card Number',
@@ -56,4 +55,29 @@ final Map<String, String> enUS = {
   'tracking_start': 'Point tracking in this app starts from 2025.07.01.',
   'before_date':
       'All purchases made before that date will continue to be managed using your physical member card.',
+
+  // Logout confirmation
+  'logout_confirmation': 'Are you sure you want to log out',
+  'yes_logout': 'Yes, Log Out',
+
+  // Error messages
+  'missing_information': 'Missing Information',
+  'enter_both': 'Please enter both Card Number and Phone Number',
+  'enter_phone_first': 'Please enter your Phone Number first',
+  'fill_all_fields': 'Please fill all the fields',
+  'invalid_otp': 'Invalid OTP',
+  'enter_valid_otp': 'Please enter a valid 6-digit OTP',
+
+  // Loading messages
+  'logging_in': 'Logging in...',
+  'sending_otp': 'Sending OTP...',
+  'processing_request': 'Processing your request...',
+  'verifying_otp': 'Verifying OTP...',
+
+  // Success messages
+  'success': 'Success',
+  'otp_verified': 'OTP verified successfully',
+  'continue': 'Continue',
+  'otp_resent': 'OTP Resent',
+  'new_otp_sent': 'A new OTP has been sent to your phone number',
 };

@@ -66,14 +66,14 @@ class SignupController extends GetxController {
         !isCardNumberValid.value ||
         !isPhoneNumberValid.value) {
       DialogHelper.showErrorDialog(
-        title: 'Missing Information',
-        message: 'Please fill all the fields',
+        title: 'missing_information'.tr,
+        message: 'fill_all_fields'.tr,
       );
       return;
     }
 
     // Show loading dialog
-    DialogHelper.showLoading(message: 'Processing your request...');
+    DialogHelper.showLoading(message: 'processing_request'.tr);
 
     // Simulate API call
     Future.delayed(const Duration(seconds: 2), () {

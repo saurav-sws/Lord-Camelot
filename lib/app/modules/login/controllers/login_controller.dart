@@ -4,7 +4,6 @@ import '../../../routes/app_pages.dart';
 import '../../../utils/dialog_helper.dart';
 
 class LoginController extends GetxController {
-
   Rx<TextEditingController?> cardNumberController = Rx<TextEditingController?>(
     null,
   );
@@ -26,7 +25,6 @@ class LoginController extends GetxController {
 
   @override
   void onClose() {
-
     cardNumberController.value?.dispose();
     phoneNumberController.value = null;
 
@@ -47,13 +45,13 @@ class LoginController extends GetxController {
   void login() {
     if (!isCardNumberValid.value || !isPhoneNumberValid.value) {
       DialogHelper.showErrorDialog(
-        title: 'Missing Information',
-        message: 'Please enter both Card Number and Phone Number',
+        title: 'missing_information'.tr,
+        message: 'enter_both'.tr,
       );
       return;
     }
 
-    DialogHelper.showLoading(message: 'Logging in...');
+    DialogHelper.showLoading(message: 'logging_in'.tr);
 
     Future.delayed(const Duration(seconds: 2), () {
       DialogHelper.hideLoading();
@@ -64,13 +62,13 @@ class LoginController extends GetxController {
   void getOtp() {
     if (!isPhoneNumberValid.value) {
       DialogHelper.showErrorDialog(
-        title: 'Missing Information',
-        message: 'Please enter your Phone Number first',
+        title: 'missing_information'.tr,
+        message: 'enter_phone_first'.tr,
       );
       return;
     }
 
-    DialogHelper.showLoading(message: 'Sending OTP...');
+    DialogHelper.showLoading(message: 'sending_otp'.tr);
 
     Future.delayed(const Duration(seconds: 2), () {
       DialogHelper.hideLoading();

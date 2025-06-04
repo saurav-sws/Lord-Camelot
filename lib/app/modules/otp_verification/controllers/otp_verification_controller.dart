@@ -84,14 +84,14 @@ class OtpVerificationController extends GetxController {
   void verifyOTP() {
     if (pin.value.length != 6) {
       DialogHelper.showErrorDialog(
-        title: 'Invalid OTP',
-        message: 'Please enter a valid 6-digit OTP',
+        title: 'invalid_otp'.tr,
+        message: 'enter_valid_otp'.tr,
       );
       return;
     }
 
     // Show loading dialog
-    DialogHelper.showLoading(message: 'Verifying OTP...');
+    DialogHelper.showLoading(message: 'verifying_otp'.tr);
 
     // Simulate API call
     Future.delayed(const Duration(seconds: 2), () {
@@ -100,9 +100,9 @@ class OtpVerificationController extends GetxController {
 
       // Show success dialog and navigate to main page
       DialogHelper.showSuccessDialog(
-        title: 'Success',
-        message: 'OTP verified successfully',
-        buttonText: 'Continue',
+        title: 'success'.tr,
+        message: 'otp_verified'.tr,
+        buttonText: 'continue'.tr,
         onConfirm: () => Get.offAllNamed(Routes.MAIN),
       );
     });
@@ -120,8 +120,8 @@ class OtpVerificationController extends GetxController {
       startResendTimer(); // Restart the timer
 
       DialogHelper.showSuccessDialog(
-        title: 'OTP Resent',
-        message: 'A new OTP has been sent to your phone number',
+        title: 'otp_resent'.tr,
+        message: 'new_otp_sent'.tr,
       );
     });
   }
