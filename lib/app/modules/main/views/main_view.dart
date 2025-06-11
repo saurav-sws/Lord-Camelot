@@ -18,80 +18,73 @@ class MainView extends GetView<MainController> {
           border: Border(top: BorderSide(color: Color(0xFF151515), width: 1.0)),
         ),
         child: Obx(
-          () => BottomNavigationBar(
-            backgroundColor: Colors.black,
-            type: BottomNavigationBarType.fixed,
+          () => CustomBottomNavigationBar(
             currentIndex: mainController.currentIndex.value,
             onTap: mainController.changePage,
-            selectedItemColor:  Color(0xFF288c25),
-            unselectedItemColor: Colors.white70,
-            selectedLabelStyle: TextStyle(
-              fontSize: ResponsiveSize.fontSize(12),
-              fontWeight: FontWeight.w600,
-            ),
-            unselectedLabelStyle: TextStyle(
-              fontSize: ResponsiveSize.fontSize(12),
-              fontWeight: FontWeight.w600,
-            ),
-            items: [
-              BottomNavigationBarItem(
-                icon: Padding(
-                  padding: ResponsiveSize.padding(top: 10, bottom: 5),
-                  child: Icon(
-                    Icons.newspaper,
-                    color:
-                        mainController.currentIndex.value == 0
-                            ?   Color(0xFF288c25)
-                            : Colors.white70,
-                    size: ResponsiveSize.width(24),
-                  ),
-                ),
-                label: 'News',
-              ),
-              BottomNavigationBarItem(
-                icon: Padding(
-                  padding: ResponsiveSize.padding(top: 10, bottom: 5),
-                  child: Icon(
-                    Icons.card_giftcard,
-                    color:
-                        mainController.currentIndex.value == 1
-                            ? Color(0xFF288c25)
-                            : Colors.white70,
-                    size: ResponsiveSize.width(24),
-                  ),
-                ),
-                label: 'My Points',
-              ),
-              BottomNavigationBarItem(
-                icon: Padding(
-                  padding: ResponsiveSize.padding(top: 10, bottom: 5),
-                  child: Icon(
-                    Icons.redeem,
-                    color:
-                        mainController.currentIndex.value == 2
-                            ? Color(0xFF288c25)
-                            : Colors.white70,
-                    size: ResponsiveSize.width(24),
-                  ),
-                ),
-                label: 'Redeem Points',
-              ),
-              BottomNavigationBarItem(
-                icon: Padding(
-                  padding: ResponsiveSize.padding(top: 10, bottom: 5),
-                  child: Icon(
-                    Icons.history,
-                    color:
-                        mainController.currentIndex.value == 3
-                            ? Color(0xFF288c25)
-                            : Colors.white70,
-                    size: ResponsiveSize.width(24),
-                  ),
-                ),
-                label: 'History',
-              ),
-            ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class CustomBottomNavigationBar extends StatelessWidget {
+  final int currentIndex;
+  final Function(int) onTap;
+
+  const CustomBottomNavigationBar({
+    Key? key,
+    required this.currentIndex,
+    required this.onTap,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 65,
+      width: double.infinity,
+      color: Colors.black,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          _buildNavItem(0, Icons.newspaper, 'news'.tr),
+          _buildNavItem(1, Icons.card_giftcard, 'my_points'.tr),
+          _buildNavItem(2, Icons.redeem, 'redeem_points'.tr),
+          _buildNavItem(3, Icons.history, 'history'.tr),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNavItem(int index, IconData icon, String label) {
+    final isSelected = currentIndex == index;
+    final Color iconColor = isSelected ? Color(0xFF288c25) : Colors.white70;
+    final Color textColor = isSelected ? Color(0xFF288c25) : Colors.white70;
+
+    return InkWell(
+      onTap: () => onTap(index),
+      splashColor: Color(0xFF288c25).withOpacity(0.2),
+      highlightColor: Colors.transparent,
+      borderRadius: BorderRadius.circular(ResponsiveSize.radius(8)),
+      child: Container(
+        padding: EdgeInsets.symmetric(
+          horizontal: ResponsiveSize.width(12),
+          vertical: ResponsiveSize.height(6),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, color: iconColor, size: ResponsiveSize.width(22)),
+            SizedBox(height: ResponsiveSize.height(3)),
+            Text(
+              label,
+              style: TextStyle(
+                color: textColor,
+                fontSize: ResponsiveSize.fontSize(11),
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
         ),
       ),
     );

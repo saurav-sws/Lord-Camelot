@@ -4,16 +4,10 @@ import '../../../routes/app_pages.dart';
 import '../../../utils/dialog_helper.dart';
 
 class SignupController extends GetxController {
-  // We'll create these controllers when they're needed
-  Rx<TextEditingController?> fullNameController = Rx<TextEditingController?>(
-    null,
-  );
-  Rx<TextEditingController?> cardNumberController = Rx<TextEditingController?>(
-    null,
-  );
-  Rx<TextEditingController?> phoneNumberController = Rx<TextEditingController?>(
-    null,
-  );
+  // Use late initialization
+  late final fullNameController = TextEditingController();
+  late final cardNumberController = TextEditingController();
+  late final phoneNumberController = TextEditingController();
 
   // Observable variables
   final RxBool isLoading = false.obs;
@@ -21,26 +15,24 @@ class SignupController extends GetxController {
   final RxBool isCardNumberValid = false.obs;
   final RxBool isPhoneNumberValid = false.obs;
 
+  // Track if controller is disposed
+  final RxBool isDisposed = false.obs;
+
   @override
   void onInit() {
     super.onInit();
-    // Initialize controllers
-    fullNameController.value = TextEditingController();
-    cardNumberController.value = TextEditingController();
-    phoneNumberController.value = TextEditingController();
+    isDisposed.value = false;
   }
 
   @override
   void onClose() {
+    // Mark as disposed before actually disposing
+    isDisposed.value = true;
+
     // Safely dispose controllers
-    fullNameController.value?.dispose();
-    fullNameController.value = null;
-
-    cardNumberController.value?.dispose();
-    cardNumberController.value = null;
-
-    phoneNumberController.value?.dispose();
-    phoneNumberController.value = null;
+    fullNameController.dispose();
+    cardNumberController.dispose();
+    phoneNumberController.dispose();
 
     super.onClose();
   }
@@ -80,7 +72,7 @@ class SignupController extends GetxController {
       // Hide loading dialog
       DialogHelper.hideLoading();
 
-      final phoneNumber = phoneNumberController.value?.text ?? '';
+      final phoneNumber = phoneNumberController.text;
 
       // Navigate to OTP verification screen
       Get.toNamed(

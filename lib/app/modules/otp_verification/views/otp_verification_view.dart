@@ -12,7 +12,8 @@ class OtpVerificationView extends GetView<OtpVerificationController> {
 
   @override
   Widget build(BuildContext context) {
-
+    // Use the controller passed by the route
+    final otpController = Get.find<OtpVerificationController>();
     final languageController = Get.find<LanguageController>();
 
     return Scaffold(
@@ -32,9 +33,6 @@ class OtpVerificationView extends GetView<OtpVerificationController> {
             child: Column(
               children: [
                 SizedBox(height: ResponsiveSize.height(50)),
-
-
-
                 Center(
                   child: Image.asset(
                     'assets/images/Splash.png',
@@ -70,7 +68,7 @@ class OtpVerificationView extends GetView<OtpVerificationController> {
                       Center(
                         child: Obx(
                           () => Text(
-                            controller.formattedPhoneNumber.value,
+                            otpController.formattedPhoneNumber.value,
                             style: AppTextStyles.heading.copyWith(
                               fontSize: ResponsiveSize.fontSize(20),
                             ),
@@ -80,28 +78,34 @@ class OtpVerificationView extends GetView<OtpVerificationController> {
                       SizedBox(height: ResponsiveSize.height(30)),
                       Padding(
                         padding: ResponsiveSize.padding(horizontal: 20),
-                        child: PinCodeTextField(
-                          appContext: context,
-                          length: 6,
-                          onChanged: controller.updatePin,
-                          pinTheme: PinTheme(
-                            shape: PinCodeFieldShape.box,
-                            borderRadius: BorderRadius.circular(
-                              ResponsiveSize.radius(10),
-                            ),
-                            fieldHeight: ResponsiveSize.height(56),
-                            fieldWidth: ResponsiveSize.width(45),
-                            activeFillColor: Colors.grey.shade900,
-                            inactiveFillColor: Colors.grey.shade900,
-                            selectedFillColor: Colors.grey.shade900,
-                            activeColor: Colors.white70,
-                            inactiveColor: Colors.grey.shade800,
-                            selectedColor: Colors.white,
-                          ),
-                          cursorColor: Colors.white,
-                          enableActiveFill: true,
-                          keyboardType: TextInputType.number,
-                          textStyle: AppTextStyles.inputText,
+                        child: Obx(
+                          () =>
+                              otpController.isDisposed.value
+                                  ? SizedBox() // Don't show PIN field if controller is disposed
+                                  : PinCodeTextField(
+                                    appContext: context,
+                                    length: 6,
+                                    controller: otpController.pinController,
+                                    onChanged: otpController.updatePin,
+                                    pinTheme: PinTheme(
+                                      shape: PinCodeFieldShape.box,
+                                      borderRadius: BorderRadius.circular(
+                                        ResponsiveSize.radius(10),
+                                      ),
+                                      fieldHeight: ResponsiveSize.height(56),
+                                      fieldWidth: ResponsiveSize.width(45),
+                                      activeFillColor: Colors.grey.shade900,
+                                      inactiveFillColor: Colors.grey.shade900,
+                                      selectedFillColor: Colors.grey.shade900,
+                                      activeColor: Colors.white70,
+                                      inactiveColor: Colors.grey.shade800,
+                                      selectedColor: Colors.white,
+                                    ),
+                                    cursorColor: Colors.white,
+                                    enableActiveFill: true,
+                                    keyboardType: TextInputType.number,
+                                    textStyle: AppTextStyles.inputText,
+                                  ),
                         ),
                       ),
                       SizedBox(height: ResponsiveSize.height(35)),
@@ -109,7 +113,7 @@ class OtpVerificationView extends GetView<OtpVerificationController> {
                         width: double.infinity,
                         height: ResponsiveSize.height(50),
                         child: ElevatedButton(
-                          onPressed: controller.verifyOTP,
+                          onPressed: otpController.verifyOTP,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.green,
                             shape: RoundedRectangleBorder(
@@ -137,16 +141,16 @@ class OtpVerificationView extends GetView<OtpVerificationController> {
                             Obx(
                               () => TextButton(
                                 onPressed:
-                                    controller.canResend.value
-                                        ? controller.resendOTP
+                                    otpController.canResend.value
+                                        ? otpController.resendOTP
                                         : null,
                                 child: Text(
-                                  controller.canResend.value
+                                  otpController.canResend.value
                                       ? 'resend'.tr
-                                      : '${controller.resendTimer.value} ${'seconds'.tr}',
+                                      : '${otpController.resendTimer.value} ${'seconds'.tr}',
                                   style: AppTextStyles.linkText.copyWith(
                                     color:
-                                        controller.canResend.value
+                                        otpController.canResend.value
                                             ? Colors.orange
                                             : Colors.grey,
                                   ),
@@ -171,12 +175,12 @@ class OtpVerificationView extends GetView<OtpVerificationController> {
                   height: ResponsiveSize.height(40),
                   width: ResponsiveSize.width(128.9),
                   child: Obx(
-                        () => Row(
+                    () => Row(
                       children: [
                         _buildLanguageToggleOption(
                           'EN',
                           languageController.isEnglish.value,
-                              () {
+                          () {
                             if (!languageController.isEnglish.value) {
                               languageController.toggleLanguage();
                             }
@@ -185,7 +189,7 @@ class OtpVerificationView extends GetView<OtpVerificationController> {
                         _buildLanguageToggleOption(
                           'JP',
                           !languageController.isEnglish.value,
-                              () {
+                          () {
                             if (languageController.isEnglish.value) {
                               languageController.toggleLanguage();
                             }
@@ -203,7 +207,6 @@ class OtpVerificationView extends GetView<OtpVerificationController> {
       ),
     );
   }
-
 
   Widget _buildLanguageToggleOption(
     String language,

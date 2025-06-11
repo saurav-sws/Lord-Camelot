@@ -12,7 +12,7 @@ class OtpVerificationController extends GetxController {
   OtpVerificationController({required this.phoneNumber});
 
   // Text editing controller for PIN input
-  final TextEditingController pinController = TextEditingController();
+  late final TextEditingController pinController = TextEditingController();
 
   // Observable variables
   final RxBool isLoading = false.obs;
@@ -21,9 +21,10 @@ class OtpVerificationController extends GetxController {
   final RxString formattedPhoneNumber = ''.obs;
   final RxBool canResend = false.obs;
   final RxInt resendTimer = 60.obs;
+  final RxBool isDisposed = false.obs;
 
   // Focus node for PIN input
-  final focusNode = FocusNode();
+  late final focusNode = FocusNode();
   Timer? _timer;
 
   @override
@@ -37,6 +38,7 @@ class OtpVerificationController extends GetxController {
 
   @override
   void onClose() {
+    isDisposed.value = true;
     pinController.dispose();
     focusNode.dispose();
     _timer?.cancel();

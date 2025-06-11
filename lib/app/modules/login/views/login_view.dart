@@ -11,7 +11,12 @@ class LoginView extends GetView<LoginController> {
 
   @override
   Widget build(BuildContext context) {
-    final loginController = Get.put(LoginController());
+    // Use Get.find() instead of Get.put() to ensure controller is not recreated
+    // when returning to this screen
+    final loginController =
+        Get.isRegistered<LoginController>()
+            ? Get.find<LoginController>()
+            : Get.put(LoginController());
 
     final languageController = Get.put(LanguageController());
 
@@ -32,7 +37,6 @@ class LoginView extends GetView<LoginController> {
             child: Column(
               children: [
                 SizedBox(height: ResponsiveSize.height(60)),
-
 
                 Center(
                   child: Image.asset(
@@ -55,12 +59,12 @@ class LoginView extends GetView<LoginController> {
                     height: ResponsiveSize.height(40),
                     width: ResponsiveSize.width(128.9),
                     child: Obx(
-                          () => Row(
+                      () => Row(
                         children: [
                           _buildLanguageToggleOption(
                             'EN',
                             languageController.isEnglish.value,
-                                () {
+                            () {
                               if (!languageController.isEnglish.value) {
                                 languageController.toggleLanguage();
                               }
@@ -69,7 +73,7 @@ class LoginView extends GetView<LoginController> {
                           _buildLanguageToggleOption(
                             'JP',
                             !languageController.isEnglish.value,
-                                () {
+                            () {
                               if (languageController.isEnglish.value) {
                                 languageController.toggleLanguage();
                               }
@@ -99,54 +103,61 @@ class LoginView extends GetView<LoginController> {
                       Text('login_desc'.tr, style: AppTextStyles.subheading),
                       SizedBox(height: ResponsiveSize.height(40)),
                       Obx(
-                        () => TextField(
-                          controller:
-                              loginController.cardNumberController.value,
-                          onChanged: loginController.validateCardNumber,
-                          decoration: InputDecoration(
-                            filled: true,
-                            fillColor: Colors.grey.shade900,
-                            hintText: 'enter_card'.tr,
-                            hintStyle: AppTextStyles.inputHint,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(
-                                ResponsiveSize.radius(10),
-                              ),
-                              borderSide: BorderSide.none,
-                            ),
-                            contentPadding: ResponsiveSize.padding(
-                              horizontal: 16,
-                              vertical: 14,
-                            ),
-                          ),
-                          style: AppTextStyles.inputText,
-                        ),
+                        () =>
+                            loginController.isDisposed.value
+                                ? SizedBox() // Don't show TextField if controller is disposed
+                                : TextField(
+                                  controller:
+                                      loginController.cardNumberController,
+                                  onChanged: loginController.validateCardNumber,
+                                  decoration: InputDecoration(
+                                    filled: true,
+                                    fillColor: Colors.grey.shade900,
+                                    hintText: 'enter_card'.tr,
+                                    hintStyle: AppTextStyles.inputHint,
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(
+                                        ResponsiveSize.radius(10),
+                                      ),
+                                      borderSide: BorderSide.none,
+                                    ),
+                                    contentPadding: ResponsiveSize.padding(
+                                      horizontal: 16,
+                                      vertical: 14,
+                                    ),
+                                  ),
+                                  style: AppTextStyles.inputText,
+                                ),
                       ),
                       SizedBox(height: ResponsiveSize.height(15)),
                       Obx(
-                        () => TextField(
-                          controller:
-                              loginController.phoneNumberController.value,
-                          onChanged: loginController.validatePhoneNumber,
-                          keyboardType: TextInputType.number,
-                          decoration: InputDecoration(
-                            filled: true,
-                            fillColor: Colors.grey.shade900,
-                            hintText: 'enter_phone'.tr,
-                            hintStyle: AppTextStyles.inputHint,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(
-                                ResponsiveSize.radius(10),
-                              ),
-                              borderSide: BorderSide.none,
-                            ),
-                            contentPadding: ResponsiveSize.padding(
-                              horizontal: 16,
-                              vertical: 14,
-                            ),
-                          ),
-                          style: AppTextStyles.inputText,
-                        ),
+                        () =>
+                            loginController.isDisposed.value
+                                ? SizedBox() // Don't show TextField if controller is disposed
+                                : TextField(
+                                  controller:
+                                      loginController.phoneNumberController,
+                                  onChanged:
+                                      loginController.validatePhoneNumber,
+                                  keyboardType: TextInputType.number,
+                                  decoration: InputDecoration(
+                                    filled: true,
+                                    fillColor: Colors.grey.shade900,
+                                    hintText: 'enter_phone'.tr,
+                                    hintStyle: AppTextStyles.inputHint,
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(
+                                        ResponsiveSize.radius(10),
+                                      ),
+                                      borderSide: BorderSide.none,
+                                    ),
+                                    contentPadding: ResponsiveSize.padding(
+                                      horizontal: 16,
+                                      vertical: 14,
+                                    ),
+                                  ),
+                                  style: AppTextStyles.inputText,
+                                ),
                       ),
                       SizedBox(height: ResponsiveSize.height(25)),
                       Row(
@@ -205,8 +216,6 @@ class LoginView extends GetView<LoginController> {
                   ),
                 ),
                 SizedBox(height: ResponsiveSize.height(15)),
-
-
               ],
             ),
           ),
@@ -214,7 +223,6 @@ class LoginView extends GetView<LoginController> {
       ),
     );
   }
-
 
   Widget _buildLanguageToggleOption(
     String language,

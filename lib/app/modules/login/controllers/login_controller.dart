@@ -4,32 +4,31 @@ import '../../../routes/app_pages.dart';
 import '../../../utils/dialog_helper.dart';
 
 class LoginController extends GetxController {
-  Rx<TextEditingController?> cardNumberController = Rx<TextEditingController?>(
-    null,
-  );
-  Rx<TextEditingController?> phoneNumberController = Rx<TextEditingController?>(
-    null,
-  );
+  // Use late initialization to ensure controllers are created only once
+  late final cardNumberController = TextEditingController();
+  late final phoneNumberController = TextEditingController();
 
   final RxBool isLoading = false.obs;
   final RxBool isCardNumberValid = false.obs;
   final RxBool isPhoneNumberValid = false.obs;
 
+  // Track if controller is disposed
+  final RxBool isDisposed = false.obs;
+
   @override
   void onInit() {
     super.onInit();
-
-    cardNumberController.value = TextEditingController();
-    phoneNumberController.value = TextEditingController();
+    isDisposed.value = false;
   }
 
   @override
   void onClose() {
-    cardNumberController.value?.dispose();
-    phoneNumberController.value = null;
+    // Mark as disposed before actually disposing
+    isDisposed.value = true;
 
-    phoneNumberController.value?.dispose();
-    phoneNumberController.value = null;
+    // Safely dispose controllers
+    cardNumberController.dispose();
+    phoneNumberController.dispose();
 
     super.onClose();
   }
@@ -73,7 +72,7 @@ class LoginController extends GetxController {
     Future.delayed(const Duration(seconds: 2), () {
       DialogHelper.hideLoading();
 
-      final phoneNumber = phoneNumberController.value?.text ?? '';
+      final phoneNumber = phoneNumberController.text;
 
       Get.toNamed(
         Routes.OTP_VERIFICATION,
