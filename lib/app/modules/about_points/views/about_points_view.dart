@@ -18,15 +18,10 @@ class AboutPointsView extends GetView<AboutPointsController> {
         width: double.infinity,
         height: double.infinity,
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              Color(0xFF000000),
-              Color(0xFF000000),
-              Color(0xFF000000),
-              Color(0xFF001e16),
-            ],
-            begin: Alignment.bottomRight,
-            end: Alignment.topRight,
+          gradient: RadialGradient(
+            center: Alignment.topRight,
+            radius: 0.8,
+            colors: [Color(0xFF001e16), Color(0xFF000000)],
           ),
         ),
         child: Padding(
@@ -69,9 +64,7 @@ class AboutPointsView extends GetView<AboutPointsController> {
                     Expanded(
                       child: Obx(() {
                         String cardNumber = storageService.cardNumber;
-                        if (cardNumber.isEmpty) {
-                          cardNumber = '678543'; // Fallback
-                        }
+
                         return Text(
                           'card_number'.tr + ' $cardNumber',
                           style: TextStyle(
@@ -118,7 +111,7 @@ class AboutPointsView extends GetView<AboutPointsController> {
                   child: Container(
                     padding: EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: Color(0xFF0f0f0f),
+                      color: Colors.black38,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Column(
@@ -201,94 +194,25 @@ class AboutPointsView extends GetView<AboutPointsController> {
                           style: TextStyle(color: Colors.orange),
                         ),
                         SizedBox(height: 12),
-
-                        // Improved layout for the points range information
-                        Table(
-                          columnWidths: {
-                            0: FlexColumnWidth(5),
-                            1: FlexColumnWidth(5),
-                          },
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            TableRow(
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.only(bottom: 5),
-                                  child: Text(
-                                    "¥50,000 – ¥99,999",
-                                    style: TextStyle(
-                                      fontSize: 13.sp,
-                                      color: Colors.white70,
-                                    ),
-                                  ),
-                                ),
-                                Text(
-                                  "= ¥2,000 discount Or Gift",
-                                  style: TextStyle(
-                                    fontSize: 13.sp,
-                                    color: Colors.white70,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            TableRow(
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.only(bottom: 5),
-                                  child: Text(
-                                    "¥100,000 – ¥199,999",
-                                    style: TextStyle(
-                                      fontSize: 13.sp,
-                                      color: Colors.white70,
-                                    ),
-                                  ),
-                                ),
-                                Text(
-                                  "= ¥5,000 discount Or Gift",
-                                  style: TextStyle(
-                                    fontSize: 13.sp,
-                                    color: Colors.white70,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            TableRow(
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.only(bottom: 5),
-                                  child: Text(
-                                    "¥200,000+",
-                                    style: TextStyle(
-                                      fontSize: 13.sp,
-                                      color: Colors.white70,
-                                    ),
-                                  ),
-                                ),
-                                Text(
-                                  "= ¥10,000 discount Or Gift",
-                                  style: TextStyle(
-                                    fontSize: 13.sp,
-                                    color: Colors.white70,
-                                  ),
-                                ),
-                              ],
-                            ),
+                            _buildPointsRow("¥50,000 – ¥99,999", "¥2,000 discount Or Gift"),
+                            SizedBox(height: 8),
+                            _buildPointsRow("¥100,000 – ¥199,999", "¥5,000 discount Or Gift"),
+                            SizedBox(height: 8),
+                            _buildPointsRow("¥200,000+", "¥10,000 discount Or Gift"),
                           ],
                         ),
-
                         SizedBox(height: 16),
-                        Text(
-                          'tracking_start'.tr,
-                          style: TextStyle(
-                            fontSize: 13.sp,
-                            color: Colors.white70,
-                          ),
-                        ),
-                        SizedBox(height: 8),
-                        Text(
-                          'before_date'.tr,
-                          style: TextStyle(
-                            fontSize: 13.sp,
-                            color: Colors.white70,
+                        Transform(
+                          transform: Matrix4.identity()..scale( 1.0),
+                          child: Text(
+                            'tracking_info'.tr,
+                            style: TextStyle(
+                              fontSize: 13.sp,
+                              color: Colors.white60,
+                            ),
                           ),
                         ),
                       ],
@@ -302,4 +226,27 @@ class AboutPointsView extends GetView<AboutPointsController> {
       ),
     );
   }
+  Widget _buildPointsRow(String left, String right) {
+    return Row(
+      children: [
+        Expanded(
+          child: Text(
+            left,
+            style: TextStyle(
+              fontSize: 13.sp,
+              color: Colors.white70,
+            ),
+          ),
+        ),
+        Text(
+          "= $right",
+          style: TextStyle(
+            fontSize: 13.sp,
+            color: Colors.white70,
+          ),
+        ),
+      ],
+    );
+  }
+
 }

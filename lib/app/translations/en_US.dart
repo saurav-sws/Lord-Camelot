@@ -53,7 +53,9 @@ final Map<String, String> enUS = {
   'points_expire': 'Your points never expire.',
   'reach_points':
       'When you reach 5 unredeemed points, you\'ll receive a reward:',
-  'tracking_start': 'Point tracking in this app starts from 2025.07.01.',
+'tracking_info': 'Point tracking in this app starts from 2025.07.01.\nAll purchases made before that date will continue\nto be managed using your physical member card.',
+
+'tracking_start': 'Point tracking in this app starts from 2025.07.01.',
   'before_date':
       'All purchases made before that date will continue to be managed using your physical member card.',
 

@@ -383,6 +383,19 @@ class ApiService {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         print('Points redeemed successfully: ${response.data}');
+
+
+        if (response.data is Map<String, dynamic>) {
+          if (!response.data.containsKey('success')) {
+            if (response.data.containsKey('message') &&
+                response.data['message'].toString().toLowerCase().contains(
+                  'successful',
+                )) {
+              response.data['success'] = true;
+            }
+          }
+        }
+
         return response.data;
       } else {
         throw Exception('Failed to redeem points: ${response.statusCode}');

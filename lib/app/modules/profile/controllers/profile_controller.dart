@@ -56,7 +56,7 @@ class ProfileController extends GetxController {
       birthDate.value = user.dob ?? '1990-01-01';
       totalPoints.value = user.totalPoint ?? 0;
     } else {
-      // Fallback values
+
       fullName.value = 'John Doe';
       cardNumber.value = _storageService.cardNumber;
       mobileNumber.value = '+81 90-1234-5678';
@@ -181,7 +181,7 @@ class ProfileController extends GetxController {
     try {
       isLoading.value = true;
 
-      // Validate required fields
+
       if (fullName.value.trim().isEmpty) {
         DialogHelper.showErrorDialog(
           title: 'Validation Error',
@@ -206,7 +206,7 @@ class ProfileController extends GetxController {
         return;
       }
 
-      // Call the update API
+
       final response = await _apiService.updateProfile(
         name: fullName.value.trim(),
         mobile: mobileNumber.value.trim(),
@@ -217,11 +217,11 @@ class ProfileController extends GetxController {
 
       print('Profile update response: $response');
 
-      // Update local storage with new data if API returns updated user data
+
       if (response.containsKey('user') || response.containsKey('data')) {
         final userData = response['user'] ?? response['data'] ?? response;
 
-        // Create updated user object
+
         final currentUser = _storageService.currentUser.value;
         if (currentUser != null) {
           final updatedUser = User(
@@ -235,10 +235,10 @@ class ProfileController extends GetxController {
             totalPoint: totalPoints.value,
           );
 
-          // Save updated user to storage
+
           await _storageService.saveUser(updatedUser);
 
-          // Reload user data
+
           _loadUserData();
         }
       }
@@ -265,11 +265,11 @@ class ProfileController extends GetxController {
       message: 'logout_confirmation'.tr,
       buttonText: 'yes_logout'.tr,
       onConfirm: () async {
-        // Clear user data from storage
+
         await _storageService.clearUser();
         print('User data cleared from storage');
 
-        // Navigate to login screen and clear all previous routes
+
         Get.offAllNamed('/login');
       },
     );

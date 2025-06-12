@@ -28,15 +28,12 @@ class MyPointsController extends GetxController {
   void onInit() {
     super.onInit();
 
-    // Get card number from storage
     cardNumber.value = _storageService.cardNumber;
 
-    // If no card number from storage, set a default
     if (cardNumber.value.isEmpty) {
       cardNumber.value = '678543';
     }
 
-    // Fetch points data from API
     fetchPoints();
   }
 
@@ -46,7 +43,7 @@ class MyPointsController extends GetxController {
     errorMessage.value = '';
 
     try {
-      // Check if user is logged in
+
       if (!_storageService.hasUser) {
         hasError.value = true;
         errorMessage.value =
@@ -55,38 +52,38 @@ class MyPointsController extends GetxController {
         return;
       }
 
-      // Update card number from storage in case it changed
+
       final currentCardNumber = _storageService.cardNumber;
       if (currentCardNumber.isNotEmpty) {
         cardNumber.value = currentCardNumber;
       }
 
-      final response = await _apiService.getPoints();
+
+      final response = await _apiService.getPointHistory();
 
       if (response['success'] == true) {
-        final List<dynamic> pointsData = response['point_records'] ?? [];
+        List<dynamic>? pointsData;
+
+        if (response['data'] != null) {
+          pointsData = response['data'];
+        } else if (response['point_history'] != null) {
+          pointsData = response['point_history'];
+        } else if (response['points'] != null) {
+          pointsData = response['points'];
+        } else {
+          pointsData = [];
+        }
+
         final records =
-            pointsData.map((data) {
-              // Add mock redemption data for demo purposes if needed
-              // In real app, this would come from the API
-              final isRedeemedStatus = data['is_redeemed'] ?? false;
-              final redemptionDateValue = data['redemption_date'];
+            pointsData!.map((data) {
 
-              // Create a modified data map to pass to PointRecord.fromJson
-              final Map<String, dynamic> modifiedData = {...data};
-              modifiedData['is_redeemed'] = isRedeemedStatus;
-
-              // If it's redeemed but no redemption date, add a sample one for first record
-              if (isRedeemedStatus &&
-                  redemptionDateValue == null &&
-                  pointsData.indexOf(data) == 0) {
-                modifiedData['redemption_date'] = '2024-05-25T00:00:00.000000Z';
-              }
-
-              return PointRecord.fromJson(modifiedData);
+              return PointRecord.fromJson(data);
             }).toList();
 
         pointRecords.value = records;
+
+        print('Fetched ${pointRecords.length} point records');
+        print('Total unredeemed points: ${totalPoints}');
       } else {
         hasError.value = true;
         errorMessage.value = 'Failed to load points data';
@@ -101,11 +98,9 @@ class MyPointsController extends GetxController {
   }
 
   Future<void> refreshPoints() async {
-    // Reset error state
     hasError.value = false;
     errorMessage.value = '';
 
-    // Fetch fresh data
     await fetchPoints();
     return;
   }

@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 
 class AboutPointsController extends GetxController {
-  // List of FAQ items about points
+
   final List<Map<String, String>> faqItems = [
     {
       'question': 'What are Lord Camelot points?',

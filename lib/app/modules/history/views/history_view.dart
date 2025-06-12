@@ -17,15 +17,10 @@ class HistoryView extends GetView<HistoryController> {
         width: double.infinity,
         height: double.infinity,
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              Color(0xFF000000),
-              Color(0xFF000000),
-              Color(0xFF000000),
-              Color(0xFF001e16),
-            ],
-            begin: Alignment.bottomRight,
-            end: Alignment.topRight,
+          gradient: RadialGradient(
+            center: Alignment.topRight,
+            radius: 0.8,
+            colors: [Color(0xFF001e16), Color(0xFF000000)],
           ),
         ),
         child: Padding(
@@ -67,14 +62,14 @@ class HistoryView extends GetView<HistoryController> {
                       child: Obx(() {
                         String cardNumber = storageService.cardNumber;
 
-                        // If no card number from storage, try to get from first history record
+
                         if (cardNumber.isEmpty &&
                             historyController.redeemHistory.isNotEmpty) {
                           cardNumber =
                               historyController.redeemHistory.first.cardNumber;
                         }
 
-                        // Final fallback to default
+
                         if (cardNumber.isEmpty) {
                           cardNumber = '678543';
                         }
@@ -179,9 +174,6 @@ class HistoryView extends GetView<HistoryController> {
                     );
                   }
 
-                  if (historyController.redeemHistory.isEmpty) {
-                    return _buildSampleHistoryData();
-                  }
 
                   return RefreshIndicator(
                     onRefresh: historyController.refreshHistory,
@@ -312,14 +304,7 @@ class HistoryView extends GetView<HistoryController> {
     );
   }
 
-  Widget _buildSampleHistoryData() {
-    return ListView(
-      children: [
-        _buildHistoryEntry('2024.05.25', '678543', '5', '¥123,000', '¥10,000'),
-        _buildHistoryEntry('2025.07.20', '678543', '5', '¥123,000', '¥10,000'),
-      ],
-    );
-  }
+
 
   Widget _buildHistoryEntry(
     String date,

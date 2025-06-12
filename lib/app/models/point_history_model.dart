@@ -33,13 +33,13 @@ class PointHistory {
       userId: json['user_id'] ?? 0,
       dealerNumber: json['dealer_number'] ?? '',
       itemCode: json['item_code'] ?? '',
-      total: json['total'] ?? '0.00',
-      point: json['point'] ?? 0,
-      purchaseDate: json['purchase_date'] ?? '',
+      total: json['total']?.toString() ?? '0.00',
+      point: json['point'] ?? json['point_receive'] ?? 0,
+      purchaseDate: json['purchase_date'] ?? json['date'] ?? '',
       createdAt: json['created_at'] ?? '',
       updatedAt: json['updated_at'] ?? '',
       isRedeemed: json['is_redeemed'] ?? 0,
-      redeemDate: json['redeem_date'],
+      redeemDate: json['redeem_date'] ?? json['redemption_date'],
     );
   }
 
@@ -59,7 +59,7 @@ class PointHistory {
     };
   }
 
-  // Helper methods
+
   String get formattedTotal => '¥${double.parse(total).toStringAsFixed(0)}';
 
   String get formattedPurchaseDate {

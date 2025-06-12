@@ -74,7 +74,12 @@ class CustomBottomNavigationBar extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, color: iconColor, size: ResponsiveSize.width(22)),
+            Image.asset(
+              'assets/images/Splash.png',
+              width: ResponsiveSize.width(30),
+              height: ResponsiveSize.height(30),
+              color: isSelected ? const Color(0xFF288c25) : Colors.white70,
+            ),
             SizedBox(height: ResponsiveSize.height(3)),
             Text(
               label,

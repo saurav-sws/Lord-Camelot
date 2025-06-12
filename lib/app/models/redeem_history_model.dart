@@ -45,7 +45,7 @@ class RedeemHistory {
     };
   }
 
-  // Helper method to get formatted date
+
   String get formattedDate {
     try {
       final dateTime = DateTime.parse(createdAt);
@@ -55,7 +55,7 @@ class RedeemHistory {
     }
   }
 
-  // Helper method to get formatted total amount with currency
+
   String get formattedTotalAmount {
     try {
       final amount = double.parse(totalAmount);
@@ -65,7 +65,7 @@ class RedeemHistory {
     }
   }
 
-  // Helper method to get formatted discount with currency
+
   String get formattedDiscount {
     try {
       final discountAmount = double.parse(discount);

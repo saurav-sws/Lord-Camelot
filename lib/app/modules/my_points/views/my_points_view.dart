@@ -200,7 +200,7 @@ class MyPointsView extends GetView<MyPointsController> {
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              // Left side - Point information
+
                               Expanded(
                                 flex: 2,
                                 child: Column(
@@ -234,13 +234,10 @@ class MyPointsView extends GetView<MyPointsController> {
                                 ),
                               ),
 
-
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
-
                                 children: [
-                                SizedBox(
-                              height: ResponsiveSize.height(78)),
+                                  SizedBox(height: ResponsiveSize.height(78)),
                                   Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
@@ -248,24 +245,20 @@ class MyPointsView extends GetView<MyPointsController> {
                                         'point_redeemed'.tr,
                                         style: TextStyle(
                                           color: Colors.white70,
-                                          fontSize: ResponsiveSize.fontSize(
-                                            13,
-                                          ),
+                                          fontSize: ResponsiveSize.fontSize(12),
                                           fontWeight: FontWeight.w500,
                                         ),
                                       ),
-                                      SizedBox(
-                                        width: ResponsiveSize.width(8),
-                                      ),
+                                      SizedBox(width: ResponsiveSize.width(8)),
                                       Container(
-                                        width: ResponsiveSize.width(15),
-                                        height: ResponsiveSize.height(15),
+                                        width: ResponsiveSize.width(12),
+                                        height: ResponsiveSize.height(12),
                                         decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
                                           color:
                                               record.isRedeemed
-                                                  ? Color(0xFF288c25)
+                                                  ? Colors.green
                                                   : Colors.red,
-                                          shape: BoxShape.circle,
                                         ),
                                       ),
                                     ],

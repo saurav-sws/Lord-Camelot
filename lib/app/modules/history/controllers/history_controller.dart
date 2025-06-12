@@ -24,7 +24,7 @@ class HistoryController extends GetxController {
     errorMessage.value = '';
 
     try {
-      // Check if user is logged in
+
       if (!_storageService.hasUser) {
         hasError.value = true;
         errorMessage.value =
@@ -65,11 +65,11 @@ class HistoryController extends GetxController {
   }
 
   Future<void> refreshHistory() async {
-    // Reset error state
+
     hasError.value = false;
     errorMessage.value = '';
 
-    // Fetch fresh data
+
     await fetchRedeemHistory();
     return;
   }

@@ -139,7 +139,6 @@ class RedeemPointsView extends GetView<RedeemPointsController> {
                 ],
               ),
 
-
               Expanded(
                 child: Obx(() {
                   if (redeemController.isLoading.value) {
@@ -148,10 +147,16 @@ class RedeemPointsView extends GetView<RedeemPointsController> {
                     );
                   }
 
-                  if (redeemController.pointHistoryList.isEmpty) {
+
+                  final unredeemedPoints =
+                      redeemController.pointHistoryList
+                          .where((point) => !point.isAlreadyRedeemed)
+                          .toList();
+
+                  if (unredeemedPoints.isEmpty) {
                     return Center(
                       child: Text(
-                        'No point history available',
+                        'No unredeemed points available',
                         style: TextStyle(
                           color: Colors.white70,
                           fontSize: ResponsiveSize.fontSize(16),
@@ -163,10 +168,9 @@ class RedeemPointsView extends GetView<RedeemPointsController> {
                   return RefreshIndicator(
                     onRefresh: redeemController.refreshData,
                     child: ListView.builder(
-                      itemCount: redeemController.pointHistoryList.length,
+                      itemCount: unredeemedPoints.length,
                       itemBuilder: (context, index) {
-                        final pointHistory =
-                            redeemController.pointHistoryList[index];
+                        final pointHistory = unredeemedPoints[index];
                         return Container(
                           margin: ResponsiveSize.margin(bottom: 12),
                           padding: ResponsiveSize.padding(all: 12),
@@ -180,7 +184,7 @@ class RedeemPointsView extends GetView<RedeemPointsController> {
                             children: [
                               Expanded(
                                 child: Column(
-
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     _buildInfoRow(
                                       'dealer_number'.tr,
@@ -209,14 +213,9 @@ class RedeemPointsView extends GetView<RedeemPointsController> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
-                                    pointHistory.isAlreadyRedeemed
-                                        ? 'Redeemed'
-                                        : 'redeeme'.tr,
+                                    'redeeme'.tr,
                                     style: TextStyle(
-                                      color:
-                                          pointHistory.isAlreadyRedeemed
-                                              ? Colors.orange
-                                              : Colors.white70,
+                                      color: Colors.white70,
                                       fontSize: ResponsiveSize.fontSize(12),
                                       fontWeight: FontWeight.w600,
                                     ),
@@ -224,35 +223,32 @@ class RedeemPointsView extends GetView<RedeemPointsController> {
                                   SizedBox(height: 5),
                                   GestureDetector(
                                     onTap:
-                                        pointHistory.isAlreadyRedeemed
-                                            ? null
-                                            : () => redeemController
-                                                .togglePointSelection(index),
+                                        () => redeemController
+                                            .togglePointSelection(
+                                              redeemController.pointHistoryList
+                                                  .indexOf(pointHistory),
+                                            ),
                                     child: Container(
                                       width: ResponsiveSize.width(24),
                                       height: ResponsiveSize.height(24),
                                       decoration: BoxDecoration(
                                         color:
-                                            pointHistory.isAlreadyRedeemed
-                                                ? Colors.orange
-                                                : pointHistory.isSelected
+                                            pointHistory.isSelected
                                                 ? Color(0xFF288c25)
-                                                : Colors.transparent,
+                                                : Colors.black,
                                         border: Border.all(
-                                          color:
-                                              pointHistory.isAlreadyRedeemed
-                                                  ? Colors.orange
-                                                  : pointHistory.isSelected
-                                                  ? Color(0xFF288c25)
-                                                  : Colors.grey,
+                                          color: Color(0xFF288c25),
                                           width: 1.5,
                                         ),
                                       ),
-                                      child: Icon(
-                                        Icons.check,
-                                        color: Colors.white,
-                                        size: 18,
-                                      ),
+                                      child:
+                                          pointHistory.isSelected
+                                              ? Icon(
+                                                Icons.check,
+                                                color: Colors.white,
+                                                size: 18,
+                                              )
+                                              : null,
                                     ),
                                   ),
                                 ],
@@ -285,7 +281,7 @@ class RedeemPointsView extends GetView<RedeemPointsController> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Summary',
+                        'Summary (Minimum ${redeemController.minimumPoints} points required)',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: ResponsiveSize.fontSize(16),
@@ -401,7 +397,7 @@ class RedeemPointsView extends GetView<RedeemPointsController> {
                               ),
                             )
                             : Text(
-                              'Redeem Points',
+                              'Redeem ${redeemController.totalSelectedPoints.value} Points',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: ResponsiveSize.fontSize(16),
@@ -420,7 +416,6 @@ class RedeemPointsView extends GetView<RedeemPointsController> {
 
   Widget _buildInfoRow(String label, String value) {
     return Row(
-
       children: [
         SizedBox(
           width: ResponsiveSize.width(120),

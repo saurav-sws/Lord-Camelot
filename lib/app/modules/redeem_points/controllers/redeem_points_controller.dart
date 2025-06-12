@@ -17,7 +17,7 @@ class RedeemPointsController extends GetxController {
   final RxList<PointHistory> pointHistoryList = <PointHistory>[].obs;
   final RxList<PointHistory> selectedPoints = <PointHistory>[].obs;
 
-  // Summary calculations
+
   final RxInt totalSelectedPoints = 0.obs;
   final RxDouble totalAmount = 0.0.obs;
   final RxDouble totalDiscount = 0.0.obs;
@@ -26,6 +26,7 @@ class RedeemPointsController extends GetxController {
   void onInit() {
     super.onInit();
     _loadCardNumber();
+    _clearSelections();
     _loadPointHistory();
   }
 
@@ -36,70 +37,68 @@ class RedeemPointsController extends GetxController {
     } else {
       cardNumber.value = _storageService.cardNumber;
     }
-
-    // Fallback to static value if still empty
-    if (cardNumber.value.isEmpty) {
-      cardNumber.value = '678543';
-    }
-
-    print('RedeemPointsController - Loaded card number: ${cardNumber.value}');
   }
 
   Future<void> _loadPointHistory() async {
     try {
       isLoading.value = true;
-      print('Loading point history from API...');
-      final response = await _apiService.getPointHistory();
+      print('Loading points data from API...');
+      final response = await _apiService.getPoints();
 
-      print('Point history API response: $response');
+      print('Points API response: $response');
 
       if (response['success'] == true) {
-        // Try different possible data keys
+
         List<dynamic>? data;
 
         if (response['data'] != null) {
           data = response['data'];
           print('Using response[data] key');
-        } else if (response['point_history'] != null) {
-          data = response['point_history'];
-          print('Using response[point_history] key');
+        } else if (response['point_records'] != null) {
+          data = response['point_records'];
+          print('Using response[point_records] key');
         } else if (response['points'] != null) {
           data = response['points'];
           print('Using response[points] key');
         }
 
         if (data != null && data.isNotEmpty) {
-          print('Found ${data.length} point history items');
+          print('Found ${data.length} point items');
           pointHistoryList.value =
               data.map((item) {
                 print('Processing item: $item');
+
                 return PointHistory.fromJson(item);
               }).toList();
 
-          // Calculate available points from unredeemed points
+
           availablePoints.value = pointHistoryList
               .where((point) => !point.isAlreadyRedeemed)
               .fold(0, (sum, point) => sum + point.point);
 
-          print('Loaded ${pointHistoryList.length} point history items');
-          print('Available points: ${availablePoints.value}');
+          print('Loaded ${pointHistoryList.length} point items');
+          print('Available unredeemed points: ${availablePoints.value}');
+
+
+          if (pointHistoryList
+              .where((point) => !point.isAlreadyRedeemed)
+              .isEmpty) {
+            print('No unredeemed points available');
+          }
         } else {
-          print('No point history data found in response');
+          print('No point data found in response');
           pointHistoryList.clear();
           availablePoints.value = 0;
-
-          // For testing purposes, add some mock data if no real data is available
-          _loadTestData();
         }
       } else {
         print('API returned success=false: ${response['message']}');
-        throw Exception(response['message'] ?? 'Failed to load point history');
+        throw Exception(response['message'] ?? 'Failed to load points data');
       }
     } catch (e) {
-      print('Error loading point history: $e');
+      print('Error loading points data: $e');
       DialogHelper.showErrorDialog(
         title: 'Error',
-        message: 'Failed to load point history. Please try again.',
+        message: 'Failed to load points data. Please try again.',
       );
     } finally {
       isLoading.value = false;
@@ -111,7 +110,6 @@ class RedeemPointsController extends GetxController {
 
     final pointHistory = pointHistoryList[index];
 
-    // Can't select already redeemed points
     if (pointHistory.isAlreadyRedeemed) {
       DialogHelper.showInfoDialog(
         title: 'Already Redeemed',
@@ -120,14 +118,12 @@ class RedeemPointsController extends GetxController {
       return;
     }
 
-    // Toggle selection
     final updatedPoint = pointHistory.copyWith(
       isSelected: !pointHistory.isSelected,
     );
 
     pointHistoryList[index] = updatedPoint;
 
-    // Update selected points list
     if (updatedPoint.isSelected) {
       selectedPoints.add(updatedPoint);
     } else {
@@ -147,7 +143,6 @@ class RedeemPointsController extends GetxController {
       (sum, item) => sum + double.parse(item.total),
     );
 
-    // Calculate discount (assuming 10,000 yen discount per point)
     totalDiscount.value = totalSelectedPoints.value * 10000.0;
 
     print(
@@ -156,7 +151,8 @@ class RedeemPointsController extends GetxController {
   }
 
   bool get canRedeem => totalSelectedPoints.value >= minimumPoints;
-  bool get hasSelectedPoints => selectedPoints.isNotEmpty;
+  bool get hasSelectedPoints =>
+      selectedPoints.isNotEmpty && totalSelectedPoints.value >= minimumPoints;
 
   Future<void> redeemSelectedPoints() async {
     if (!canRedeem || selectedPoints.isEmpty) return;
@@ -169,7 +165,6 @@ class RedeemPointsController extends GetxController {
 
       final pointIds = selectedPoints.map((point) => point.id).toList();
 
-      // Get user ID from storage
       final user = _storageService.currentUser.value;
       final userId = user?.userId?.toString() ?? '0';
 
@@ -192,8 +187,8 @@ class RedeemPointsController extends GetxController {
 
       print('Redeem API response: $response');
 
-      if (response['success'] == true) {
-        // Update the redeemed status locally
+      if (response['success'] == true ||
+          response['message']?.contains('successful') == true) {
         for (var selectedPoint in selectedPoints) {
           final index = pointHistoryList.indexWhere(
             (p) => p.id == selectedPoint.id,
@@ -206,28 +201,38 @@ class RedeemPointsController extends GetxController {
           }
         }
 
-        // Clear selections and recalculate
         selectedPoints.clear();
         _calculateSummary();
 
-        // Recalculate available points
         availablePoints.value = pointHistoryList
             .where((point) => !point.isAlreadyRedeemed)
             .fold(0, (sum, point) => sum + point.point);
 
         DialogHelper.showSuccessDialog(
           title: 'Success',
-          message: 'Points redeemed successfully!',
+          message: response['message'] ?? 'Points redeemed successfully!',
         );
+
+        await _loadPointHistory();
       } else {
         throw Exception(response['message'] ?? 'Failed to redeem points');
       }
     } catch (e) {
       print('Error redeeming points: $e');
-      DialogHelper.showErrorDialog(
-        title: 'Error',
-        message: 'Failed to redeem points. Please try again.',
-      );
+
+      if (!e.toString().toLowerCase().contains('successful')) {
+        DialogHelper.showErrorDialog(
+          title: 'Error',
+          message: 'Failed to redeem points. Please try again.',
+        );
+      } else {
+        DialogHelper.showSuccessDialog(
+          title: 'Success',
+          message: e.toString().replaceAll('Exception: ', ''),
+        );
+
+        await _loadPointHistory();
+      }
     } finally {
       isLoadingRedeem.value = false;
     }
@@ -299,62 +304,21 @@ class RedeemPointsController extends GetxController {
   }
 
   Future<void> refreshData() async {
+    _clearSelections();
     await _loadPointHistory();
   }
 
-  void _loadTestData() {
-    print('Loading test data for point history...');
+  void _clearSelections() {
+    for (int i = 0; i < pointHistoryList.length; i++) {
+      if (pointHistoryList[i].isSelected) {
+        pointHistoryList[i] = pointHistoryList[i].copyWith(isSelected: false);
+      }
+    }
 
-    final testData = [
-      PointHistory(
-        id: 1,
-        userId: 1,
-        dealerNumber: 'D001',
-        itemCode: 'ITEM001',
-        total: '2000.00',
-        point: 10,
-        purchaseDate: '2024-01-15',
-        createdAt: '2024-01-15 10:00:00',
-        updatedAt: '2024-01-15 10:00:00',
-        isRedeemed: 0,
-        redeemDate: null,
-      ),
-      PointHistory(
-        id: 2,
-        userId: 1,
-        dealerNumber: 'D002',
-        itemCode: 'ITEM002',
-        total: '1500.00',
-        point: 8,
-        purchaseDate: '2024-01-20',
-        createdAt: '2024-01-20 14:30:00',
-        updatedAt: '2024-01-20 14:30:00',
-        isRedeemed: 0,
-        redeemDate: null,
-      ),
-      PointHistory(
-        id: 3,
-        userId: 1,
-        dealerNumber: 'D003',
-        itemCode: 'ITEM003',
-        total: '3000.00',
-        point: 15,
-        purchaseDate: '2024-01-25',
-        createdAt: '2024-01-25 09:15:00',
-        updatedAt: '2024-01-25 09:15:00',
-        isRedeemed: 1,
-        redeemDate: '2024-01-26',
-      ),
-    ];
+    selectedPoints.clear();
 
-    pointHistoryList.value = testData;
-
-    // Calculate available points from unredeemed points
-    availablePoints.value = pointHistoryList
-        .where((point) => !point.isAlreadyRedeemed)
-        .fold(0, (sum, point) => sum + point.point);
-
-    print('Loaded ${pointHistoryList.length} test point history items');
-    print('Available points: ${availablePoints.value}');
+    totalSelectedPoints.value = 0;
+    totalAmount.value = 0.0;
+    totalDiscount.value = 0.0;
   }
 }
