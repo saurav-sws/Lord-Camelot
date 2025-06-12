@@ -28,10 +28,12 @@ class MyPointsController extends GetxController {
   void onInit() {
     super.onInit();
 
-    // Get card number from storage if available
-    if (_storageService.currentUser.value != null) {
-      // If you have card number stored in user model, you can set it here
-      // cardNumber.value = _storageService.currentUser.value!.cardNumber;
+    // Get card number from storage
+    cardNumber.value = _storageService.cardNumber;
+
+    // If no card number from storage, set a default
+    if (cardNumber.value.isEmpty) {
+      cardNumber.value = '678543';
     }
 
     // Fetch points data from API
@@ -53,11 +55,11 @@ class MyPointsController extends GetxController {
         return;
       }
 
-      // Get card number from current user
-      // Since the User model doesn't have a cardNumber property,
-      // we'll use a default value or retrieve it from another source
-      final user = _storageService.currentUser.value;
-      cardNumber.value = '678543'; // Default or placeholder value
+      // Update card number from storage in case it changed
+      final currentCardNumber = _storageService.cardNumber;
+      if (currentCardNumber.isNotEmpty) {
+        cardNumber.value = currentCardNumber;
+      }
 
       final response = await _apiService.getPoints();
 

@@ -6,9 +6,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lordcamelot_point/services/fcm_service.dart';
 import 'package:lordcamelot_point/services/firebase_options.dart';
 import 'package:lordcamelot_point/services/storage_service.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'app/routes/app_pages.dart';
 import 'app/translations/app_translations.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -18,23 +18,12 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  // Test SharedPreferences
-  try {
-    final prefs = await SharedPreferences.getInstance();
-    print('SharedPreferences initialized successfully');
-
-    // Test writing and reading
-    await prefs.setString('test_key', 'test_value');
-    final testValue = prefs.getString('test_key');
-    print('SharedPreferences test value: $testValue');
-  } catch (e) {
-    print('Error initializing SharedPreferences: $e');
-  }
-
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+  // Test SharedPreferences
+  await testSharedPreferences();
 
   // Initialize services
   await initServices();
@@ -44,19 +33,41 @@ Future<void> main() async {
   runApp(const MyApp());
 }
 
-Future<void> initServices() async {
+Future<void> testSharedPreferences() async {
   try {
-    // Initialize storage service
-    final storageService = await Get.putAsync(() => StorageService().init());
-    print('Storage service initialized: ${storageService.hasUser}');
+    print('Testing SharedPreferences functionality...');
+    final prefs = await SharedPreferences.getInstance();
 
-    // Initialize FCM service
-    await Get.putAsync(() => FCMService().init());
+    // Try writing to SharedPreferences
+    final testKey = 'test_key_${DateTime.now().millisecondsSinceEpoch}';
+    final testValue = 'test_value_${DateTime.now().millisecondsSinceEpoch}';
 
-    print('All services initialized');
+    await prefs.setString(testKey, testValue);
+    final readValue = prefs.getString(testKey);
+
+    if (readValue == testValue) {
+      print('SharedPreferences test passed: write/read successful');
+    } else {
+      print(
+        'SharedPreferences test failed: value mismatch. Expected $testValue, got $readValue',
+      );
+    }
+
+    // Clean up
+    await prefs.remove(testKey);
   } catch (e) {
-    print('Error initializing services: $e');
+    print('SharedPreferences test error: $e');
   }
+}
+
+Future<void> initServices() async {
+  // Initialize storage service
+  await Get.putAsync(() => StorageService().init());
+
+  // Initialize FCM service
+  await Get.putAsync(() => FCMService().init());
+
+  print('All services initialized');
 }
 
 Future<void> initializeFCM() async {

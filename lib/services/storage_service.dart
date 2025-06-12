@@ -9,17 +9,19 @@ class StorageService extends GetxService {
   final RxBool isLoggedIn = false.obs;
   final Rx<User?> currentUser = Rx<User?>(null);
 
-  // In-memory fallback storage when SharedPreferences fails
-  String? _inMemoryToken;
-  String? _inMemoryTokenType;
-  int? _inMemoryUserId;
-
   // Keys for SharedPreferences
   static const String _userKey = 'user_data';
   static const String _tokenKey = 'access_token';
   static const String _isLoggedInKey = 'is_logged_in';
   static const String _userId = 'user_id';
   static const String _tokenType = 'token_type';
+  static const String _cardNumberKey = 'card_number';
+
+  // In-memory fallback storage when SharedPreferences fails
+  String? _inMemoryToken;
+  String? _inMemoryTokenType;
+  int? _inMemoryUserId;
+  String? _inMemoryCardNumber;
 
   Future<void> saveUser(User user) async {
     try {
@@ -31,8 +33,10 @@ class StorageService extends GetxService {
       _inMemoryToken = user.accessToken;
       _inMemoryTokenType = user.tokenType;
       _inMemoryUserId = user.userId;
+      _inMemoryCardNumber = user.cardNumber;
 
       print('In-memory token saved: ${user.accessToken}');
+      print('In-memory card number saved: ${user.cardNumber}');
 
       // Try to save to SharedPreferences
       try {
@@ -43,9 +47,11 @@ class StorageService extends GetxService {
         await prefs.setString(_tokenKey, user.accessToken);
         await prefs.setString(_tokenType, user.tokenType);
         await prefs.setInt(_userId, user.userId);
+        await prefs.setString(_cardNumberKey, user.cardNumber);
         await prefs.setBool(_isLoggedInKey, true);
 
         print('User data saved to SharedPreferences: ${user.accessToken}');
+        print('Card number saved to SharedPreferences: ${user.cardNumber}');
       } catch (prefError) {
         print('SharedPreferences error (using in-memory fallback): $prefError');
       }
@@ -64,6 +70,7 @@ class StorageService extends GetxService {
       _inMemoryToken = null;
       _inMemoryTokenType = null;
       _inMemoryUserId = null;
+      _inMemoryCardNumber = null;
 
       // Try to clear SharedPreferences
       try {
@@ -75,6 +82,7 @@ class StorageService extends GetxService {
         await prefs.remove(_isLoggedInKey);
         await prefs.remove(_userId);
         await prefs.remove(_tokenType);
+        await prefs.remove(_cardNumberKey);
 
         print('User data cleared from SharedPreferences');
       } catch (prefError) {
@@ -137,18 +145,52 @@ class StorageService extends GetxService {
     }
   }
 
+  // Get the stored card number
+  Future<String?> getCardNumber() async {
+    try {
+      // Return from current user if available
+      if (currentUser.value != null) {
+        return currentUser.value!.cardNumber;
+      }
+
+      // Try SharedPreferences
+      try {
+        final prefs = await SharedPreferences.getInstance();
+        final cardNumber = prefs.getString(_cardNumberKey);
+        if (cardNumber != null && cardNumber.isNotEmpty) {
+          return cardNumber;
+        }
+      } catch (prefError) {
+        print('SharedPreferences error getting card number: $prefError');
+      }
+
+      // Fall back to in-memory card number if available
+      return _inMemoryCardNumber;
+    } catch (e) {
+      print('Error getting card number: $e');
+      return null;
+    }
+  }
+
+  // Get card number synchronously
+  String get cardNumber =>
+      currentUser.value?.cardNumber ?? _inMemoryCardNumber ?? '';
+
   Future<StorageService> init() async {
     try {
+      print('Initializing StorageService...');
       // Try to initialize from SharedPreferences
       try {
         final prefs = await SharedPreferences.getInstance();
 
         // Check if user is logged in
         final isUserLoggedIn = prefs.getBool(_isLoggedInKey) ?? false;
+        print('SharedPreferences - Is user logged in: $isUserLoggedIn');
 
         if (isUserLoggedIn) {
           // Get stored user data
           final userData = prefs.getString(_userKey);
+          print('SharedPreferences - User data exists: ${userData != null}');
 
           if (userData != null) {
             // Parse user data
@@ -162,21 +204,28 @@ class StorageService extends GetxService {
             _inMemoryToken = currentUser.value?.accessToken;
             _inMemoryTokenType = currentUser.value?.tokenType;
             _inMemoryUserId = currentUser.value?.userId;
+            _inMemoryCardNumber = currentUser.value?.cardNumber;
 
             print(
-              'User loaded from SharedPreferences: ${currentUser.value?.accessToken}',
+              'User loaded from SharedPreferences: ID=${currentUser.value?.userId}, Token=${currentUser.value?.accessToken?.substring(0, 10)}...',
             );
           } else {
             // Fallback if we have login state but no user data
             final token = prefs.getString(_tokenKey);
             final type = prefs.getString(_tokenType) ?? 'Bearer';
             final id = prefs.getInt(_userId) ?? 0;
+            final cardNum = prefs.getString(_cardNumberKey) ?? '';
+
+            print(
+              'SharedPreferences - Fallback token exists: ${token != null}',
+            );
 
             if (token != null && token.isNotEmpty) {
               currentUser.value = User(
                 accessToken: token,
                 tokenType: type,
                 userId: id,
+                cardNumber: cardNum,
               );
               isLoggedIn.value = true;
 
@@ -184,10 +233,20 @@ class StorageService extends GetxService {
               _inMemoryToken = token;
               _inMemoryTokenType = type;
               _inMemoryUserId = id;
+              _inMemoryCardNumber = cardNum;
 
-              print('User reconstructed from token: $token');
+              print(
+                'User reconstructed from token: ${token.substring(0, 10)}..., ID=$id, Card=$cardNum',
+              );
+            } else {
+              print('No valid token found despite isLoggedIn flag being true');
+              // Reset login state since we don't have valid credentials
+              isLoggedIn.value = false;
+              await prefs.setBool(_isLoggedInKey, false);
             }
           }
+        } else {
+          print('User is not logged in according to SharedPreferences');
         }
       } catch (prefError) {
         print('SharedPreferences error during init: $prefError');
@@ -196,6 +255,9 @@ class StorageService extends GetxService {
       print('Error initializing storage service: $e');
     }
 
+    print(
+      'StorageService initialized. hasUser = ${hasUser}, isLoggedIn = ${isLoggedIn.value}',
+    );
     return this;
   }
 }

@@ -73,7 +73,7 @@ final Map<String, String> jaJP = {
   'sending_otp': '認証コードを送信中...',
   'processing_request': 'リクエスト処理中...',
   'verifying_otp': '認証コードを確認中...',
-
+'no points': 'ポイントレコードが見つかりませんでした',
   // Success messages
   'success': '成功',
   'login_success': 'ログインに成功しました',

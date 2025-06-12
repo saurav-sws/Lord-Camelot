@@ -36,19 +36,15 @@ class ApiService {
       ),
     );
 
-    // Add auth interceptor
     _dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) async {
-          // Don't add auth headers for login and registration
           if (!options.path.contains('login') &&
               !options.path.contains('send-otp') &&
               !options.path.contains('resend-otp') &&
               !options.path.contains('verifyOtpAndRegister')) {
-            // Get the storage service
             final storageService = Get.find<StorageService>();
 
-            // Get auth header
             final authHeader = await storageService.getAuthHeader();
 
             if (authHeader != null) {
@@ -229,7 +225,6 @@ class ApiService {
     }
   }
 
-  // Fetch user points
   Future<Map<String, dynamic>> getPoints() async {
     try {
       final response = await _dio.get('/points');
@@ -251,7 +246,159 @@ class ApiService {
         throw Exception('Network error: ${e.message}');
       }
     } catch (e) {
-      print('Unexpected error fetching points: $e');
+      print('General error fetching points: $e');
+      throw Exception('Error: $e');
+    }
+  }
+
+  Future<Map<String, dynamic>> getRedeemHistory() async {
+    try {
+      final response = await _dio.get('/redeem-history');
+
+      if (response.statusCode == 200) {
+        print('Redeem history fetched successfully: ${response.data}');
+        return response.data;
+      } else {
+        throw Exception(
+          'Failed to fetch redeem history: ${response.statusCode}',
+        );
+      }
+    } on DioException catch (e) {
+      if (e.response != null) {
+        print('Error response from redeem history API: ${e.response?.data}');
+        throw Exception(
+          'Error: ${e.response?.data['message'] ?? 'Unknown error'}',
+        );
+      } else {
+        print('Network error fetching redeem history: ${e.message}');
+        throw Exception('Network error: ${e.message}');
+      }
+    } catch (e) {
+      print('General error fetching redeem history: $e');
+      throw Exception('Error: $e');
+    }
+  }
+
+  Future<Map<String, dynamic>> updateProfile({
+    required String name,
+    required String mobile,
+    required String cardNumber,
+    required int totalPoint,
+    required String dob,
+  }) async {
+    try {
+      final response = await _dio.post(
+        '/update',
+        data: {
+          'name': name,
+          'mobile': mobile,
+          'card_number': cardNumber,
+          'total_point': totalPoint,
+          'dob': dob,
+        },
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        print('Profile updated successfully: ${response.data}');
+        return response.data;
+      } else {
+        throw Exception('Failed to update profile: ${response.statusCode}');
+      }
+    } on DioException catch (e) {
+      if (e.response != null) {
+        print('Error response from update profile API: ${e.response?.data}');
+        if (e.response!.data is Map && e.response!.data.containsKey('errors')) {
+          Map<String, dynamic> errors = e.response!.data['errors'];
+          String errorMessage = '';
+
+          errors.forEach((key, value) {
+            if (value is List && value.isNotEmpty) {
+              errorMessage += '${value[0]} ';
+            }
+          });
+
+          throw Exception(errorMessage.trim());
+        }
+        throw Exception(
+          'Error: ${e.response?.data['message'] ?? 'Unknown error'}',
+        );
+      } else {
+        print('Network error updating profile: ${e.message}');
+        throw Exception('Network error: ${e.message}');
+      }
+    } catch (e) {
+      print('General error updating profile: $e');
+      throw Exception('Error: $e');
+    }
+  }
+
+  Future<Map<String, dynamic>> getPointHistory() async {
+    try {
+      final response = await _dio.get('/point_history');
+
+      if (response.statusCode == 200) {
+        print('Point history fetched successfully: ${response.data}');
+        return response.data;
+      } else {
+        throw Exception(
+          'Failed to fetch point history: ${response.statusCode}',
+        );
+      }
+    } on DioException catch (e) {
+      if (e.response != null) {
+        print('Error response from point history API: ${e.response?.data}');
+        throw Exception(
+          'Error: ${e.response?.data['message'] ?? 'Unknown error'}',
+        );
+      } else {
+        print('Network error fetching point history: ${e.message}');
+        throw Exception('Network error: ${e.message}');
+      }
+    } catch (e) {
+      print('General error fetching point history: $e');
+      throw Exception('Error: $e');
+    }
+  }
+
+  Future<Map<String, dynamic>> redeemPoints({
+    required List<int> pointIds,
+    required double totalAmount,
+    required double discount,
+    required int totalPoint,
+    required String cardNumber,
+    required String userId,
+  }) async {
+    try {
+      final response = await _dio.post(
+        '/redeem-points',
+        data: {
+          'point_ids': pointIds,
+          'total_amount': totalAmount,
+          'discount': discount,
+          'total_point': totalPoint,
+          'card_number': cardNumber,
+          'user_id': userId,
+        },
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        print('Points redeemed successfully: ${response.data}');
+        return response.data;
+      } else {
+        throw Exception('Failed to redeem points: ${response.statusCode}');
+      }
+    } on DioException catch (e) {
+      if (e.response != null) {
+        print('Error response from redeem points API: ${e.response?.data}');
+        throw Exception(
+          'Error: ${e.response?.data['message'] ?? 'Unknown error'}',
+        );
+      } else {
+        print('Network error redeeming points: ${e.message}');
+        throw Exception('Network error: ${e.message}');
+      }
+    } catch (e) {
+      print('General error redeeming points: $e');
       throw Exception('Error: $e');
     }
   }

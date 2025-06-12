@@ -77,7 +77,7 @@ final Map<String, String> enUS = {
   'sending_otp': 'Sending OTP...',
   'processing_request': 'Processing your request...',
   'verifying_otp': 'Verifying OTP...',
-
+  'no points': 'No points records found',
   // Success messages
   'success': 'Success',
   'login_success': 'Login successful',

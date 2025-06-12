@@ -5,6 +5,7 @@ import '../../my_points/views/my_points_view.dart';
 import '../../news/views/news_view.dart';
 import '../../redeem_points/views/redeem_points_view.dart';
 import '../../../../services/storage_service.dart';
+import '../../../routes/app_pages.dart';
 
 class MainController extends GetxController {
   final RxInt currentIndex = 2.obs;
@@ -20,12 +21,23 @@ class MainController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    // Test if access token is available
-    checkToken();
+    // Verify authentication
+    verifyAuthentication();
   }
 
-  Future<void> checkToken() async {
+  Future<void> verifyAuthentication() async {
     try {
+      // Verify if user is logged in
+      if (!_storageService.hasUser) {
+        print('MainController - User not authenticated, redirecting to login');
+        // Redirect to login screen with small delay
+        Future.delayed(Duration(milliseconds: 300), () {
+          Get.offAllNamed(Routes.LOGIN);
+        });
+        return;
+      }
+
+      // If user is authenticated, test access token
       final token = await _storageService.getAccessToken();
       final user = _storageService.currentUser.value;
 
@@ -35,10 +47,17 @@ class MainController extends GetxController {
         );
         print('MainController - User ID: ${user?.userId}');
       } else {
-        print('MainController - No authentication token found');
+        print('MainController - Token is empty or null, redirecting to login');
+        Future.delayed(Duration(milliseconds: 300), () {
+          Get.offAllNamed(Routes.LOGIN);
+        });
       }
     } catch (e) {
-      print('MainController - Error checking token: $e');
+      print('MainController - Error checking authentication: $e');
+      // On error, redirect to login
+      Future.delayed(Duration(milliseconds: 300), () {
+        Get.offAllNamed(Routes.LOGIN);
+      });
     }
   }
 

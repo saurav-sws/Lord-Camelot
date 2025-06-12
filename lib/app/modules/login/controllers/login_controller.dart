@@ -67,15 +67,25 @@ class LoginController extends GetxController {
 
       print('Login response: $response');
 
+      if (response['access_token'] == null) {
+        throw Exception('No access token received from server. Login failed.');
+      }
+
       // Create a user from the response
       final user = User.fromJson(response);
 
-      print('User created with token: ${user.accessToken}');
+      print('User created with token: ${user.accessToken.substring(0, 10)}...');
+
+      if (user.accessToken.isEmpty || user.userId == 0) {
+        throw Exception('Invalid user data received. Login failed.');
+      }
 
       // Save user data (this might fail but we'll continue anyway)
+      bool savedSuccessfully = false;
       try {
         await _storageService.saveUser(user);
-        print('User saved successfully');
+        savedSuccessfully = true;
+        print('User saved successfully to storage');
       } catch (saveError) {
         // If saving fails, we'll still proceed with the login
         print('Error saving user but proceeding with login: $saveError');
@@ -85,7 +95,15 @@ class LoginController extends GetxController {
         _storageService.isLoggedIn.value = true;
       }
 
-      print('User saved, navigating to main screen');
+      // Verify login status
+      final loggedIn = _storageService.hasUser;
+      print(
+        'After login process - Is user logged in: $loggedIn (data saved: $savedSuccessfully)',
+      );
+
+      if (!loggedIn) {
+        throw Exception('Failed to establish login session. Please try again.');
+      }
 
       DialogHelper.hideLoading();
 

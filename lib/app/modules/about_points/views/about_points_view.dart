@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import '../../../utils/responsive_size.dart';
 import '../controllers/about_points_controller.dart';
+import '../../../../services/storage_service.dart';
 
 class AboutPointsView extends GetView<AboutPointsController> {
   const AboutPointsView({Key? key}) : super(key: key);
@@ -10,6 +11,7 @@ class AboutPointsView extends GetView<AboutPointsController> {
   @override
   Widget build(BuildContext context) {
     final aboutPointsController = Get.put(AboutPointsController());
+    final storageService = Get.find<StorageService>();
 
     return Scaffold(
       body: Container(
@@ -65,15 +67,21 @@ class AboutPointsView extends GetView<AboutPointsController> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Expanded(
-                      child: Text(
-                        'card_number'.tr + ' 678543',
-                        style: TextStyle(
-                          color: Colors.white70,
-                          fontSize: ResponsiveSize.fontSize(14),
-                          fontWeight: FontWeight.w500,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
+                      child: Obx(() {
+                        String cardNumber = storageService.cardNumber;
+                        if (cardNumber.isEmpty) {
+                          cardNumber = '678543'; // Fallback
+                        }
+                        return Text(
+                          'card_number'.tr + ' $cardNumber',
+                          style: TextStyle(
+                            color: Colors.white70,
+                            fontSize: ResponsiveSize.fontSize(14),
+                            fontWeight: FontWeight.w500,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        );
+                      }),
                     ),
                     SizedBox(width: ResponsiveSize.width(8)),
                     OutlinedButton(

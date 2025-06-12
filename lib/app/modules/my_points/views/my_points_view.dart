@@ -171,7 +171,7 @@ class MyPointsView extends GetView<MyPointsController> {
                           ),
                           SizedBox(height: ResponsiveSize.height(16)),
                           Text(
-                            'No points records found',
+                            'no points'.tr,
                             style: TextStyle(
                               color: Colors.white70,
                               fontSize: ResponsiveSize.fontSize(14),

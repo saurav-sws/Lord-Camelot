@@ -16,15 +16,10 @@ class ProfileView extends GetView<ProfileController> {
         width: double.infinity,
         height: double.infinity,
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              Color(0xFF000000),
-              Color(0xFF000000),
-              Color(0xFF000000),
-              Color(0xFF001e16),
-            ],
-            begin: Alignment.bottomRight,
-            end: Alignment.topRight,
+          gradient: RadialGradient(
+            center: Alignment.topRight,
+            radius: 0.8,
+            colors: [Color(0xFF001e16), Color(0xFF000000)],
           ),
         ),
         child: SingleChildScrollView(
@@ -115,32 +110,49 @@ class ProfileView extends GetView<ProfileController> {
                   ),
                   child: Column(
                     children: [
-                      _buildProfileField(
-                        'full_name'.tr,
-                        profileController.fullName.value,
-                        () => profileController.editField('Full Name'),
-                        hasEditIcon: true,
+                      Obx(
+                        () => _buildProfileField(
+                          'full_name'.tr,
+                          profileController.fullName.value,
+                          () => profileController.editField('Full Name'),
+                          hasEditIcon: true,
+                        ),
                       ),
                       SizedBox(height: ResponsiveSize.height(15)),
-                      _buildProfileField(
-                        'card_number'.tr,
-                        profileController.cardNumber.value,
-                        () => profileController.editField('Card Number'),
-                        hasEditIcon: true,
+                      Obx(
+                        () => _buildProfileField(
+                          'card_number'.tr,
+                          profileController.cardNumber.value,
+                          () => profileController.editField('Card Number'),
+                          hasEditIcon: false,
+                        ),
                       ),
                       SizedBox(height: ResponsiveSize.height(15)),
-                      _buildProfileField(
-                        'mobile_number'.tr,
-                        profileController.mobileNumber.value,
-                        () => profileController.editField('Mobile Number'),
-                        hasEditIcon: true,
+                      Obx(
+                        () => _buildProfileField(
+                          'mobile_number'.tr,
+                          profileController.mobileNumber.value,
+                          () => profileController.editField('Mobile Number'),
+                          hasEditIcon: true,
+                        ),
                       ),
                       SizedBox(height: ResponsiveSize.height(15)),
-                      _buildProfileField(
-                        'birth_date'.tr,
-                        profileController.birthDate.value,
-                        null,
-                        hasEditIcon: false,
+                      Obx(
+                        () => _buildProfileField(
+                          'birth_date'.tr,
+                          profileController.birthDate.value,
+                          () => profileController.editField('Birth Date'),
+                          hasEditIcon: true,
+                        ),
+                      ),
+                      SizedBox(height: ResponsiveSize.height(15)),
+                      Obx(
+                        () => _buildProfileField(
+                          'Total Points',
+                          '${profileController.totalPoints.value}',
+                          null,
+                          hasEditIcon: false,
+                        ),
                       ),
                       SizedBox(height: ResponsiveSize.height(10)),
                     ],
@@ -150,23 +162,39 @@ class ProfileView extends GetView<ProfileController> {
                 SizedBox(
                   width: ResponsiveSize.width(270),
                   height: ResponsiveSize.height(50),
-                  child: ElevatedButton(
-                    onPressed: profileController.updateProfile,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(
-                          ResponsiveSize.radius(10),
+                  child: Obx(
+                    () => ElevatedButton(
+                      onPressed:
+                          profileController.isLoading.value
+                              ? null
+                              : profileController.updateProfile,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        disabledBackgroundColor: Colors.grey,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                            ResponsiveSize.radius(10),
+                          ),
                         ),
                       ),
-                    ),
-                    child: Text(
-                      'update'.tr,
-                      style: TextStyle(
-                        color: Colors.white70,
-                        fontSize: ResponsiveSize.fontSize(16),
-                        fontWeight: FontWeight.w600,
-                      ),
+                      child:
+                          profileController.isLoading.value
+                              ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 2,
+                                ),
+                              )
+                              : Text(
+                                'update'.tr,
+                                style: TextStyle(
+                                  color: Colors.white70,
+                                  fontSize: ResponsiveSize.fontSize(16),
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
                     ),
                   ),
                 ),
@@ -205,7 +233,9 @@ class ProfileView extends GetView<ProfileController> {
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
                     color: const Color(0xFF1E1E1E),
-                    borderRadius: BorderRadius.circular(ResponsiveSize.radius(10)),
+                    borderRadius: BorderRadius.circular(
+                      ResponsiveSize.radius(10),
+                    ),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -232,8 +262,13 @@ class ProfileView extends GetView<ProfileController> {
                             ),
                             decoration: BoxDecoration(
                               color: Colors.black38,
-                              borderRadius: BorderRadius.circular(ResponsiveSize.radius(12)),
-                              border: Border.all(color: Colors.yellow, width: 1),
+                              borderRadius: BorderRadius.circular(
+                                ResponsiveSize.radius(12),
+                              ),
+                              border: Border.all(
+                                color: Colors.yellow,
+                                width: 1,
+                              ),
                             ),
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
@@ -244,15 +279,23 @@ class ProfileView extends GetView<ProfileController> {
                                     vertical: ResponsiveSize.height(2),
                                   ),
                                   decoration: BoxDecoration(
-                                    color: isEnglish ? Colors.yellow : Colors.transparent,
-                                    borderRadius: BorderRadius.circular(ResponsiveSize.radius(8)),
+                                    color:
+                                        isEnglish
+                                            ? Colors.yellow
+                                            : Colors.transparent,
+                                    borderRadius: BorderRadius.circular(
+                                      ResponsiveSize.radius(8),
+                                    ),
                                   ),
                                   child: Text(
                                     'EN',
                                     style: TextStyle(
                                       fontSize: ResponsiveSize.fontSize(12),
                                       fontWeight: FontWeight.bold,
-                                      color: isEnglish ? Colors.black : Colors.yellow,
+                                      color:
+                                          isEnglish
+                                              ? Colors.black
+                                              : Colors.yellow,
                                     ),
                                   ),
                                 ),
@@ -263,15 +306,23 @@ class ProfileView extends GetView<ProfileController> {
                                     vertical: ResponsiveSize.height(2),
                                   ),
                                   decoration: BoxDecoration(
-                                    color: !isEnglish ? Colors.yellow : Colors.transparent,
-                                    borderRadius: BorderRadius.circular(ResponsiveSize.radius(8)),
+                                    color:
+                                        !isEnglish
+                                            ? Colors.yellow
+                                            : Colors.transparent,
+                                    borderRadius: BorderRadius.circular(
+                                      ResponsiveSize.radius(8),
+                                    ),
                                   ),
                                   child: Text(
                                     'JP',
                                     style: TextStyle(
                                       fontSize: ResponsiveSize.fontSize(12),
                                       fontWeight: FontWeight.bold,
-                                      color: !isEnglish ? Colors.black : Colors.yellow,
+                                      color:
+                                          !isEnglish
+                                              ? Colors.black
+                                              : Colors.yellow,
                                     ),
                                   ),
                                 ),
