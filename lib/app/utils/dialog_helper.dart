@@ -4,10 +4,10 @@ import 'responsive_size.dart';
 import 'typography.dart';
 
 class DialogHelper {
-  // Hide the default constructor
+
   DialogHelper._();
 
-  // Success dialog
+
   static void showSuccessDialog({
     required String title,
     required String message,
@@ -25,7 +25,7 @@ class DialogHelper {
     );
   }
 
-  // Error dialog
+
   static void showErrorDialog({
     required String title,
     required String message,
@@ -43,7 +43,7 @@ class DialogHelper {
     );
   }
 
-  // Warning dialog
+
   static void showWarningDialog({
     required String title,
     required String message,
@@ -61,7 +61,7 @@ class DialogHelper {
     );
   }
 
-  // Info dialog
+
   static void showInfoDialog({
     required String title,
     required String message,
@@ -79,7 +79,7 @@ class DialogHelper {
     );
   }
 
-  // Private method to show custom dialog
+
   static void _showCustomDialog({
     required String title,
     required String message,
@@ -168,7 +168,7 @@ class DialogHelper {
     );
   }
 
-  // Loading dialog
+
   static void showLoading({String message = 'Loading...'}) {
     Get.dialog(
       Dialog(
@@ -205,7 +205,6 @@ class DialogHelper {
     );
   }
 
-  // Hide loading
   static void hideLoading() {
     if (Get.isDialogOpen!) {
       Get.back();

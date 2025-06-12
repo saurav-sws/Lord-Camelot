@@ -11,12 +11,7 @@ class LoginView extends GetView<LoginController> {
 
   @override
   Widget build(BuildContext context) {
-    // Use Get.find() instead of Get.put() to ensure controller is not recreated
-    // when returning to this screen
-    final loginController =
-        Get.isRegistered<LoginController>()
-            ? Get.find<LoginController>()
-            : Get.put(LoginController());
+    final loginController = Get.put(LoginController());
 
     final languageController = Get.put(LanguageController());
 
@@ -24,11 +19,11 @@ class LoginView extends GetView<LoginController> {
       body: Container(
         width: double.infinity,
         height: double.infinity,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.black, Color(0xFF002A20)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+        decoration: BoxDecoration(
+          gradient: RadialGradient(
+            center: Alignment.topRight,
+            radius: 0.8,
+            colors: [Color(0xFF001e16), Color(0xFF000000)],
           ),
         ),
         child: SingleChildScrollView(
@@ -36,52 +31,12 @@ class LoginView extends GetView<LoginController> {
             padding: ResponsiveSize.padding(horizontal: 30),
             child: Column(
               children: [
-                SizedBox(height: ResponsiveSize.height(60)),
-
+                SizedBox(height: ResponsiveSize.height(80)),
                 Center(
                   child: Image.asset(
                     'assets/images/Splash.png',
-                    width: ResponsiveSize.width(90),
-                  ),
-                ),
-                SizedBox(height: ResponsiveSize.height(20)),
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: Container(
-                    margin: EdgeInsets.only(left: 20),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF1E1E1E),
-                      borderRadius: BorderRadius.circular(
-                        ResponsiveSize.radius(10),
-                      ),
-                      border: Border.all(color: Colors.orange),
-                    ),
-                    height: ResponsiveSize.height(40),
-                    width: ResponsiveSize.width(128.9),
-                    child: Obx(
-                      () => Row(
-                        children: [
-                          _buildLanguageToggleOption(
-                            'EN',
-                            languageController.isEnglish.value,
-                            () {
-                              if (!languageController.isEnglish.value) {
-                                languageController.toggleLanguage();
-                              }
-                            },
-                          ),
-                          _buildLanguageToggleOption(
-                            'JP',
-                            !languageController.isEnglish.value,
-                            () {
-                              if (languageController.isEnglish.value) {
-                                languageController.toggleLanguage();
-                              }
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
+                    width: ResponsiveSize.width(150),
+                    height: ResponsiveSize.height(150),
                   ),
                 ),
                 SizedBox(height: ResponsiveSize.height(10)),
@@ -97,82 +52,86 @@ class LoginView extends GetView<LoginController> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Center(
-                        child: Text('sign_in'.tr, style: AppTextStyles.heading),
+                        child: Transform(
+                            transform: Matrix4.identity()..scale( 1.1),
+                            child: Text('sign_in'.tr, style: AppTextStyles.heading)),
                       ),
                       SizedBox(height: ResponsiveSize.height(10)),
-                      Text('login_desc'.tr, style: AppTextStyles.subheading),
+                      Transform(
+                          transform: Matrix4.identity()..scale( 1.1),
+                          child: Text('login_desc'.tr, style: AppTextStyles.subheading)),
                       SizedBox(height: ResponsiveSize.height(40)),
                       Obx(
-                        () =>
-                            loginController.isDisposed.value
-                                ? SizedBox() // Don't show TextField if controller is disposed
-                                : TextField(
-                                  controller:
-                                      loginController.cardNumberController,
-                                  onChanged: loginController.validateCardNumber,
-                                  decoration: InputDecoration(
-                                    filled: true,
-                                    fillColor: Colors.grey.shade900,
-                                    hintText: 'enter_card'.tr,
-                                    hintStyle: AppTextStyles.inputHint,
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(
-                                        ResponsiveSize.radius(10),
-                                      ),
-                                      borderSide: BorderSide.none,
-                                    ),
-                                    contentPadding: ResponsiveSize.padding(
-                                      horizontal: 16,
-                                      vertical: 14,
-                                    ),
-                                  ),
-                                  style: AppTextStyles.inputText,
-                                ),
+                        () => TextField(
+                          cursorColor: Colors.white70,
+                          controller:
+                              loginController.cardNumberController.value,
+                          onChanged: loginController.validateCardNumber,
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Colors.grey.shade900,
+                            hintText: 'enter_card'.tr,
+                            hintStyle: AppTextStyles.inputHint,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(
+                                ResponsiveSize.radius(12),
+                              ),
+                              borderSide: BorderSide.none,
+                            ),
+                            contentPadding: ResponsiveSize.padding(
+                              horizontal: 16,
+                              vertical: 14,
+                            ),
+                          ),
+                          style: AppTextStyles.inputText,
+                        ),
                       ),
                       SizedBox(height: ResponsiveSize.height(15)),
                       Obx(
-                        () =>
-                            loginController.isDisposed.value
-                                ? SizedBox() // Don't show TextField if controller is disposed
-                                : TextField(
-                                  controller:
-                                      loginController.phoneNumberController,
-                                  onChanged:
-                                      loginController.validatePhoneNumber,
-                                  keyboardType: TextInputType.number,
-                                  decoration: InputDecoration(
-                                    filled: true,
-                                    fillColor: Colors.grey.shade900,
-                                    hintText: 'enter_phone'.tr,
-                                    hintStyle: AppTextStyles.inputHint,
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(
-                                        ResponsiveSize.radius(10),
-                                      ),
-                                      borderSide: BorderSide.none,
-                                    ),
-                                    contentPadding: ResponsiveSize.padding(
-                                      horizontal: 16,
-                                      vertical: 14,
-                                    ),
-                                  ),
-                                  style: AppTextStyles.inputText,
-                                ),
+                        () => TextField(
+                          controller:
+                              loginController.phoneNumberController.value,
+                          onChanged: loginController.validatePhoneNumber,
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Colors.grey.shade900,
+                            hintText: 'enter_phone'.tr,
+                            hintStyle: AppTextStyles.inputHint,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(
+                                ResponsiveSize.radius(12),
+                              ),
+                              borderSide: BorderSide.none,
+                            ),
+                            contentPadding: ResponsiveSize.padding(
+                              horizontal: 16,
+                              vertical: 14,
+                            ),
+                          ),
+                          style: AppTextStyles.inputText,
+                        ),
                       ),
                       SizedBox(height: ResponsiveSize.height(25)),
                       Row(
                         children: [
-                          Text(
-                            'forget_card'.tr,
-                            style: AppTextStyles.grayLabel,
-                            overflow: TextOverflow.ellipsis,
+                          Transform(
+                            transform: Matrix4.identity()..scale(1.1, 1.2),
+                            child: Text(
+                              'forget_card'.tr,
+                              style: AppTextStyles.grayLabel,
+
+                            ),
                           ),
-                          SizedBox(width: ResponsiveSize.width(5)),
+                          SizedBox(width: ResponsiveSize.width(25)),
                           GestureDetector(
                             onTap: loginController.getOtp,
-                            child: Text(
-                              'get_otp'.tr,
-                              style: AppTextStyles.linkText,
+                            child: Transform(
+                              transform: Matrix4.identity()..scale(1.1, 1.2),
+                              child: Text(
+                                'get_otp'.tr,
+                                style: AppTextStyles.linkText,
+                              ),
                             ),
                           ),
                         ],
@@ -184,16 +143,22 @@ class LoginView extends GetView<LoginController> {
                         child: ElevatedButton(
                           onPressed: loginController.login,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.green,
+                            backgroundColor:  Color(0xFF227522),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(
                                 ResponsiveSize.radius(14),
                               ),
                             ),
                           ),
-                          child: Text(
-                            'login'.tr,
-                            style: AppTextStyles.buttonText,
+                          child: Padding(
+                            padding: const EdgeInsets.only(bottom: 7.0,right: 9),
+                            child: Transform(
+                              transform: Matrix4.identity()..scale( 1.2),
+                              child: Text(
+                                'login'.tr,
+                                style: AppTextStyles.buttonText,
+                              ),
+                            ),
                           ),
                         ),
                       ),
@@ -201,52 +166,147 @@ class LoginView extends GetView<LoginController> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text('no_account'.tr, style: AppTextStyles.grayLabel),
-                          const SizedBox(width: 8),
+                          Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: Transform(
+                                transform: Matrix4.identity()..scale( 1.1,1.2),
+                                child: Text('no_account'.tr, style: AppTextStyles.grayLabel)),
+                          ),
+                          const SizedBox(width: 14),
                           GestureDetector(
                             onTap: loginController.goToSignUp,
-                            child: Text(
-                              'sign_upl'.tr,
-                              style: AppTextStyles.linkText,
+                            child: Transform(
+                              transform: Matrix4.identity()..scale( 1.1,1.2),
+                              child: Text(
+                                'sign_upl'.tr,
+                                style: AppTextStyles.linkText,
+                              ),
                             ),
                           ),
                         ],
+                      ),
+                      SizedBox(height: ResponsiveSize.height(20)),
+                      Container(
+                        margin: const EdgeInsets.only(left: 35),
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF1E1E1E),
+                          borderRadius: BorderRadius.circular(
+                            ResponsiveSize.radius(10),
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.language,
+                              color: Colors.yellow,
+                              size: (18),
+                            ),
+                            SizedBox(width: ResponsiveSize.width(8)),
+                            Text(
+                              'switch_lan'.tr,
+                              style: TextStyle(
+                                color: Colors.yellow,
+                                fontWeight: FontWeight.bold,
+                                fontSize: ResponsiveSize.fontSize(12),
+                              ),
+                            ),
+                            SizedBox(width: ResponsiveSize.width(12)),
+                            Obx(() {
+                              final isEnglish =
+                                  languageController.isEnglish.value;
+                              return GestureDetector(
+                                onTap:
+                                    () => languageController.toggleLanguage(),
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: ResponsiveSize.width(6),
+                                    vertical: ResponsiveSize.height(4),
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.black38,
+                                    borderRadius: BorderRadius.circular(
+                                      ResponsiveSize.radius(12),
+                                    ),
+                                    border: Border.all(
+                                      color: Colors.yellow,
+                                      width: 1,
+                                    ),
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Container(
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: ResponsiveSize.width(8),
+                                          vertical: ResponsiveSize.height(2),
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color:
+                                              isEnglish
+                                                  ? Colors.yellow
+                                                  : Colors.transparent,
+                                          borderRadius: BorderRadius.circular(
+                                            ResponsiveSize.radius(8),
+                                          ),
+                                        ),
+                                        child: Text(
+                                          'EN',
+                                          style: TextStyle(
+                                            fontSize: ResponsiveSize.fontSize(
+                                              12,
+                                            ),
+                                            fontWeight: FontWeight.bold,
+                                            color:
+                                                isEnglish
+                                                    ? Colors.black
+                                                    : Colors.yellow,
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(width: ResponsiveSize.width(4)),
+                                      Container(
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: ResponsiveSize.width(8),
+                                          vertical: ResponsiveSize.height(2),
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color:
+                                              !isEnglish
+                                                  ? Colors.yellow
+                                                  : Colors.transparent,
+                                          borderRadius: BorderRadius.circular(
+                                            ResponsiveSize.radius(8),
+                                          ),
+                                        ),
+                                        child: Text(
+                                          'JP',
+                                          style: TextStyle(
+                                            fontSize: ResponsiveSize.fontSize(
+                                              12,
+                                            ),
+                                            fontWeight: FontWeight.bold,
+                                            color:
+                                                !isEnglish
+                                                    ? Colors.black
+                                                    : Colors.yellow,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            }),
+                          ],
+                        ),
                       ),
                     ],
                   ),
                 ),
                 SizedBox(height: ResponsiveSize.height(15)),
               ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildLanguageToggleOption(
-    String language,
-    bool isSelected,
-    Function() onTap,
-  ) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: ResponsiveSize.width(63),
-        decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFFFFA500) : Colors.transparent,
-          borderRadius: BorderRadius.horizontal(
-            left: Radius.circular(10),
-            right: Radius.circular(10),
-          ),
-        ),
-        child: Center(
-          child: Text(
-            language,
-            style: TextStyle(
-              color: isSelected ? Colors.white70 : Colors.yellow.shade400,
-              fontSize: ResponsiveSize.fontSize(14),
-              fontWeight: FontWeight.w500,
             ),
           ),
         ),

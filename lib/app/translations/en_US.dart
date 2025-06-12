@@ -1,4 +1,5 @@
 final Map<String, String> enUS = {
+  'switch_lan': 'Switch Language',
   'sign_in': 'Sign in to your Account',
   'login_desc': 'Enter your Card-No and phone-No to log in',
   'enter_card': 'Enter your Card Number',
@@ -12,12 +13,12 @@ final Map<String, String> enUS = {
   'get_otp': 'Get OTP',
   'have_account': 'Already have an account?',
   'otp_verification': 'OTP Verification',
-  'verify_otp': 'Verify OTP',
+  'verify_otp': 'Verify',
   'no_code': 'Dont received code?  Re-Send',
   'enter_code': 'Enter the verification code sent to',
   'forget_card': 'Forget Your Card Number?',
-  'no_otp_received': 'Didn\'t receive the code?',
-  'resend': 'Resend',
+  'no_otp_received': 'Dont received the code?',
+  'resend': 'Re-send',
   'seconds': 'seconds',
   'my_points': 'My Points',
   'card_number': 'Card Number',
@@ -61,12 +62,15 @@ final Map<String, String> enUS = {
   'yes_logout': 'Yes, Log Out',
 
   // Error messages
+  'error': 'Error',
+  'login_failed': 'Login failed. Please check your credentials and try again.',
+  'network_error': 'Network error. Please check your connection and try again.',
   'missing_information': 'Missing Information',
   'enter_both': 'Please enter both Card Number and Phone Number',
   'enter_phone_first': 'Please enter your Phone Number first',
   'fill_all_fields': 'Please fill all the fields',
   'invalid_otp': 'Invalid OTP',
-  'enter_valid_otp': 'Please enter a valid 6-digit OTP',
+  'enter_valid_otp': 'Please enter a valid 4-digit OTP',
 
   // Loading messages
   'logging_in': 'Logging in...',
@@ -76,6 +80,7 @@ final Map<String, String> enUS = {
 
   // Success messages
   'success': 'Success',
+  'login_success': 'Login successful',
   'otp_verified': 'OTP verified successfully',
   'continue': 'Continue',
   'otp_resent': 'OTP Resent',

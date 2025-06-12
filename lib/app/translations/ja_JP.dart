@@ -1,4 +1,5 @@
 final Map<String, String> jaJP = {
+  'switch_lan': '言語を切り替える',
   'sign_in': 'アカウントにサインイン',
   'login_desc': 'カード番号と電話番号を入力してログインしてください',
   'enter_card': 'カード番号を入力',
@@ -57,12 +58,15 @@ final Map<String, String> jaJP = {
   'yes_logout': 'はい、ログアウトします',
 
   // Error messages
+  'error': 'エラー',
+  'login_failed': 'ログインに失敗しました。認証情報を確認して再試行してください。',
+  'network_error': 'ネットワークエラー。接続を確認して再試行してください。',
   'missing_information': '情報が不足しています',
   'enter_both': 'カード番号と電話番号の両方を入力してください',
   'enter_phone_first': '先に電話番号を入力してください',
   'fill_all_fields': 'すべての項目を入力してください',
   'invalid_otp': '無効な認証コード',
-  'enter_valid_otp': '有効な6桁の認証コードを入力してください',
+  'enter_valid_otp': '有効な4桁の認証コードを入力してください',
 
   // Loading messages
   'logging_in': 'ログイン中...',
@@ -72,6 +76,7 @@ final Map<String, String> jaJP = {
 
   // Success messages
   'success': '成功',
+  'login_success': 'ログインに成功しました',
   'otp_verified': '認証コードが正常に確認されました',
   'continue': '続ける',
   'otp_resent': '認証コード再送信',

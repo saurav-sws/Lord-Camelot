@@ -10,44 +10,41 @@ class RedeemPointsView extends GetView<RedeemPointsController> {
   @override
   Widget build(BuildContext context) {
     final redeemController = Get.put(RedeemPointsController());
-
     return Scaffold(
       body: Container(
         width: double.infinity,
         height: double.infinity,
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              Color(0xFF000000),
-              Color(0xFF000000),
-              Color(0xFF000000),
-              Color(0xFF001e16),
-            ],
-            begin: Alignment.bottomRight,
-            end: Alignment.topRight,
+          gradient: RadialGradient(
+            center: Alignment.topRight,
+            radius: 0.8,
+            colors: [Color(0xFF001e16), Color(0xFF000000)],
           ),
         ),
         child: Padding(
           padding: ResponsiveSize.padding(vertical: 16, horizontal: 10),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+
             children: [
               SizedBox(height: 30),
               Container(
-                height: ResponsiveSize.height(60),
+                height: ResponsiveSize.height(80),
                 decoration: BoxDecoration(
                   color: Color(0xFF0f0f0f),
                   borderRadius: BorderRadius.circular(
-                    ResponsiveSize.radius(20),
+                    ResponsiveSize.radius(15),
                   ),
                 ),
                 child: Center(
-                  child: Text(
-                    'redeem_points'.tr,
-                    style: TextStyle(
-                      color: Colors.white70,
-                      fontSize: ResponsiveSize.fontSize(18),
-                      fontWeight: FontWeight.w600,
+                  child: Transform(
+                    transform: Matrix4.identity()..scale( 1.1),
+                    child: Text(
+                      'redeem_points'.tr,
+                      style: TextStyle(
+                        color: Colors.white70,
+                        fontSize: ResponsiveSize.fontSize(18),
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                 ),
@@ -64,12 +61,15 @@ class RedeemPointsView extends GetView<RedeemPointsController> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      'card_number'.tr + ' ${redeemController.cardNumber}',
-                      style: TextStyle(
-                        color: Colors.white70,
-                        fontSize: ResponsiveSize.fontSize(14),
-                        fontWeight: FontWeight.w500,
+                    Transform(
+                      transform: Matrix4.identity()..scale( 1.1),
+                      child: Text(
+                        'card_number'.tr + ' ${redeemController.cardNumber}',
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: ResponsiveSize.fontSize(14),
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
                     OutlinedButton(
@@ -82,16 +82,19 @@ class RedeemPointsView extends GetView<RedeemPointsController> {
                           ),
                         ),
                         minimumSize: Size(
-                          ResponsiveSize.width(100),
-                          ResponsiveSize.height(45),
+                          ResponsiveSize.width(90),
+                          ResponsiveSize.height(50),
                         ),
                       ),
-                      child: Text(
-                        'my_profile'.tr,
-                        style: TextStyle(
-                          color: Color(0xFF288c25),
-                          fontSize: ResponsiveSize.fontSize(14),
-                          fontWeight: FontWeight.w500,
+                      child: Transform(
+                        transform: Matrix4.identity()..scale( 1.1),
+                        child: Text(
+                          'my_profile'.tr,
+                          style: TextStyle(
+                            color:  Color(0xFF227522),
+                            fontSize: ResponsiveSize.fontSize(14),
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
                     ),
@@ -102,15 +105,18 @@ class RedeemPointsView extends GetView<RedeemPointsController> {
               SizedBox(height: ResponsiveSize.height(16)),
               Row(
                 children: [
-                  Text(
-                    'redeem_minimum'.tr.replaceFirst(
-                      '5',
-                      '${redeemController.minimumPoints}',
-                    ),
-                    style: TextStyle(
-                      color: Colors.white70,
-                      fontSize: ResponsiveSize.fontSize(14),
-                      fontWeight: FontWeight.w500,
+                  Transform(
+                    transform: Matrix4.identity()..scale( 1.1),
+                    child: Text(
+                      'redeem_minimum'.tr.replaceFirst(
+                        '5',
+                        '${redeemController.minimumPoints}',
+                      ),
+                      style: TextStyle(
+                        color: Colors.white70,
+                        fontSize: ResponsiveSize.fontSize(13),
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ),
                   SizedBox(width: ResponsiveSize.width(8)),
@@ -118,7 +124,7 @@ class RedeemPointsView extends GetView<RedeemPointsController> {
                     () => Text(
                       '${redeemController.availablePoints.value}',
                       style: TextStyle(
-                        color: Color(0xFF288c25),
+                        color:  Color(0xFF227522),
                         fontSize: ResponsiveSize.fontSize(25),
                         fontWeight: FontWeight.bold,
                       ),

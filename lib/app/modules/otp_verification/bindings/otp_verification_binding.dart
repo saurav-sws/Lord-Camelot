@@ -6,7 +6,11 @@ class OtpVerificationBinding extends Bindings {
   void dependencies() {
     Get.lazyPut<OtpVerificationController>(
       () => OtpVerificationController(
-        phoneNumber: Get.arguments?['phoneNumber'] ?? '12345678',
+        phoneNumber: Get.arguments?['phoneNumber'] ?? '',
+        fullName: Get.arguments?['fullName'] ?? '',
+        cardNumber: Get.arguments?['cardNumber'] ?? '',
+        fcmToken: Get.arguments?['fcmToken'] ?? '',
+        otpValue: Get.arguments?['otpValue'],
       ),
     );
   }

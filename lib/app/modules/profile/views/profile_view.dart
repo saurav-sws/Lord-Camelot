@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../controllers/language_controller.dart';
 import '../../../utils/responsive_size.dart';
 import '../controllers/profile_controller.dart';
 
@@ -9,7 +10,7 @@ class ProfileView extends GetView<ProfileController> {
   @override
   Widget build(BuildContext context) {
     final profileController = Get.put(ProfileController());
-
+    final languageController = Get.put(LanguageController());
     return Scaffold(
       body: Container(
         width: double.infinity,
@@ -141,52 +142,11 @@ class ProfileView extends GetView<ProfileController> {
                         null,
                         hasEditIcon: false,
                       ),
-                      SizedBox(height: ResponsiveSize.height(15)),
+                      SizedBox(height: ResponsiveSize.height(10)),
                     ],
                   ),
                 ),
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: Container(
-                    margin: EdgeInsets.only(left: 20),
-                    decoration: BoxDecoration(
-                      color: Color(0xFF1E1E1E),
-                      borderRadius: BorderRadius.circular(
-                        ResponsiveSize.radius(8),
-                      ),
-                      border: Border.all(color: Colors.orange),
-                    ),
-                    height: ResponsiveSize.height(40),
-                    width: ResponsiveSize.width(128.9),
-                    child: Obx(
-                          () => Row(
-                        children: [
-                          _buildLanguageToggleOption(
-                            'EN',
-                            profileController.isEnglish.value,
-                                () {
-                              if (!profileController.isEnglish.value) {
-                                profileController.toggleLanguage();
-                              }
-                            },
-                          ),
-                          _buildLanguageToggleOption(
-                            'JP',
-                            !profileController.isEnglish.value,
-                                () {
-                              if (profileController.isEnglish.value) {
-                                profileController.toggleLanguage();
-                              }
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-          
-                SizedBox(height: ResponsiveSize.height(25)),
-          
+                SizedBox(height: ResponsiveSize.height(15)),
                 SizedBox(
                   width: ResponsiveSize.width(270),
                   height: ResponsiveSize.height(50),
@@ -210,7 +170,6 @@ class ProfileView extends GetView<ProfileController> {
                     ),
                   ),
                 ),
-          
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
                   child: Row(
@@ -238,6 +197,89 @@ class ProfileView extends GetView<ProfileController> {
                           ),
                         ),
                       ),
+                    ],
+                  ),
+                ),
+                Container(
+                  margin: const EdgeInsets.only(left: 10),
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF1E1E1E),
+                    borderRadius: BorderRadius.circular(ResponsiveSize.radius(10)),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.language, color: Colors.yellow, size: (18)),
+                      SizedBox(width: ResponsiveSize.width(8)),
+                      Text(
+                        'switch_lan'.tr,
+                        style: TextStyle(
+                          color: Colors.yellow,
+                          fontWeight: FontWeight.bold,
+                          fontSize: ResponsiveSize.fontSize(12),
+                        ),
+                      ),
+                      SizedBox(width: ResponsiveSize.width(12)),
+                      Obx(() {
+                        final isEnglish = languageController.isEnglish.value;
+                        return GestureDetector(
+                          onTap: () => languageController.toggleLanguage(),
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: ResponsiveSize.width(6),
+                              vertical: ResponsiveSize.height(4),
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.black38,
+                              borderRadius: BorderRadius.circular(ResponsiveSize.radius(12)),
+                              border: Border.all(color: Colors.yellow, width: 1),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Container(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: ResponsiveSize.width(8),
+                                    vertical: ResponsiveSize.height(2),
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: isEnglish ? Colors.yellow : Colors.transparent,
+                                    borderRadius: BorderRadius.circular(ResponsiveSize.radius(8)),
+                                  ),
+                                  child: Text(
+                                    'EN',
+                                    style: TextStyle(
+                                      fontSize: ResponsiveSize.fontSize(12),
+                                      fontWeight: FontWeight.bold,
+                                      color: isEnglish ? Colors.black : Colors.yellow,
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(width: ResponsiveSize.width(4)),
+                                Container(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: ResponsiveSize.width(8),
+                                    vertical: ResponsiveSize.height(2),
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: !isEnglish ? Colors.yellow : Colors.transparent,
+                                    borderRadius: BorderRadius.circular(ResponsiveSize.radius(8)),
+                                  ),
+                                  child: Text(
+                                    'JP',
+                                    style: TextStyle(
+                                      fontSize: ResponsiveSize.fontSize(12),
+                                      fontWeight: FontWeight.bold,
+                                      color: !isEnglish ? Colors.black : Colors.yellow,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }),
                     ],
                   ),
                 ),

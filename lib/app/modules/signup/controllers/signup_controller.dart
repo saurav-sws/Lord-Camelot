@@ -2,12 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../routes/app_pages.dart';
 import '../../../utils/dialog_helper.dart';
+import '../../../../services/api_service.dart';
+import '../../../../services/fcm_service.dart';
 
 class SignupController extends GetxController {
-  // Use late initialization
-  late final fullNameController = TextEditingController();
-  late final cardNumberController = TextEditingController();
-  late final phoneNumberController = TextEditingController();
+  final ApiService _apiService = ApiService();
+
+  // We'll create these controllers when they're needed
+  Rx<TextEditingController?> fullNameController = Rx<TextEditingController?>(
+    null,
+  );
+  Rx<TextEditingController?> cardNumberController = Rx<TextEditingController?>(
+    null,
+  );
+  Rx<TextEditingController?> phoneNumberController = Rx<TextEditingController?>(
+    null,
+  );
 
   // Observable variables
   final RxBool isLoading = false.obs;
@@ -15,24 +25,26 @@ class SignupController extends GetxController {
   final RxBool isCardNumberValid = false.obs;
   final RxBool isPhoneNumberValid = false.obs;
 
-  // Track if controller is disposed
-  final RxBool isDisposed = false.obs;
-
   @override
   void onInit() {
     super.onInit();
-    isDisposed.value = false;
+    // Initialize controllers
+    fullNameController.value = TextEditingController();
+    cardNumberController.value = TextEditingController();
+    phoneNumberController.value = TextEditingController();
   }
 
   @override
   void onClose() {
-    // Mark as disposed before actually disposing
-    isDisposed.value = true;
-
     // Safely dispose controllers
-    fullNameController.dispose();
-    cardNumberController.dispose();
-    phoneNumberController.dispose();
+    fullNameController.value?.dispose();
+    fullNameController.value = null;
+
+    cardNumberController.value?.dispose();
+    cardNumberController.value = null;
+
+    phoneNumberController.value?.dispose();
+    phoneNumberController.value = null;
 
     super.onClose();
   }
@@ -53,7 +65,7 @@ class SignupController extends GetxController {
   }
 
   // Handle get OTP
-  void getOTP() {
+  Future<void> getOTP() async {
     if (!isFullNameValid.value ||
         !isCardNumberValid.value ||
         !isPhoneNumberValid.value) {
@@ -64,22 +76,48 @@ class SignupController extends GetxController {
       return;
     }
 
-    // Show loading dialog
-    DialogHelper.showLoading(message: 'processing_request'.tr);
+    final phoneNumber = phoneNumberController.value?.text ?? '';
+    final fullName = fullNameController.value?.text ?? '';
+    final cardNumber = cardNumberController.value?.text ?? '';
+    final fcmToken = FCMService.to.fcmToken.value;
 
-    // Simulate API call
-    Future.delayed(const Duration(seconds: 2), () {
+    // Show loading dialog
+    DialogHelper.showLoading(message: 'sending_otp'.tr);
+
+    try {
+      // Call the API to send OTP
+      final response = await _apiService.sendOTP(
+        mobile: phoneNumber,
+        name: fullName,
+        cardNumber: cardNumber,
+        fcmToken: fcmToken,
+      );
+
       // Hide loading dialog
       DialogHelper.hideLoading();
 
-      final phoneNumber = phoneNumberController.text;
+      // Check if the API returned the OTP value (for testing purposes)
+      String? otpValue;
+      if (response.containsKey('otp')) {
+        otpValue = response['otp'].toString();
+        print('OTP received: $otpValue');
+      }
 
       // Navigate to OTP verification screen
       Get.toNamed(
         Routes.OTP_VERIFICATION,
-        arguments: {'phoneNumber': phoneNumber},
+        arguments: {
+          'phoneNumber': phoneNumber,
+          'fullName': fullName,
+          'cardNumber': cardNumber,
+          'fcmToken': fcmToken,
+          'otpValue': otpValue, // Pass the OTP value if available (for testing)
+        },
       );
-    });
+    } catch (e) {
+      DialogHelper.hideLoading();
+      DialogHelper.showErrorDialog(title: 'error'.tr, message: e.toString());
+    }
   }
 
   // Navigate to login

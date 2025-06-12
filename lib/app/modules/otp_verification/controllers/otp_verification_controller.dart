@@ -1,73 +1,74 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../models/user_model.dart';
 import '../../../routes/app_pages.dart';
 import '../../../utils/dialog_helper.dart';
+import '../../../../services/api_service.dart';
+import '../../../../services/storage_service.dart';
 
 class OtpVerificationController extends GetxController {
-  // The phone number from the previous screen
+  final ApiService _apiService = ApiService();
+  final StorageService _storageService = Get.find<StorageService>();
+
   final String phoneNumber;
+  final String fullName;
+  final String cardNumber;
+  final String fcmToken;
+  final String? otpValue; // OTP value for auto-fill (testing only)
 
-  // Constructor to receive phone number
-  OtpVerificationController({required this.phoneNumber});
+  OtpVerificationController({
+    required this.phoneNumber,
+    required this.fullName,
+    required this.cardNumber,
+    required this.fcmToken,
+    this.otpValue,
+  });
 
-  // Text editing controller for PIN input
-  late final TextEditingController pinController = TextEditingController();
+  final TextEditingController pinController = TextEditingController();
 
-  // Observable variables
   final RxBool isLoading = false.obs;
   final RxBool isResending = false.obs;
   final RxString pin = ''.obs;
   final RxString formattedPhoneNumber = ''.obs;
   final RxBool canResend = false.obs;
   final RxInt resendTimer = 60.obs;
-  final RxBool isDisposed = false.obs;
 
-  // Focus node for PIN input
-  late final focusNode = FocusNode();
+  final focusNode = FocusNode();
   Timer? _timer;
 
   @override
   void onInit() {
     super.onInit();
-    // Format the phone number for display (e.g. +81 90-XXXX-5678)
+
     formattedPhoneNumber.value = formatPhoneNumber(phoneNumber);
-    // Start the resend timer
+
     startResendTimer();
+
+    // Auto-fill OTP if available (for testing purposes)
+    if (otpValue != null && otpValue!.isNotEmpty) {
+      pin.value = otpValue!;
+      pinController.text = otpValue!;
+    }
   }
 
   @override
   void onClose() {
-    isDisposed.value = true;
     pinController.dispose();
     focusNode.dispose();
     _timer?.cancel();
     super.onClose();
   }
 
-  // Format phone number for display
   String formatPhoneNumber(String number) {
-    // Check if number is already formatted
-    if (number.contains('-') || number.contains(' ')) {
-      return number;
-    }
-
-    // Basic formatting - can be customized based on your needs
-    if (number.length >= 10) {
-      String prefix = number.substring(0, 3);
-      String middle = number.substring(3, 7);
-      String last = number.substring(7);
-      return '+81 $prefix-$middle-$last';
-    }
-    return number;
+    String cleanNumber = number.replaceAll(RegExp(r'[^\d]'), '');
+    return cleanNumber;
   }
 
-  // Update PIN when user enters code
   void updatePin(String value) {
     pin.value = value;
   }
 
-  // Start the resend timer
   void startResendTimer() {
     canResend.value = false;
     resendTimer.value = 60;
@@ -82,9 +83,8 @@ class OtpVerificationController extends GetxController {
     });
   }
 
-  // Verify OTP
-  void verifyOTP() {
-    if (pin.value.length != 6) {
+  Future<void> verifyOTP() async {
+    if (pin.value.length != 4) {
       DialogHelper.showErrorDialog(
         title: 'invalid_otp'.tr,
         message: 'enter_valid_otp'.tr,
@@ -92,39 +92,116 @@ class OtpVerificationController extends GetxController {
       return;
     }
 
-    // Show loading dialog
     DialogHelper.showLoading(message: 'verifying_otp'.tr);
 
-    // Simulate API call
-    Future.delayed(const Duration(seconds: 2), () {
-      // Hide loading dialog
+    try {
+      print('Verifying OTP: ${pin.value}');
+      final response = await _apiService.verifyOtpAndRegister(
+        mobile: phoneNumber,
+        name: fullName,
+        cardNumber: cardNumber,
+        fcmToken: fcmToken,
+        otp: pin.value,
+      );
+
+      print('Verification response: $response');
       DialogHelper.hideLoading();
 
-      // Show success dialog and navigate to main page
-      DialogHelper.showSuccessDialog(
-        title: 'success'.tr,
-        message: 'otp_verified'.tr,
-        buttonText: 'continue'.tr,
-        onConfirm: () => Get.offAllNamed(Routes.MAIN),
+      try {
+        // Create a user from the response
+        final user = User.fromJson(response);
+        print('User created: ${user.userId} with token: ${user.accessToken}');
+
+        // Save user data (this might fail but we'll continue anyway)
+        try {
+          await _storageService.saveUser(user);
+          print('User data saved successfully');
+        } catch (saveError) {
+          // If saving fails, we'll still proceed with the registration
+          print(
+            'Error saving user but proceeding with registration: $saveError',
+          );
+
+          // Ensure the user is at least available in memory
+          _storageService.currentUser.value = user;
+          _storageService.isLoggedIn.value = true;
+        }
+
+        // Navigate directly to the main screen without showing success dialog
+        print('Navigating directly to MAIN route');
+        Get.offAllNamed(Routes.MAIN);
+      } catch (userError) {
+        print('Error creating user object: $userError');
+        print(
+          'Registration was successful, but user parsing failed. Navigating anyway.',
+        );
+
+        // Even if user object creation fails, navigate directly to main screen
+        print('Forced direct navigation to MAIN route');
+        Get.offAllNamed(Routes.MAIN);
+      }
+    } catch (e) {
+      print('Error during OTP verification: $e');
+      DialogHelper.hideLoading();
+
+      String errorMessage = e.toString();
+      // Simplify error message if it's too technical
+      if (errorMessage.contains('Exception: Error:')) {
+        errorMessage = errorMessage.replaceAll('Exception: Error: ', '');
+      }
+
+      DialogHelper.showErrorDialog(
+        title: 'error'.tr,
+        message: errorMessage,
+        buttonText: 'OK',
+        onConfirm: () {
+          // Ensure that the error dialog is properly dismissed
+          if (Get.isDialogOpen ?? false) {
+            Get.back();
+          }
+        },
       );
-    });
+    }
   }
 
-  // Resend OTP
-  void resendOTP() {
+  Future<void> resendOTP() async {
     if (!canResend.value) return;
 
     isResending.value = true;
 
-    // Simulate API call
-    Future.delayed(const Duration(seconds: 2), () {
+    DialogHelper.showLoading(message: 'sending_otp'.tr);
+
+    try {
+      // Call the API to resend OTP
+      final response = await _apiService.resendOTP(mobile: phoneNumber);
+
+      DialogHelper.hideLoading();
       isResending.value = false;
-      startResendTimer(); // Restart the timer
+      startResendTimer();
+
+      // Auto-fill OTP if available (for testing purposes)
+      if (response.containsKey('otp')) {
+        String newOtp = response['otp'].toString();
+        pin.value = newOtp;
+        pinController.text = newOtp;
+        print('New OTP received: $newOtp');
+      }
 
       DialogHelper.showSuccessDialog(
         title: 'otp_resent'.tr,
         message: 'new_otp_sent'.tr,
       );
-    });
+    } catch (e) {
+      DialogHelper.hideLoading();
+      isResending.value = false;
+
+      String errorMessage = e.toString();
+      // Simplify error message if it's too technical
+      if (errorMessage.contains('Exception: Error:')) {
+        errorMessage = errorMessage.replaceAll('Exception: Error: ', '');
+      }
+
+      DialogHelper.showErrorDialog(title: 'error'.tr, message: errorMessage);
+    }
   }
 }
