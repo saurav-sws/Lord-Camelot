@@ -26,15 +26,11 @@ class ProfileView extends GetView<ProfileController> {
           child: Padding(
             padding: ResponsiveSize.padding(vertical: 26, horizontal: 5),
             child: Column(
-
               children: [
-                Container(
-                  height: ResponsiveSize.height(40),
-                ),
+                Container(height: ResponsiveSize.height(40)),
                 Container(
                   height: ResponsiveSize.height(70),
                   width: double.infinity,
-
 
                   decoration: BoxDecoration(
                     color: Colors.black54,
@@ -76,10 +72,7 @@ class ProfileView extends GetView<ProfileController> {
                         ),
                       ),
                       OutlinedButton(
-                        onPressed: () {
-                          final controller = Get.find<ProfileController>();
-                          controller.onInit();
-                        },
+                        onPressed: () => profileController.fetchProfileData(),
                         style: OutlinedButton.styleFrom(
                           side: const BorderSide(color: Color(0xFF288c25)),
                           shape: RoundedRectangleBorder(
@@ -92,16 +85,28 @@ class ProfileView extends GetView<ProfileController> {
                             ResponsiveSize.height(42),
                           ),
                         ),
-                        child: Transform(
-                          transform: Matrix4.identity()..scale(1.1),
-                          child: Text(
-                            'my_profile'.tr,
-                            style: TextStyle(
-                              color:  Color(0xFF227522),
-                              fontSize: ResponsiveSize.fontSize(14),
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
+                        child: Obx(
+                          () =>
+                              profileController.isLoading.value
+                                  ? SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(
+                                      color: Color(0xFF227522),
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                                  : Transform(
+                                    transform: Matrix4.identity()..scale(1.1),
+                                    child: Text(
+                                      'refresh'.tr,
+                                      style: TextStyle(
+                                        color: Color(0xFF227522),
+                                        fontSize: ResponsiveSize.fontSize(14),
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ),
                         ),
                       ),
                     ],
@@ -153,8 +158,6 @@ class ProfileView extends GetView<ProfileController> {
                           hasEditIcon: true,
                         ),
                       ),
-
-
                     ],
                   ),
                 ),
@@ -171,7 +174,10 @@ class ProfileView extends GetView<ProfileController> {
                           width: 103,
                           height: 35,
                           decoration: BoxDecoration(
-                            border: Border.all(color: Colors.orange, width: 1.5),
+                            border: Border.all(
+                              color: Colors.orange,
+                              width: 1.5,
+                            ),
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Row(
@@ -181,14 +187,20 @@ class ProfileView extends GetView<ProfileController> {
                                 width: 50,
                                 height: 35,
                                 decoration: BoxDecoration(
-                                  color: isEnglish ? Colors.orange : Colors.black,
-                                  borderRadius: BorderRadius.horizontal(left: Radius.circular(30)),
+                                  color:
+                                      isEnglish ? Colors.orange : Colors.black,
+                                  borderRadius: BorderRadius.horizontal(
+                                    left: Radius.circular(30),
+                                  ),
                                 ),
                                 alignment: Alignment.center,
                                 child: Text(
                                   'EN',
                                   style: TextStyle(
-                                    color: isEnglish ? Colors.white : Colors.orange,
+                                    color:
+                                        isEnglish
+                                            ? Colors.white
+                                            : Colors.orange,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -198,14 +210,20 @@ class ProfileView extends GetView<ProfileController> {
                                 width: 50,
                                 height: 35,
                                 decoration: BoxDecoration(
-                                  color: !isEnglish ? Colors.orange : Colors.black,
-                                  borderRadius: BorderRadius.horizontal(right: Radius.circular(30)),
+                                  color:
+                                      !isEnglish ? Colors.orange : Colors.black,
+                                  borderRadius: BorderRadius.horizontal(
+                                    right: Radius.circular(30),
+                                  ),
                                 ),
                                 alignment: Alignment.center,
                                 child: Text(
                                   'JP',
                                   style: TextStyle(
-                                    color: !isEnglish ? Colors.white : Colors.orange,
+                                    color:
+                                        !isEnglish
+                                            ? Colors.white
+                                            : Colors.orange,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -228,7 +246,7 @@ class ProfileView extends GetView<ProfileController> {
                               ? null
                               : profileController.updateProfile,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor:  Color(0xFF227522),
+                        backgroundColor: Color(0xFF227522),
                         disabledBackgroundColor: Colors.grey,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(
@@ -247,9 +265,12 @@ class ProfileView extends GetView<ProfileController> {
                                 ),
                               )
                               : Transform(
-                            transform: Matrix4.identity()..scale( 1.2),
+                                transform: Matrix4.identity()..scale(1.2),
                                 child: Padding(
-                                  padding: const EdgeInsets.only(bottom: 7.0,right: 9),
+                                  padding: const EdgeInsets.only(
+                                    bottom: 7.0,
+                                    right: 9,
+                                  ),
                                   child: Text(
                                     'update'.tr,
                                     style: TextStyle(
@@ -293,8 +314,6 @@ class ProfileView extends GetView<ProfileController> {
                     ],
                   ),
                 ),
-
-
               ],
             ),
           ),

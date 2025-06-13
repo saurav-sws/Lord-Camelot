@@ -53,9 +53,10 @@ final Map<String, String> enUS = {
   'points_expire': 'Your points never expire.',
   'reach_points':
       'When you reach 5 unredeemed points, you\'ll receive a reward:',
-'tracking_info': 'Point tracking in this app starts from 2025.07.01.\nAll purchases made before that date will continue\nto be managed using your physical member card.',
+  'tracking_info':
+      'Point tracking in this app starts from 2025.07.01.\nAll purchases made before that date will continue\nto be managed using your physical member card.',
 
-'tracking_start': 'Point tracking in this app starts from 2025.07.01.',
+  'tracking_start': 'Point tracking in this app starts from 2025.07.01.',
   'before_date':
       'All purchases made before that date will continue to be managed using your physical member card.',
 
@@ -87,4 +88,11 @@ final Map<String, String> enUS = {
   'continue': 'Continue',
   'otp_resent': 'OTP Resent',
   'new_otp_sent': 'A new OTP has been sent to your phone number',
+  'refresh': 'Refresh',
+
+  // News related strings
+  'posted_on': 'Posted on',
+  'try_again': 'Try Again',
+  'no_news': 'No news available at the moment',
+  'news_error': 'Error loading news',
 };

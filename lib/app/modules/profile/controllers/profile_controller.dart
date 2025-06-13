@@ -29,8 +29,8 @@ class ProfileController extends GetxController {
   void onInit() {
     super.onInit();
 
-    // Load user data from storage
-    _loadUserData();
+    // Load user data from API
+    fetchProfileData();
 
     final locale = Get.locale;
     isEnglish.value = locale == null || locale.languageCode == 'en';
@@ -44,7 +44,61 @@ class ProfileController extends GetxController {
     super.onClose();
   }
 
-  void _loadUserData() {
+  Future<void> fetchProfileData() async {
+    try {
+      isLoading.value = true;
+
+      // First load from storage as fallback
+      _loadUserDataFromStorage();
+
+      // Then try to fetch from API
+      final response = await _apiService.getProfile();
+
+      if (response['success'] == true && response['data'] != null) {
+        final profileData = response['data'];
+
+        // Update UI with API data
+        fullName.value = profileData['name'] ?? fullName.value;
+        cardNumber.value = profileData['card_number'] ?? cardNumber.value;
+        mobileNumber.value = profileData['mobile'] ?? mobileNumber.value;
+        birthDate.value = profileData['dob'] ?? birthDate.value;
+
+        // Update storage with latest data
+        final currentUser = _storageService.currentUser.value;
+        if (currentUser != null) {
+          final updatedUser = User(
+            accessToken: currentUser.accessToken,
+            tokenType: currentUser.tokenType,
+            userId: profileData['id'] ?? currentUser.userId,
+            cardNumber: profileData['card_number'] ?? currentUser.cardNumber,
+            name: profileData['name'] ?? currentUser.name,
+            mobile: profileData['mobile'] ?? currentUser.mobile,
+            dob: profileData['dob'] ?? currentUser.dob,
+            totalPoint: currentUser.totalPoint,
+          );
+
+          await _storageService.saveUser(updatedUser);
+        }
+
+        print('ProfileController - Loaded user data from API:');
+        print('Name: ${fullName.value}');
+        print('Card Number: ${cardNumber.value}');
+        print('Mobile: ${mobileNumber.value}');
+        print('DOB: ${birthDate.value}');
+      } else {
+        print(
+          'Failed to fetch profile data from API, using storage data instead',
+        );
+      }
+    } catch (e) {
+      print('Error fetching profile data: $e');
+      // Already loaded from storage as fallback
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  void _loadUserDataFromStorage() {
     final user = _storageService.currentUser.value;
     if (user != null) {
       fullName.value = user.name ?? 'John Doe';
@@ -56,7 +110,7 @@ class ProfileController extends GetxController {
       birthDate.value = user.dob ?? '1990-01-01';
       totalPoints.value = user.totalPoint ?? 0;
     } else {
-
+      // Fallback values
       fullName.value = 'John Doe';
       cardNumber.value = _storageService.cardNumber;
       mobileNumber.value = '+81 90-1234-5678';
@@ -64,7 +118,7 @@ class ProfileController extends GetxController {
       totalPoints.value = 0;
     }
 
-    print('ProfileController - Loaded user data:');
+    print('ProfileController - Loaded user data from storage:');
     print('Name: ${fullName.value}');
     print('Card Number: ${cardNumber.value}');
     print('Mobile: ${mobileNumber.value}');
@@ -181,7 +235,6 @@ class ProfileController extends GetxController {
     try {
       isLoading.value = true;
 
-
       if (fullName.value.trim().isEmpty) {
         DialogHelper.showErrorDialog(
           title: 'Validation Error',
@@ -206,7 +259,6 @@ class ProfileController extends GetxController {
         return;
       }
 
-
       final response = await _apiService.updateProfile(
         name: fullName.value.trim(),
         mobile: mobileNumber.value.trim(),
@@ -217,10 +269,8 @@ class ProfileController extends GetxController {
 
       print('Profile update response: $response');
 
-
       if (response.containsKey('user') || response.containsKey('data')) {
         final userData = response['user'] ?? response['data'] ?? response;
-
 
         final currentUser = _storageService.currentUser.value;
         if (currentUser != null) {
@@ -235,11 +285,9 @@ class ProfileController extends GetxController {
             totalPoint: totalPoints.value,
           );
 
-
           await _storageService.saveUser(updatedUser);
 
-
-          _loadUserData();
+          _loadUserDataFromStorage();
         }
       }
 
@@ -265,10 +313,8 @@ class ProfileController extends GetxController {
       message: 'logout_confirmation'.tr,
       buttonText: 'yes_logout'.tr,
       onConfirm: () async {
-
         await _storageService.clearUser();
         print('User data cleared from storage');
-
 
         Get.offAllNamed('/login');
       },

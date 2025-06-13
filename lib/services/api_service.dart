@@ -360,6 +360,33 @@ class ApiService {
     }
   }
 
+  Future<Map<String, dynamic>> getProfile() async {
+    try {
+      print('Fetching user profile data...');
+      final response = await _dio.get('/get-profile');
+
+      if (response.statusCode == 200) {
+        print('Profile data fetched successfully: ${response.data}');
+        return response.data;
+      } else {
+        throw Exception('Failed to fetch profile data: ${response.statusCode}');
+      }
+    } on DioException catch (e) {
+      if (e.response != null) {
+        print('Error response from get-profile API: ${e.response?.data}');
+        throw Exception(
+          'Error: ${e.response?.data['message'] ?? 'Unknown error'}',
+        );
+      } else {
+        print('Network error fetching profile data: ${e.message}');
+        throw Exception('Network error: ${e.message}');
+      }
+    } catch (e) {
+      print('General error fetching profile data: $e');
+      throw Exception('Error: $e');
+    }
+  }
+
   Future<Map<String, dynamic>> redeemPoints({
     required List<int> pointIds,
     required double totalAmount,
@@ -383,7 +410,6 @@ class ApiService {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         print('Points redeemed successfully: ${response.data}');
-
 
         if (response.data is Map<String, dynamic>) {
           if (!response.data.containsKey('success')) {
@@ -412,6 +438,33 @@ class ApiService {
       }
     } catch (e) {
       print('General error redeeming points: $e');
+      throw Exception('Error: $e');
+    }
+  }
+
+  Future<Map<String, dynamic>> getNews() async {
+    try {
+      print('Fetching news data...');
+      final response = await _dio.get('/news');
+
+      if (response.statusCode == 200) {
+        print('News data fetched successfully: ${response.data}');
+        return response.data;
+      } else {
+        throw Exception('Failed to fetch news data: ${response.statusCode}');
+      }
+    } on DioException catch (e) {
+      if (e.response != null) {
+        print('Error response from news API: ${e.response?.data}');
+        throw Exception(
+          'Error: ${e.response?.data['message'] ?? 'Unknown error'}',
+        );
+      } else {
+        print('Network error fetching news data: ${e.message}');
+        throw Exception('Network error: ${e.message}');
+      }
+    } catch (e) {
+      print('General error fetching news data: $e');
       throw Exception('Error: $e');
     }
   }

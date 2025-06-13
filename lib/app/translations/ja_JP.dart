@@ -50,7 +50,8 @@ final Map<String, String> jaJP = {
   'purchase_recorded': 'ご購入内容は店舗スタッフが手動で記録します。',
   'points_expire': 'ポイントに有効期限はありません。',
   'reach_points': '5ポイント未使用で貯まると、以下の特典がもらえます：',
-  'tracking_info' : 'このアプリでのポイント管理は2025年7月1日から開始されます。それ以前のご購入分は引き続き物理会員カードで管理されます。',
+  'tracking_info':
+      'このアプリでのポイント管理は2025年7月1日から開始されます。それ以前のご購入分は引き続き物理会員カードで管理されます。',
   'tracking_start': 'このアプリでのポイント管理は2025年7月1日から開始されます。',
   'before_date': 'それ以前のご購入分は引き続き物理会員カードで管理されます。',
 
@@ -74,7 +75,7 @@ final Map<String, String> jaJP = {
   'sending_otp': '認証コードを送信中...',
   'processing_request': 'リクエスト処理中...',
   'verifying_otp': '認証コードを確認中...',
-'no points': 'ポイントレコードが見つかりませんでした',
+  'no points': 'ポイントレコードが見つかりませんでした',
   // Success messages
   'success': '成功',
   'login_success': 'ログインに成功しました',
@@ -82,4 +83,11 @@ final Map<String, String> jaJP = {
   'continue': '続ける',
   'otp_resent': '認証コード再送信',
   'new_otp_sent': '新しい認証コードが電話番号に送信されました',
+  'refresh': '更新',
+
+  // News related strings
+  'posted_on': '投稿日',
+  'try_again': '再試行',
+  'no_news': '現在、ニュースはありません',
+  'news_error': 'ニュースの読み込みエラー',
 };
