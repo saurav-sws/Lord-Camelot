@@ -56,26 +56,25 @@ class NewsView extends GetView<NewsController> {
                 padding: ResponsiveSize.padding(vertical: 12, horizontal: 16),
                 decoration: BoxDecoration(
                   color: Colors.black54,
-                  borderRadius: BorderRadius.circular(ResponsiveSize.radius(20)),
+                  borderRadius: BorderRadius.circular(ResponsiveSize.radius(8)),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Expanded(
                       child: Obx(() {
-                        String cardNumber = storageService.cardNumber;
+                        String cardNumber =
+                            storageService.currentUser.value?.cardNumber ??
+                            storageService.cardNumber;
 
-                        return Transform(
-                          transform: Matrix4.identity()..scale(1.1),
-                          child: Text(
-                            'card_number'.tr + ' $cardNumber',
-                            style: TextStyle(
-                              color: Colors.white70,
-                              fontSize: ResponsiveSize.fontSize(14),
-                              fontWeight: FontWeight.w500,
-                            ),
-                            overflow: TextOverflow.ellipsis,
+                        return Text(
+                          'card_number'.tr + ' $cardNumber',
+                          style: TextStyle(
+                            color: Colors.white70,
+                            fontSize: ResponsiveSize.fontSize(13),
+                            fontWeight: FontWeight.w600,
                           ),
+                          overflow: TextOverflow.ellipsis,
                         );
                       }),
                     ),
@@ -90,8 +89,8 @@ class NewsView extends GetView<NewsController> {
                           ),
                         ),
                         minimumSize: Size(
-                          ResponsiveSize.width(90),
-                          ResponsiveSize.height(50),
+                          ResponsiveSize.width(50),
+                          ResponsiveSize.height(40),
                         ),
                       ),
                       child: Transform(
@@ -202,7 +201,6 @@ class NewsView extends GetView<NewsController> {
                                 Container(
                                   margin: ResponsiveSize.margin(vertical: 8),
                                   height: 10,
-
                                 ),
                             ],
                           );
@@ -220,46 +218,86 @@ class NewsView extends GetView<NewsController> {
   }
 
   Widget _buildNewsCard(News news, NewsController controller) {
+    // Format the date to match the screenshot (YYYY.MM.DD)
+    String formattedDate = '';
+    try {
+      final DateTime date = DateTime.parse(news.createdAt);
+      formattedDate =
+          '${date.year}.${date.month.toString().padLeft(2, '0')}.${date.day.toString().padLeft(2, '0')}';
+    } catch (e) {
+      formattedDate = news.createdAt;
+    }
+
     return GestureDetector(
       onTap: () => controller.showNewsDetail(news),
       child: Container(
-        margin: ResponsiveSize.margin(vertical: 16),
+        margin: ResponsiveSize.margin(vertical: 10),
         decoration: BoxDecoration(
-          color: Colors.black54,
+          color: Color(0xFF0f0f0f),
           borderRadius: BorderRadius.circular(ResponsiveSize.radius(12)),
-          border: Border.all(color: Color(0xFF1E1E1E)),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (news.image.isNotEmpty)
-              ClipRRect(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(ResponsiveSize.radius(12)),
-                  topRight: Radius.circular(ResponsiveSize.radius(12)),
-                ),
-                child: Image.network(
-                  news.image,
-                  width: double.infinity,
-                  height: ResponsiveSize.height(180),
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      height: ResponsiveSize.height(180),
-                      color: Colors.grey.shade800,
-                      child: Center(
-                        child: Icon(
-                          Icons.image_not_supported,
-                          color: Colors.white,
-                          size: ResponsiveSize.width(40),
-                        ),
-                      ),
-                    );
-                  },
+            // Date at the top
+            Padding(
+              padding: ResponsiveSize.padding(horizontal: 16, vertical: 8),
+              child: Text(
+                formattedDate,
+                style: TextStyle(
+                  color: Colors.amber[600],
+                  fontSize: ResponsiveSize.fontSize(14),
+                  fontWeight: FontWeight.w500,
                 ),
               ),
+            ),
+            // Image with fixed aspect ratio
+            if (news.image.isNotEmpty)
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: AspectRatio(
+                  aspectRatio: 1.5, // Fixed aspect ratio for consistent sizing
+                  child: Container(
+                    margin: EdgeInsets.symmetric(horizontal: 16),
+                    child: Image.network(
+                      news.image,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          color: Colors.grey.shade800,
+                          child: Center(
+                            child: Icon(
+                              Icons.image_not_supported,
+                              color: Colors.white,
+                              size: ResponsiveSize.width(50),
+                            ),
+                          ),
+                        );
+                      },
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return Container(
+                          color: Colors.grey.shade800,
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              color: Color(0xFF288c25),
+                              value:
+                                  loadingProgress.expectedTotalBytes != null
+                                      ? loadingProgress.cumulativeBytesLoaded /
+                                          loadingProgress.expectedTotalBytes!
+                                      : null,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              ),
+            // Title and description
             Padding(
-              padding: ResponsiveSize.padding(horizontal: 20, vertical: 20),
+              padding: ResponsiveSize.padding(all: 16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -267,39 +305,21 @@ class NewsView extends GetView<NewsController> {
                     news.title,
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: ResponsiveSize.fontSize(18),
+                      fontSize: ResponsiveSize.fontSize(16),
                       fontWeight: FontWeight.bold,
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  SizedBox(height: ResponsiveSize.height(14)),
+                  SizedBox(height: ResponsiveSize.height(8)),
                   Text(
-                    _getPlainText(news.description),
+                    _stripHtmlTags(news.description),
                     style: TextStyle(
                       color: Colors.white70,
                       fontSize: ResponsiveSize.fontSize(14),
                     ),
                     maxLines: 3,
                     overflow: TextOverflow.ellipsis,
-                  ),
-                  SizedBox(height: ResponsiveSize.height(20)),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        '${'posted_on'.tr}: ${news.createdAt}',
-                        style: TextStyle(
-                          color: Colors.grey,
-                          fontSize: ResponsiveSize.fontSize(12),
-                        ),
-                      ),
-                      Icon(
-                        Icons.arrow_forward,
-                        color: Color(0xFF288c25),
-                        size: ResponsiveSize.width(20),
-                      ),
-                    ],
                   ),
                 ],
               ),
@@ -310,7 +330,7 @@ class NewsView extends GetView<NewsController> {
     );
   }
 
-  String _getPlainText(String htmlString) {
+  String _stripHtmlTags(String htmlString) {
     return htmlString.replaceAll(RegExp(r'<[^>]*>'), '');
   }
 }

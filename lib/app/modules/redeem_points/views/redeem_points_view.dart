@@ -4,12 +4,52 @@ import '../../../utils/responsive_size.dart';
 
 import '../controllers/redeem_points_controller.dart';
 
-class RedeemPointsView extends GetView<RedeemPointsController> {
+class RedeemPointsView extends StatefulWidget {
   const RedeemPointsView({Key? key}) : super(key: key);
 
   @override
+  State<RedeemPointsView> createState() => _RedeemPointsViewState();
+}
+
+class _RedeemPointsViewState extends State<RedeemPointsView>
+    with WidgetsBindingObserver {
+  late RedeemPointsController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = Get.put(RedeemPointsController());
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      // Refresh data when app is resumed
+      controller.refreshData();
+    }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // This will be called when the route is pushed or popped
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (ModalRoute.of(context)?.isCurrent == true) {
+        // This view is now the current view, refresh data
+        controller.onResume();
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final redeemController = Get.put(RedeemPointsController());
     return Scaffold(
       body: Container(
         width: double.infinity,
@@ -61,21 +101,20 @@ class RedeemPointsView extends GetView<RedeemPointsController> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Transform(
-                      transform: Matrix4.identity()..scale(1.1),
+                      transform: Matrix4.identity()..scale(1.0),
                       child: Obx(
                         () => Text(
-                          'card_number'.tr +
-                              ' ${redeemController.cardNumber.value}',
+                          'card_number'.tr + ' ${controller.cardNumber.value}',
                           style: TextStyle(
                             color: Colors.white70,
-                            fontSize: ResponsiveSize.fontSize(14),
-                            fontWeight: FontWeight.w500,
+                            fontSize: ResponsiveSize.fontSize(13),
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ),
                     ),
                     OutlinedButton(
-                      onPressed: redeemController.goToProfile,
+                      onPressed: controller.goToProfile,
                       style: OutlinedButton.styleFrom(
                         side: const BorderSide(color: Color(0xFF288c25)),
                         shape: RoundedRectangleBorder(
@@ -84,8 +123,8 @@ class RedeemPointsView extends GetView<RedeemPointsController> {
                           ),
                         ),
                         minimumSize: Size(
-                          ResponsiveSize.width(90),
-                          ResponsiveSize.height(50),
+                          ResponsiveSize.width(50),
+                          ResponsiveSize.height(40),
                         ),
                       ),
                       child: Transform(
@@ -116,7 +155,7 @@ class RedeemPointsView extends GetView<RedeemPointsController> {
                           Text(
                             'redeem_minimum'.tr.replaceFirst(
                               '5',
-                              '${redeemController.minimumPoints}',
+                              '${controller.minimumPoints}',
                             ),
                             style: TextStyle(
                               color: Colors.white70,
@@ -125,11 +164,14 @@ class RedeemPointsView extends GetView<RedeemPointsController> {
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.only(bottom: 5.0,right: 40),
+                            padding: const EdgeInsets.only(
+                              bottom: 5.0,
+                              right: 40,
+                            ),
                             child: Transform(
                               transform: Matrix4.identity()..scale(1.1),
                               child: Text(
-                                ' ${redeemController.totalSelectedPoints.value}',
+                                ' ${controller.totalSelectedPoints.value}',
                                 style: TextStyle(
                                   color: Color(0xFF227522),
                                   fontSize: ResponsiveSize.fontSize(22),
@@ -142,21 +184,19 @@ class RedeemPointsView extends GetView<RedeemPointsController> {
                       ),
                     ),
                   ),
-
-
                 ],
               ),
 
               Expanded(
                 child: Obx(() {
-                  if (redeemController.isLoading.value) {
+                  if (controller.isLoading.value) {
                     return const Center(
                       child: CircularProgressIndicator(color: Colors.green),
                     );
                   }
 
                   final unredeemedPoints =
-                      redeemController.pointHistoryList
+                      controller.pointHistoryList
                           .where((point) => !point.isAlreadyRedeemed)
                           .toList();
 
@@ -173,7 +213,7 @@ class RedeemPointsView extends GetView<RedeemPointsController> {
                   }
 
                   return RefreshIndicator(
-                    onRefresh: redeemController.refreshData,
+                    onRefresh: controller.refreshData,
                     child: ListView.builder(
                       itemCount: unredeemedPoints.length,
                       itemBuilder: (context, index) {
@@ -230,11 +270,11 @@ class RedeemPointsView extends GetView<RedeemPointsController> {
                                   SizedBox(height: 5),
                                   GestureDetector(
                                     onTap:
-                                        () => redeemController
-                                            .togglePointSelection(
-                                              redeemController.pointHistoryList
-                                                  .indexOf(pointHistory),
-                                            ),
+                                        () => controller.togglePointSelection(
+                                          controller.pointHistoryList.indexOf(
+                                            pointHistory,
+                                          ),
+                                        ),
                                     child: Container(
                                       width: ResponsiveSize.width(24),
                                       height: ResponsiveSize.height(24),
@@ -270,7 +310,7 @@ class RedeemPointsView extends GetView<RedeemPointsController> {
               ),
 
               Obx(() {
-                if (!redeemController.hasSelectedPoints) {
+                if (!controller.hasSelectedPoints) {
                   return const SizedBox.shrink();
                 }
 
@@ -287,7 +327,7 @@ class RedeemPointsView extends GetView<RedeemPointsController> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '${'summary'.tr} (${redeemController.totalSelectedPoints.value} ${'my_points'.tr})',
+                        '${'summary'.tr} (${controller.totalSelectedPoints.value} ${'my_points'.tr})',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: ResponsiveSize.fontSize(16),
@@ -342,7 +382,7 @@ class RedeemPointsView extends GetView<RedeemPointsController> {
                             ),
                           ),
                           Text(
-                            '${redeemController.totalSelectedPoints.value}',
+                            '${controller.totalSelectedPoints.value}',
                             style: TextStyle(
                               color: Colors.orange,
                               fontSize: ResponsiveSize.fontSize(14),
@@ -364,7 +404,7 @@ class RedeemPointsView extends GetView<RedeemPointsController> {
                             ),
                           ),
                           Text(
-                            '¥${redeemController.totalAmount.value.toStringAsFixed(0)}',
+                            '¥${controller.totalAmount.value.toStringAsFixed(0)}',
                             style: TextStyle(
                               color: Colors.orange,
                               fontSize: ResponsiveSize.fontSize(14),
@@ -386,7 +426,7 @@ class RedeemPointsView extends GetView<RedeemPointsController> {
                             ),
                           ),
                           Text(
-                            '¥${redeemController.totalDiscount.value.toStringAsFixed(0)}',
+                            '¥${controller.totalDiscount.value.toStringAsFixed(0)}',
                             style: TextStyle(
                               color: Colors.orange,
                               fontSize: ResponsiveSize.fontSize(14),
@@ -401,7 +441,7 @@ class RedeemPointsView extends GetView<RedeemPointsController> {
               }),
 
               Obx(() {
-                if (!redeemController.hasSelectedPoints) {
+                if (!controller.hasSelectedPoints) {
                   return const SizedBox.shrink();
                 }
 
@@ -411,13 +451,13 @@ class RedeemPointsView extends GetView<RedeemPointsController> {
                   margin: ResponsiveSize.margin(vertical: 10),
                   child: ElevatedButton(
                     onPressed:
-                        redeemController.canRedeem &&
-                                !redeemController.isLoadingRedeem.value
-                            ? redeemController.redeemSelectedPoints
+                        controller.canRedeem &&
+                                !controller.isLoadingRedeem.value
+                            ? controller.redeemSelectedPoints
                             : null,
                     style: ElevatedButton.styleFrom(
                       backgroundColor:
-                          redeemController.canRedeem
+                          controller.canRedeem
                               ? Color(0xFF288c25)
                               : Colors.grey,
                       shape: RoundedRectangleBorder(
@@ -427,7 +467,7 @@ class RedeemPointsView extends GetView<RedeemPointsController> {
                       ),
                     ),
                     child:
-                        redeemController.isLoadingRedeem.value
+                        controller.isLoadingRedeem.value
                             ? const SizedBox(
                               width: 20,
                               height: 20,
@@ -437,7 +477,7 @@ class RedeemPointsView extends GetView<RedeemPointsController> {
                               ),
                             )
                             : Text(
-                              '${'redeeme'.tr} ${redeemController.totalSelectedPoints.value} ${'my_points'.tr}',
+                              '${'redeeme'.tr} ${controller.totalSelectedPoints.value} ${'my_points'.tr}',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: ResponsiveSize.fontSize(16),

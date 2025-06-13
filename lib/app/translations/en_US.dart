@@ -21,7 +21,7 @@ final Map<String, String> enUS = {
   'resend': 'Re-send',
   'seconds': 'seconds',
   'my_points': 'My Points',
-  'card_number': 'Card Number',
+  'card_number': 'Card Number:',
   'my_profile': 'My Profile',
   'dealer_number': 'Dealer Number :',
   'date': 'Date:',
@@ -44,7 +44,7 @@ final Map<String, String> enUS = {
   'birth_date': 'Birth Date :',
   'update': 'Update',
   'log_out': 'Log Out',
-  'about_points': 'About Points',
+  'about': 'About',
   'about_program': 'About the Point Program',
   'earn_point':
       'Earn 1 point every time you make a purchase — no matter the amount.',
@@ -67,7 +67,7 @@ final Map<String, String> enUS = {
   // Error messages
   'error': 'Error',
   'login_failed': 'Login failed. Please check your credentials and try again.',
-  'network_error': 'Network error. Please check your connection and try again.',
+  'network_error': 'Network Error',
   'missing_information': 'Missing Information',
   'enter_both': 'Please enter both Card Number and Phone Number',
   'enter_phone_first': 'Please enter your Phone Number first',
@@ -101,4 +101,5 @@ final Map<String, String> enUS = {
   'discount_tier1': '¥50,000 - ¥99,999 = ¥2,000 discount or gift',
   'discount_tier2': '¥100,000 - ¥199,999 = ¥5,000 discount or gift',
   'discount_tier3': '¥200,000+ = ¥10,000 discount or gift',
+  'points_redeemed_success': 'Points redeemed successfully!',
 };

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lordcamelot_point/app/modules/main/views/main_view.dart';
 import '../../../controllers/language_controller.dart';
 import '../../../utils/responsive_size.dart';
+import '../../main/controllers/main_controller.dart';
 import '../controllers/profile_controller.dart';
 
 class ProfileView extends GetView<ProfileController> {
@@ -11,6 +13,7 @@ class ProfileView extends GetView<ProfileController> {
   Widget build(BuildContext context) {
     final profileController = Get.put(ProfileController());
     final languageController = Get.put(LanguageController());
+    final mainController = Get.put(MainController());
     return Scaffold(
       body: Container(
         width: double.infinity,
@@ -58,58 +61,19 @@ class ProfileView extends GetView<ProfileController> {
                       ResponsiveSize.radius(10),
                     ),
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Obx(
-                        () => Text(
-                          '${'card_number'.tr} ${profileController.cardNumber.value}',
-                          style: TextStyle(
-                            color: Colors.white70,
-                            fontSize: ResponsiveSize.fontSize(14),
-                            fontWeight: FontWeight.w500,
-                          ),
+                  child: Center(
+                    child: Obx(
+                      () => Text(
+                        '${'card_number'.tr}: ${profileController.cardNumber.value}',
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: ResponsiveSize.fontSize(13),
+                          fontWeight: FontWeight.w600,
                         ),
+                        textAlign: TextAlign.center,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      OutlinedButton(
-                        onPressed: () => profileController.fetchProfileData(),
-                        style: OutlinedButton.styleFrom(
-                          side: const BorderSide(color: Color(0xFF288c25)),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(
-                              ResponsiveSize.radius(20),
-                            ),
-                          ),
-                          minimumSize: Size(
-                            ResponsiveSize.width(100),
-                            ResponsiveSize.height(42),
-                          ),
-                        ),
-                        child: Obx(
-                          () =>
-                              profileController.isLoading.value
-                                  ? SizedBox(
-                                    width: 20,
-                                    height: 20,
-                                    child: CircularProgressIndicator(
-                                      color: Color(0xFF227522),
-                                      strokeWidth: 2,
-                                    ),
-                                  )
-                                  : Transform(
-                                    transform: Matrix4.identity()..scale(1.1),
-                                    child: Text(
-                                      'refresh'.tr,
-                                      style: TextStyle(
-                                        color: Color(0xFF227522),
-                                        fontSize: ResponsiveSize.fontSize(14),
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                  ),
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
                 SizedBox(height: ResponsiveSize.height(5)),
@@ -125,37 +89,45 @@ class ProfileView extends GetView<ProfileController> {
                     children: [
                       Obx(
                         () => _buildProfileField(
-                          'full_name'.tr,
+                          profileController,
+                          'Full Name',
                           profileController.fullName.value,
                           () => profileController.editField('Full Name'),
                           hasEditIcon: true,
+                          translatedLabel: 'full_name'.tr,
                         ),
                       ),
                       SizedBox(height: ResponsiveSize.height(15)),
                       Obx(
                         () => _buildProfileField(
-                          'card_number'.tr,
+                          profileController,
+                          'Card Number',
                           profileController.cardNumber.value,
                           () => profileController.editField('Card Number'),
                           hasEditIcon: true,
+                          translatedLabel: 'card_number'.tr,
                         ),
                       ),
                       SizedBox(height: ResponsiveSize.height(15)),
                       Obx(
                         () => _buildProfileField(
-                          'mobile_number'.tr,
+                          profileController,
+                          'Mobile Number',
                           profileController.mobileNumber.value,
                           () => profileController.editField('Mobile Number'),
                           hasEditIcon: true,
+                          translatedLabel: 'mobile_number'.tr,
                         ),
                       ),
                       SizedBox(height: ResponsiveSize.height(15)),
                       Obx(
                         () => _buildProfileField(
-                          'birth_date'.tr,
+                          profileController,
+                          'Birth Date',
                           profileController.birthDate.value,
                           () => profileController.editField('Birth Date'),
                           hasEditIcon: true,
+                          translatedLabel: 'birth_date'.tr,
                         ),
                       ),
                     ],
@@ -235,7 +207,7 @@ class ProfileView extends GetView<ProfileController> {
                     }),
                   ),
                 ),
-                SizedBox(height: ResponsiveSize.height(25)),
+                SizedBox(height: ResponsiveSize.height(45)),
                 SizedBox(
                   width: ResponsiveSize.width(270),
                   height: ResponsiveSize.height(45),
@@ -303,7 +275,7 @@ class ProfileView extends GetView<ProfileController> {
                       TextButton(
                         onPressed: profileController.aboutPoints,
                         child: Text(
-                          'about_points'.tr,
+                          'about'.tr,
                           style: TextStyle(
                             color: const Color(0xFFFFA500),
                             fontSize: ResponsiveSize.fontSize(15),
@@ -323,53 +295,135 @@ class ProfileView extends GetView<ProfileController> {
   }
 
   Widget _buildProfileField(
+    ProfileController controller,
     String label,
     String value,
     Function()? onEdit, {
     bool hasEditIcon = true,
+    String? translatedLabel,
   }) {
-    return Container(
-      height: ResponsiveSize.height(50),
-      padding: ResponsiveSize.padding(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
-        color: const Color(0xFF1E1E1E),
-        borderRadius: BorderRadius.circular(ResponsiveSize.radius(15)),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            label,
-            style: TextStyle(
-              color: Colors.white70,
-              fontSize: ResponsiveSize.fontSize(13),
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          Expanded(
-            child: Text(
-              value,
+    return Obx(() {
+      bool isEditing =
+          controller.isEditingField.value &&
+          controller.currentlyEditingField.value == label;
+
+      print(
+        'Field: $label, isEditing: $isEditing, currentlyEditingField: ${controller.currentlyEditingField.value}',
+      );
+
+      TextEditingController? textController;
+      if (isEditing) {
+        print('Setting up controller for $label');
+        switch (label) {
+          case 'Full Name':
+            textController = controller.nameController;
+            break;
+          case 'Mobile Number':
+            textController = controller.mobileController;
+            break;
+          case 'Birth Date':
+            textController = controller.dobController;
+            break;
+          case 'Card Number':
+            textController = controller.cardNumberController;
+            break;
+        }
+      }
+
+      return Container(
+        height:
+            isEditing ? ResponsiveSize.height(70) : ResponsiveSize.height(50),
+        padding: ResponsiveSize.padding(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(
+          color: const Color(0xFF1E1E1E),
+          borderRadius: BorderRadius.circular(ResponsiveSize.radius(15)),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              translatedLabel ?? label,
               style: TextStyle(
                 color: Colors.white70,
                 fontSize: ResponsiveSize.fontSize(13),
                 fontWeight: FontWeight.w500,
               ),
-              textAlign: TextAlign.right,
             ),
-          ),
-          if (hasEditIcon) SizedBox(width: ResponsiveSize.width(10)),
-          if (hasEditIcon)
-            InkWell(
-              onTap: onEdit,
-              child: Icon(
-                Icons.edit_outlined,
-                color: Colors.black,
-                size: ResponsiveSize.width(22),
+            Expanded(
+              child:
+                  isEditing && textController != null
+                      ? TextField(
+                        controller: textController,
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: ResponsiveSize.fontSize(13),
+                          fontWeight: FontWeight.w500,
+                        ),
+                        textAlign: TextAlign.right,
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          hintText: 'Enter $label',
+                          hintStyle: TextStyle(
+                            color: Colors.white38,
+                            fontSize: ResponsiveSize.fontSize(13),
+                          ),
+                        ),
+                        keyboardType:
+                            label == 'Mobile Number'
+                                ? TextInputType.phone
+                                : label == 'Birth Date'
+                                ? TextInputType.datetime
+                                : label == 'Card Number'
+                                ? TextInputType.number
+                                : TextInputType.text,
+                        autofocus: true,
+                      )
+                      : Text(
+                        value,
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: ResponsiveSize.fontSize(13),
+                          fontWeight: FontWeight.w500,
+                        ),
+                        textAlign: TextAlign.right,
+                      ),
+            ),
+            if (isEditing) ...[
+              IconButton(
+                icon: Icon(
+                  Icons.check,
+                  color: Colors.green,
+                  size: ResponsiveSize.width(22),
+                ),
+                onPressed: () => controller.saveField(label),
+                padding: EdgeInsets.zero,
+                constraints: BoxConstraints(),
               ),
-            ),
-        ],
-      ),
-    );
+              IconButton(
+                icon: Icon(
+                  Icons.close,
+                  color: Colors.red,
+                  size: ResponsiveSize.width(22),
+                ),
+                onPressed: () => controller.cancelEditing(),
+                padding: EdgeInsets.zero,
+                constraints: BoxConstraints(),
+              ),
+            ] else if (hasEditIcon) ...[
+              SizedBox(width: ResponsiveSize.width(10)),
+              InkWell(
+                onTap: onEdit,
+                child: Icon(
+                  Icons.edit_outlined,
+                  color: Colors.black,
+                  size: ResponsiveSize.width(22),
+                ),
+              ),
+            ],
+          ],
+        ),
+      );
+    });
   }
 
   Widget _buildLanguageToggleOption(

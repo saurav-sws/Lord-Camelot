@@ -26,7 +26,6 @@ class HistoryView extends GetView<HistoryController> {
         child: Padding(
           padding: ResponsiveSize.padding(vertical: 16, horizontal: 10),
           child: Column(
-
             children: [
               SizedBox(height: ResponsiveSize.height(30)),
               Container(
@@ -63,26 +62,32 @@ class HistoryView extends GetView<HistoryController> {
                   children: [
                     Expanded(
                       child: Obx(() {
-                        String cardNumber = storageService.cardNumber;
+                        final storageService = Get.find<StorageService>();
+                        String cardNumber =
+                            storageService.currentUser.value?.cardNumber ?? '';
+
+                        if (cardNumber.isEmpty) {
+                          cardNumber = storageService.cardNumber;
+                        }
+
                         if (cardNumber.isEmpty &&
                             historyController.redeemHistory.isNotEmpty) {
                           cardNumber =
                               historyController.redeemHistory.first.cardNumber;
                         }
 
-
                         if (cardNumber.isEmpty) {
                           cardNumber = '678543';
                         }
 
                         return Transform(
-                          transform: Matrix4.identity()..scale(1.1),
+                          transform: Matrix4.identity()..scale(1.0),
                           child: Text(
                             'card_number'.tr + ' $cardNumber',
                             style: TextStyle(
                               color: Colors.white70,
-                              fontSize: ResponsiveSize.fontSize(14),
-                              fontWeight: FontWeight.w500,
+                              fontSize: ResponsiveSize.fontSize(13),
+                              fontWeight: FontWeight.w600,
                             ),
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -100,8 +105,8 @@ class HistoryView extends GetView<HistoryController> {
                           ),
                         ),
                         minimumSize: Size(
-                          ResponsiveSize.width(90),
-                          ResponsiveSize.height(50),
+                          ResponsiveSize.width(50),
+                          ResponsiveSize.height(40),
                         ),
                       ),
                       child: Transform(
@@ -312,7 +317,44 @@ class HistoryView extends GetView<HistoryController> {
     );
   }
 
+  Widget _buildCardNumberDisplay() {
+    final storageService = Get.find<StorageService>();
+    final controller = Get.find<HistoryController>();
 
+    return Obx(() {
+      String cardNumber = storageService.currentUser.value?.cardNumber ?? '';
+
+      if (cardNumber.isEmpty) {
+        cardNumber = storageService.cardNumber;
+      }
+
+      if (cardNumber.isEmpty && controller.redeemHistory.isNotEmpty) {
+        cardNumber = controller.redeemHistory.first.cardNumber;
+      }
+
+      if (cardNumber.isEmpty) {
+        cardNumber = '678543';
+      }
+
+      return Container(
+        width: double.infinity,
+        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+        decoration: BoxDecoration(
+          color: Colors.black54,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Text(
+          'card_number'.tr + ' $cardNumber',
+          style: TextStyle(
+            color: Colors.white70,
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+          ),
+          textAlign: TextAlign.center,
+        ),
+      );
+    });
+  }
 
   Widget _buildHistoryEntry(
     String date,

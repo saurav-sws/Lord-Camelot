@@ -176,6 +176,17 @@ class StorageService extends GetxService {
   String get cardNumber =>
       currentUser.value?.cardNumber ?? _inMemoryCardNumber ?? '';
 
+  // Update current user without saving to storage
+  void updateCurrentUser(User user) {
+    // Update reactive state only
+    currentUser.value = user;
+
+    // This will trigger all Obx widgets that depend on currentUser to rebuild
+    print(
+      'Updated current user in StorageService: ${user.name}, ${user.cardNumber}',
+    );
+  }
+
   Future<StorageService> init() async {
     try {
       print('Initializing StorageService...');

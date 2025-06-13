@@ -78,15 +78,15 @@ class MyPointsView extends GetView<MyPointsController> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Transform(
-                      transform: Matrix4.identity()..scale(1.1),
+                      transform: Matrix4.identity()..scale(1.0),
                       child: Obx(
                         () => Text(
                           'card_number'.tr +
                               ' ${myPointsController.cardNumber.value}',
                           style: TextStyle(
                             color: Colors.white70,
-                            fontSize: ResponsiveSize.fontSize(14),
-                            fontWeight: FontWeight.w500,
+                            fontSize: ResponsiveSize.fontSize(13),
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ),
@@ -101,8 +101,8 @@ class MyPointsView extends GetView<MyPointsController> {
                           ),
                         ),
                         minimumSize: Size(
-                          ResponsiveSize.width(90),
-                          ResponsiveSize.height(50),
+                          ResponsiveSize.width(50),
+                          ResponsiveSize.height(40),
                         ),
                       ),
                       child: Transform(

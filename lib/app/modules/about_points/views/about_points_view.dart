@@ -34,14 +34,14 @@ class AboutPointsView extends GetView<AboutPointsController> {
                 width: double.infinity,
                 height: ResponsiveSize.height(80),
                 decoration: BoxDecoration(
-                  color: Color(0xFF0f0f0f),
+                  color: Colors.black54,
                   borderRadius: BorderRadius.circular(
                     ResponsiveSize.radius(20),
                   ),
                 ),
                 child: Center(
                   child: Text(
-                    'about_points'.tr,
+                    'about'.tr,
                     style: TextStyle(
                       color: Colors.white70,
                       fontSize: ResponsiveSize.fontSize(18),
@@ -55,7 +55,7 @@ class AboutPointsView extends GetView<AboutPointsController> {
               Container(
                 padding: ResponsiveSize.padding(vertical: 15, horizontal: 15),
                 decoration: BoxDecoration(
-                  color: Color(0xFF0f0f0f),
+                  color: Colors.black54,
                   borderRadius: BorderRadius.circular(ResponsiveSize.radius(8)),
                 ),
                 child: Row(
@@ -69,8 +69,8 @@ class AboutPointsView extends GetView<AboutPointsController> {
                           'card_number'.tr + ' $cardNumber',
                           style: TextStyle(
                             color: Colors.white70,
-                            fontSize: ResponsiveSize.fontSize(14),
-                            fontWeight: FontWeight.w500,
+                            fontSize: ResponsiveSize.fontSize(13),
+                            fontWeight: FontWeight.w600,
                           ),
                           overflow: TextOverflow.ellipsis,
                         );
@@ -87,8 +87,8 @@ class AboutPointsView extends GetView<AboutPointsController> {
                           ),
                         ),
                         minimumSize: Size(
-                          ResponsiveSize.width(100),
-                          ResponsiveSize.height(45),
+                          ResponsiveSize.width(50),
+                          ResponsiveSize.height(40),
                         ),
                       ),
                       child: Text(

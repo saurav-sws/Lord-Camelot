@@ -17,13 +17,17 @@ class ProfileController extends GetxController {
 
   final RxBool isEnglish = true.obs;
   final RxBool isLoading = false.obs;
+
+  final RxString currentlyEditingField = ''.obs;
+  final RxBool isEditingField = false.obs;
   final StorageService _storageService = Get.find<StorageService>();
   final ApiService _apiService = ApiService();
 
-  // Text controllers for editing
+
   final TextEditingController nameController = TextEditingController();
   final TextEditingController mobileController = TextEditingController();
   final TextEditingController dobController = TextEditingController();
+  final TextEditingController cardNumberController = TextEditingController();
 
   @override
   void onInit() {
@@ -41,6 +45,7 @@ class ProfileController extends GetxController {
     nameController.dispose();
     mobileController.dispose();
     dobController.dispose();
+    cardNumberController.dispose();
     super.onClose();
   }
 
@@ -142,27 +147,28 @@ class ProfileController extends GetxController {
   }
 
   void editField(String field) {
-    TextEditingController controller;
-    String currentValue;
-    String title;
+    print('editField called with field: $field');
 
+    // Set up the controller with current value
     switch (field) {
       case 'Full Name':
-        controller = nameController;
-        currentValue = fullName.value;
-        title = 'Edit Name';
+        nameController.text = fullName.value;
+        print('Setting nameController text to: ${fullName.value}');
         break;
       case 'Mobile Number':
-        controller = mobileController;
-        currentValue = mobileNumber.value;
-        title = 'Edit Mobile Number';
+        mobileController.text = mobileNumber.value;
+        print('Setting mobileController text to: ${mobileNumber.value}');
         break;
       case 'Birth Date':
-        controller = dobController;
-        currentValue = birthDate.value;
-        title = 'Edit Birth Date';
+        dobController.text = birthDate.value;
+        print('Setting dobController text to: ${birthDate.value}');
+        break;
+      case 'Card Number':
+        cardNumberController.text = cardNumber.value;
+        print('Setting cardNumberController text to: ${cardNumber.value}');
         break;
       default:
+        print('Field not recognized: $field');
         DialogHelper.showInfoDialog(
           title: 'Edit $field',
           message: 'Editing functionality will be available soon',
@@ -170,65 +176,71 @@ class ProfileController extends GetxController {
         return;
     }
 
-    controller.text = currentValue;
+    // Toggle editing state
+    currentlyEditingField.value = field;
+    isEditingField.value = true;
+    print('Set currentlyEditingField to: $field, isEditingField to: true');
+  }
 
-    Get.dialog(
-      AlertDialog(
-        backgroundColor: const Color(0xFF1E1E1E),
-        title: Text(title, style: const TextStyle(color: Colors.white)),
-        content: TextField(
-          controller: controller,
-          style: const TextStyle(color: Colors.white),
-          decoration: InputDecoration(
-            hintText: 'Enter $field',
-            hintStyle: const TextStyle(color: Colors.white54),
-            enabledBorder: const UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.green),
-            ),
-            focusedBorder: const UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.green),
-            ),
-          ),
-          keyboardType:
-              field == 'Mobile Number'
-                  ? TextInputType.phone
-                  : field == 'Birth Date'
-                  ? TextInputType.datetime
-                  : TextInputType.text,
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
-          ),
-          TextButton(
-            onPressed: () {
-              final newValue = controller.text.trim();
-              if (newValue.isNotEmpty) {
-                switch (field) {
-                  case 'Full Name':
-                    fullName.value = newValue;
-                    break;
-                  case 'Mobile Number':
-                    mobileNumber.value = newValue;
-                    break;
-                  case 'Birth Date':
-                    birthDate.value = newValue;
-                    break;
-                }
-                Get.back();
-                DialogHelper.showInfoDialog(
-                  title: 'Field Updated',
-                  message:
-                      '$field has been updated. Click "Update" button to save changes.',
-                );
-              }
-            },
-            child: const Text('Save', style: TextStyle(color: Colors.green)),
-          ),
-        ],
-      ),
-    );
+  void saveField(String field) {
+    print('saveField called with field: $field');
+    String newValue = '';
+
+    switch (field) {
+      case 'Full Name':
+        newValue = nameController.text.trim();
+        if (newValue.isNotEmpty) {
+          fullName.value = newValue;
+          print('Updated fullName to: $newValue');
+
+          // Update storage immediately
+          _updateUserInStorage(name: newValue);
+        }
+        break;
+      case 'Mobile Number':
+        newValue = mobileController.text.trim();
+        if (newValue.isNotEmpty) {
+          mobileNumber.value = newValue;
+          print('Updated mobileNumber to: $newValue');
+
+          // Update storage immediately
+          _updateUserInStorage(mobile: newValue);
+        }
+        break;
+      case 'Birth Date':
+        newValue = dobController.text.trim();
+        if (newValue.isNotEmpty) {
+          birthDate.value = newValue;
+          print('Updated birthDate to: $newValue');
+
+          // Update storage immediately
+          _updateUserInStorage(dob: newValue);
+        }
+        break;
+      case 'Card Number':
+        newValue = cardNumberController.text.trim();
+        if (newValue.isNotEmpty) {
+          cardNumber.value = newValue;
+          print('Updated cardNumber to: $newValue');
+
+          // Update storage immediately
+          _updateUserInStorage(cardNumber: newValue);
+        }
+        break;
+    }
+
+    // Reset editing state
+    currentlyEditingField.value = '';
+    isEditingField.value = false;
+    print('Reset editing state');
+  }
+
+  void cancelEditing() {
+    print('cancelEditing called');
+    // Reset editing state without saving
+    currentlyEditingField.value = '';
+    isEditingField.value = false;
+    print('Reset editing state');
   }
 
   void updateProfile() async {
@@ -323,5 +335,33 @@ class ProfileController extends GetxController {
 
   void aboutPoints() {
     Get.toNamed('/about-points');
+  }
+
+  // Helper method to update user in storage immediately
+  void _updateUserInStorage({
+    String? name,
+    String? mobile,
+    String? dob,
+    String? cardNumber,
+  }) {
+    final currentUser = _storageService.currentUser.value;
+    if (currentUser != null) {
+      final updatedUser = User(
+        accessToken: currentUser.accessToken,
+        tokenType: currentUser.tokenType,
+        userId: currentUser.userId,
+        cardNumber: cardNumber ?? currentUser.cardNumber,
+        name: name ?? currentUser.name,
+        mobile: mobile ?? currentUser.mobile,
+        dob: dob ?? currentUser.dob,
+        totalPoint: currentUser.totalPoint,
+      );
+
+      // Update storage
+      _storageService.saveUser(updatedUser);
+
+      // Notify any listeners that user data has changed
+      Get.find<StorageService>().updateCurrentUser(updatedUser);
+    }
   }
 }

@@ -22,10 +22,10 @@ Future<void> main() async {
 
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
-  // Test SharedPreferences
+
   await testSharedPreferences();
 
-  // Initialize services
+
   await initServices();
 
   await initializeFCM();
@@ -38,7 +38,7 @@ Future<void> testSharedPreferences() async {
     print('Testing SharedPreferences functionality...');
     final prefs = await SharedPreferences.getInstance();
 
-    // Try writing to SharedPreferences
+
     final testKey = 'test_key_${DateTime.now().millisecondsSinceEpoch}';
     final testValue = 'test_value_${DateTime.now().millisecondsSinceEpoch}';
 
@@ -53,7 +53,7 @@ Future<void> testSharedPreferences() async {
       );
     }
 
-    // Clean up
+
     await prefs.remove(testKey);
   } catch (e) {
     print('SharedPreferences test error: $e');
@@ -61,10 +61,10 @@ Future<void> testSharedPreferences() async {
 }
 
 Future<void> initServices() async {
-  // Initialize storage service
+
   await Get.putAsync(() => StorageService().init());
 
-  // Initialize FCM service
+
   await Get.putAsync(() => FCMService().init());
 
   print('All services initialized');

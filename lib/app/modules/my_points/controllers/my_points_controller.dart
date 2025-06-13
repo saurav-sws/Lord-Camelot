@@ -28,13 +28,29 @@ class MyPointsController extends GetxController {
   void onInit() {
     super.onInit();
 
+    // Use the reactive state from StorageService
+    _setupCardNumberListener();
+
+    fetchPoints();
+  }
+
+  void _setupCardNumberListener() {
+    // Initial setup
     cardNumber.value = _storageService.cardNumber;
 
     if (cardNumber.value.isEmpty) {
       cardNumber.value = '678543';
     }
 
-    fetchPoints();
+    // Listen for changes to the user in StorageService
+    ever(_storageService.currentUser, (user) {
+      if (user != null && user.cardNumber.isNotEmpty) {
+        cardNumber.value = user.cardNumber;
+        print(
+          'MyPointsController: Updated card number from StorageService: ${cardNumber.value}',
+        );
+      }
+    });
   }
 
   Future<void> fetchPoints() async {
@@ -43,7 +59,6 @@ class MyPointsController extends GetxController {
     errorMessage.value = '';
 
     try {
-
       if (!_storageService.hasUser) {
         hasError.value = true;
         errorMessage.value =
@@ -52,12 +67,10 @@ class MyPointsController extends GetxController {
         return;
       }
 
-
       final currentCardNumber = _storageService.cardNumber;
       if (currentCardNumber.isNotEmpty) {
         cardNumber.value = currentCardNumber;
       }
-
 
       final response = await _apiService.getPointHistory();
 
@@ -76,7 +89,6 @@ class MyPointsController extends GetxController {
 
         final records =
             pointsData!.map((data) {
-
               return PointRecord.fromJson(data);
             }).toList();
 

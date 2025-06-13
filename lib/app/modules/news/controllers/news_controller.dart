@@ -158,7 +158,6 @@ class NewsController extends GetxController {
   }
 
   Widget _buildHtmlContent(String htmlContent) {
-
     return Html(
       data: htmlContent,
       style: {

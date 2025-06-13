@@ -24,18 +24,48 @@ class RedeemPointsController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    _loadCardNumber();
-    _clearSelections();
+    _setupCardNumberListener();
     _loadPointHistory();
   }
 
-  void _loadCardNumber() {
+  @override
+  void onReady() {
+    super.onReady();
+    // Initial load is already done in onInit
+  }
+
+  @override
+  void onClose() {
+    super.onClose();
+  }
+
+  // This method will be called when the view is resumed (becomes visible again)
+  void onResume() {
+    print('Redeem Points view resumed - refreshing data');
+    refreshData();
+  }
+
+  void _setupCardNumberListener() {
+    // Initial setup
     final user = _storageService.currentUser.value;
     if (user != null && user.cardNumber.isNotEmpty) {
       cardNumber.value = user.cardNumber;
     } else {
       cardNumber.value = _storageService.cardNumber;
     }
+
+    // Listen for changes to the user in StorageService
+    ever(_storageService.currentUser, (user) {
+      if (user != null && user.cardNumber.isNotEmpty) {
+        cardNumber.value = user.cardNumber;
+        print(
+          'RedeemPointsController: Updated card number from StorageService: ${cardNumber.value}',
+        );
+
+        // Reload point history when card number changes
+        _loadPointHistory();
+      }
+    });
   }
 
   Future<void> _loadPointHistory() async {
@@ -213,8 +243,8 @@ class RedeemPointsController extends GetxController {
             .fold(0, (sum, point) => sum + point.point);
 
         DialogHelper.showSuccessDialog(
-          title: 'Success',
-          message: response['message'] ?? 'Points redeemed successfully!',
+          title: 'success'.tr,
+          message: response['message'] ?? 'points_redeemed_success'.tr,
         );
 
         await _loadPointHistory();
@@ -231,7 +261,7 @@ class RedeemPointsController extends GetxController {
         );
       } else {
         DialogHelper.showSuccessDialog(
-          title: 'Success',
+          title: 'success'.tr,
           message: e.toString().replaceAll('Exception: ', ''),
         );
 

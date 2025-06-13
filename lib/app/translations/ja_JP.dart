@@ -44,7 +44,7 @@ final Map<String, String> jaJP = {
   'birth_date': '生年月日：',
   'update': '更新',
   'log_out': 'ログアウト',
-  'about_points': 'ポイントについて',
+  'about': 'について',
   'about_program': 'ポイントプログラムについて',
   'earn_point': 'ご購入ごとに1ポイント獲得できます（購入金額に関係なく）。',
   'purchase_recorded': 'ご購入内容は店舗スタッフが手動で記録します。',
@@ -62,7 +62,7 @@ final Map<String, String> jaJP = {
   // Error messages
   'error': 'エラー',
   'login_failed': 'ログインに失敗しました。認証情報を確認して再試行してください。',
-  'network_error': 'ネットワークエラー。接続を確認して再試行してください。',
+  'network_error': 'ネットワークエラー',
   'missing_information': '情報が不足しています',
   'enter_both': 'カード番号と電話番号の両方を入力してください',
   'enter_phone_first': '先に電話番号を入力してください',
@@ -96,4 +96,5 @@ final Map<String, String> jaJP = {
   'discount_tier1': '¥50,000 - ¥99,999 = ¥2,000 割引またはギフト',
   'discount_tier2': '¥100,000 - ¥199,999 = ¥5,000 割引またはギフト',
   'discount_tier3': '¥200,000+ = ¥10,000 割引またはギフト',
+  'points_redeemed_success': 'ポイントの引き換えが成功しました！',
 };
