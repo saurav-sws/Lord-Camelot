@@ -106,36 +106,44 @@ class RedeemPointsView extends GetView<RedeemPointsController> {
 
               SizedBox(height: ResponsiveSize.height(16)),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Transform(
-                    transform: Matrix4.identity()..scale(1.1),
-                    child: Text(
-                      'redeem_minimum'.tr.replaceFirst(
-                        '5',
-                        '${redeemController.minimumPoints}',
-                      ),
-                      style: TextStyle(
-                        color: Colors.white70,
-                        fontSize: ResponsiveSize.fontSize(13),
-                        fontWeight: FontWeight.w500,
+                  Obx(
+                    () => Transform(
+                      transform: Matrix4.identity()..scale(1.1),
+                      child: Row(
+                        children: [
+                          Text(
+                            'redeem_minimum'.tr.replaceFirst(
+                              '5',
+                              '${redeemController.minimumPoints}',
+                            ),
+                            style: TextStyle(
+                              color: Colors.white70,
+                              fontSize: ResponsiveSize.fontSize(13),
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 5.0,right: 40),
+                            child: Transform(
+                              transform: Matrix4.identity()..scale(1.1),
+                              child: Text(
+                                ' ${redeemController.totalSelectedPoints.value}',
+                                style: TextStyle(
+                                  color: Color(0xFF227522),
+                                  fontSize: ResponsiveSize.fontSize(22),
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
 
-                  Obx(
-                    () => Transform(
-                      transform: Matrix4.identity()..scale(1.1),
-                      child: Text(
-                        '${redeemController.availablePoints.value}',
-                        style: TextStyle(
-                          color: Color(0xFF227522),
-                          fontSize: ResponsiveSize.fontSize(25),
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
+
                 ],
               ),
 
@@ -279,7 +287,7 @@ class RedeemPointsView extends GetView<RedeemPointsController> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '${'summary'.tr} (${'redeem_minimum'.tr} ${redeemController.minimumPoints})',
+                        '${'summary'.tr} (${redeemController.totalSelectedPoints.value} ${'my_points'.tr})',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: ResponsiveSize.fontSize(16),
@@ -451,22 +459,28 @@ class RedeemPointsView extends GetView<RedeemPointsController> {
       children: [
         SizedBox(
           width: ResponsiveSize.width(120),
-          child: Text(
-            '$label:',
-            style: TextStyle(
-              color: Colors.white70,
-              fontSize: ResponsiveSize.fontSize(12),
-              fontWeight: FontWeight.w500,
+          child: Transform(
+            transform: Matrix4.identity()..scale(1.1),
+            child: Text(
+              '$label',
+              style: TextStyle(
+                color: Colors.white70,
+                fontSize: ResponsiveSize.fontSize(12),
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ),
         ),
         Expanded(
-          child: Text(
-            value,
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: ResponsiveSize.fontSize(12),
-              fontWeight: FontWeight.w600,
+          child: Transform(
+            transform: Matrix4.identity()..scale(1.1),
+            child: Text(
+              value,
+              style: TextStyle(
+                color: Colors.white70,
+                fontSize: ResponsiveSize.fontSize(12),
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
         ),

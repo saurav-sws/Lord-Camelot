@@ -298,21 +298,27 @@ class MyPointsView extends GetView<MyPointsController> {
   Widget _buildEntryField(String label, String value) {
     return Row(
       children: [
-        Text(
-          label,
-          style: TextStyle(
-            color: Colors.white70,
-            fontSize: ResponsiveSize.fontSize(13),
-            fontWeight: FontWeight.w500,
+        Transform(
+          transform: Matrix4.identity()..scale(1.1),
+          child: Text(
+            label,
+            style: TextStyle(
+              color: Colors.white70,
+              fontSize: ResponsiveSize.fontSize(12),
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ),
-        SizedBox(width: ResponsiveSize.width(5)),
-        Text(
-          value,
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: ResponsiveSize.fontSize(13),
-            fontWeight: FontWeight.w500,
+        SizedBox(width: ResponsiveSize.width(15)),
+        Transform(
+          transform: Matrix4.identity()..scale(1.1),
+          child: Text(
+            value,
+            style: TextStyle(
+              color: Colors.white70,
+              fontSize: ResponsiveSize.fontSize(12),
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ),
       ],
