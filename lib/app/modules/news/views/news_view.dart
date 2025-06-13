@@ -218,7 +218,7 @@ class NewsView extends GetView<NewsController> {
   }
 
   Widget _buildNewsCard(News news, NewsController controller) {
-    // Format the date to match the screenshot (YYYY.MM.DD)
+
     String formattedDate = '';
     try {
       final DateTime date = DateTime.parse(news.createdAt);
@@ -239,7 +239,7 @@ class NewsView extends GetView<NewsController> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Date at the top
+
             Padding(
               padding: ResponsiveSize.padding(horizontal: 16, vertical: 8),
               child: Text(
@@ -251,12 +251,12 @@ class NewsView extends GetView<NewsController> {
                 ),
               ),
             ),
-            // Image with fixed aspect ratio
+
             if (news.image.isNotEmpty)
               ClipRRect(
                 borderRadius: BorderRadius.circular(8),
                 child: AspectRatio(
-                  aspectRatio: 1.5, // Fixed aspect ratio for consistent sizing
+                  aspectRatio: 1.0,
                   child: Container(
                     margin: EdgeInsets.symmetric(horizontal: 16),
                     child: Image.network(
