@@ -17,7 +17,6 @@ class RedeemPointsController extends GetxController {
   final RxList<PointHistory> pointHistoryList = <PointHistory>[].obs;
   final RxList<PointHistory> selectedPoints = <PointHistory>[].obs;
 
-
   final RxInt totalSelectedPoints = 0.obs;
   final RxDouble totalAmount = 0.0.obs;
   final RxDouble totalDiscount = 0.0.obs;
@@ -48,7 +47,6 @@ class RedeemPointsController extends GetxController {
       print('Points API response: $response');
 
       if (response['success'] == true) {
-
         List<dynamic>? data;
 
         if (response['data'] != null) {
@@ -71,14 +69,12 @@ class RedeemPointsController extends GetxController {
                 return PointHistory.fromJson(item);
               }).toList();
 
-
           availablePoints.value = pointHistoryList
               .where((point) => !point.isAlreadyRedeemed)
               .fold(0, (sum, point) => sum + point.point);
 
           print('Loaded ${pointHistoryList.length} point items');
           print('Available unredeemed points: ${availablePoints.value}');
-
 
           if (pointHistoryList
               .where((point) => !point.isAlreadyRedeemed)
@@ -143,7 +139,15 @@ class RedeemPointsController extends GetxController {
       (sum, item) => sum + double.parse(item.total),
     );
 
-    totalDiscount.value = totalSelectedPoints.value * 10000.0;
+    if (totalAmount.value >= 50000 && totalAmount.value < 100000) {
+      totalDiscount.value = 2000.0;
+    } else if (totalAmount.value >= 100000 && totalAmount.value < 200000) {
+      totalDiscount.value = 5000.0;
+    } else if (totalAmount.value >= 200000) {
+      totalDiscount.value = 10000.0;
+    } else {
+      totalDiscount.value = 0.0;
+    }
 
     print(
       'Summary - Points: ${totalSelectedPoints.value}, Amount: ${totalAmount.value}, Discount: ${totalDiscount.value}',
@@ -244,32 +248,26 @@ class RedeemPointsController extends GetxController {
     await Get.dialog(
       AlertDialog(
         backgroundColor: const Color(0xFF1E1E1E),
-        title: const Text(
-          'Confirm Redemption',
-          style: TextStyle(color: Colors.white),
-        ),
+        title: Text('summary'.tr, style: TextStyle(color: Colors.white)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'You are about to redeem:',
-              style: TextStyle(color: Colors.white70),
-            ),
+            Text('redeem_minimum'.tr, style: TextStyle(color: Colors.white70)),
             const SizedBox(height: 10),
             Text(
-              'Points: ${totalSelectedPoints.value}',
+              '${'total_points'.tr} ${totalSelectedPoints.value}',
               style: TextStyle(
                 color: Colors.green,
                 fontWeight: FontWeight.bold,
               ),
             ),
             Text(
-              'Total Amount: ¥${totalAmount.value.toStringAsFixed(0)}',
+              '${'total_amount'.tr} ¥${totalAmount.value.toStringAsFixed(0)}',
               style: TextStyle(color: Colors.white70),
             ),
             Text(
-              'Discount: ¥${totalDiscount.value.toStringAsFixed(0)}',
+              '${'total_discount'.tr} ¥${totalDiscount.value.toStringAsFixed(0)}',
               style: TextStyle(
                 color: Colors.orange,
                 fontWeight: FontWeight.bold,
@@ -283,14 +281,14 @@ class RedeemPointsController extends GetxController {
               confirmed = false;
               Get.back();
             },
-            child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
+            child: Text('cancel'.tr, style: TextStyle(color: Colors.grey)),
           ),
           TextButton(
             onPressed: () {
               confirmed = true;
               Get.back();
             },
-            child: const Text('Redeem', style: TextStyle(color: Colors.green)),
+            child: Text('redeeme'.tr, style: TextStyle(color: Colors.green)),
           ),
         ],
       ),

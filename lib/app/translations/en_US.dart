@@ -95,4 +95,10 @@ final Map<String, String> enUS = {
   'try_again': 'Try Again',
   'no_news': 'No news available at the moment',
   'news_error': 'Error loading news',
+
+  // Redeem related strings
+  'cancel': 'Cancel',
+  'discount_tier1': '¥50,000 - ¥99,999 = ¥2,000 discount or gift',
+  'discount_tier2': '¥100,000 - ¥199,999 = ¥5,000 discount or gift',
+  'discount_tier3': '¥200,000+ = ¥10,000 discount or gift',
 };

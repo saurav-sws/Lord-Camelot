@@ -29,7 +29,7 @@ class RedeemPointsView extends GetView<RedeemPointsController> {
               Container(
                 height: ResponsiveSize.height(80),
                 decoration: BoxDecoration(
-                  color: Color(0xFF0f0f0f),
+                  color: Colors.black54,
                   borderRadius: BorderRadius.circular(
                     ResponsiveSize.radius(15),
                   ),
@@ -50,9 +50,9 @@ class RedeemPointsView extends GetView<RedeemPointsController> {
               ),
               SizedBox(height: 30),
               Container(
-                padding: ResponsiveSize.padding(vertical: 15, horizontal: 15),
+                padding: ResponsiveSize.padding(vertical: 12, horizontal: 16),
                 decoration: BoxDecoration(
-                  color: Color(0xFF0f0f0f),
+                  color: Colors.black54,
                   borderRadius: BorderRadius.circular(
                     ResponsiveSize.radius(20),
                   ),
@@ -146,7 +146,6 @@ class RedeemPointsView extends GetView<RedeemPointsController> {
                       child: CircularProgressIndicator(color: Colors.green),
                     );
                   }
-
 
                   final unredeemedPoints =
                       redeemController.pointHistoryList
@@ -262,7 +261,6 @@ class RedeemPointsView extends GetView<RedeemPointsController> {
                 }),
               ),
 
-
               Obx(() {
                 if (!redeemController.hasSelectedPoints) {
                   return const SizedBox.shrink();
@@ -281,7 +279,7 @@ class RedeemPointsView extends GetView<RedeemPointsController> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Summary (Minimum ${redeemController.minimumPoints} points required)',
+                        '${'summary'.tr} (${'redeem_minimum'.tr} ${redeemController.minimumPoints})',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: ResponsiveSize.fontSize(16),
@@ -289,11 +287,46 @@ class RedeemPointsView extends GetView<RedeemPointsController> {
                         ),
                       ),
                       SizedBox(height: 10),
+                      // Discount explanation
+                      Container(
+                        padding: ResponsiveSize.padding(all: 8),
+                        decoration: BoxDecoration(
+                          color: Colors.black26,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'discount_tier1'.tr,
+                              style: TextStyle(
+                                color: Colors.white70,
+                                fontSize: ResponsiveSize.fontSize(12),
+                              ),
+                            ),
+                            Text(
+                              'discount_tier2'.tr,
+                              style: TextStyle(
+                                color: Colors.white70,
+                                fontSize: ResponsiveSize.fontSize(12),
+                              ),
+                            ),
+                            Text(
+                              'discount_tier3'.tr,
+                              style: TextStyle(
+                                color: Colors.white70,
+                                fontSize: ResponsiveSize.fontSize(12),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 10),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            'Total Points:',
+                            'total_points'.tr,
                             style: TextStyle(
                               color: Colors.orange,
                               fontSize: ResponsiveSize.fontSize(14),
@@ -315,7 +348,7 @@ class RedeemPointsView extends GetView<RedeemPointsController> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            'Total Amount:',
+                            'total_amount'.tr,
                             style: TextStyle(
                               color: Colors.orange,
                               fontSize: ResponsiveSize.fontSize(14),
@@ -337,7 +370,7 @@ class RedeemPointsView extends GetView<RedeemPointsController> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            'Total Discount:',
+                            'total_discount'.tr,
                             style: TextStyle(
                               color: Colors.orange,
                               fontSize: ResponsiveSize.fontSize(14),
@@ -358,7 +391,6 @@ class RedeemPointsView extends GetView<RedeemPointsController> {
                   ),
                 );
               }),
-
 
               Obx(() {
                 if (!redeemController.hasSelectedPoints) {
@@ -397,7 +429,7 @@ class RedeemPointsView extends GetView<RedeemPointsController> {
                               ),
                             )
                             : Text(
-                              'Redeem ${redeemController.totalSelectedPoints.value} Points',
+                              '${'redeeme'.tr} ${redeemController.totalSelectedPoints.value} ${'my_points'.tr}',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: ResponsiveSize.fontSize(16),

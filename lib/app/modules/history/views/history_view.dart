@@ -26,24 +26,27 @@ class HistoryView extends GetView<HistoryController> {
         child: Padding(
           padding: ResponsiveSize.padding(vertical: 16, horizontal: 10),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+
             children: [
               SizedBox(height: ResponsiveSize.height(30)),
               Container(
-                height: ResponsiveSize.height(70),
+                height: ResponsiveSize.height(80),
                 decoration: BoxDecoration(
-                  color: Color(0xFF0f0f0f),
+                  color: Colors.black54,
                   borderRadius: BorderRadius.circular(
                     ResponsiveSize.radius(15),
                   ),
                 ),
                 child: Center(
-                  child: Text(
-                    'history'.tr,
-                    style: TextStyle(
-                      color: Colors.white70,
-                      fontSize: ResponsiveSize.fontSize(18),
-                      fontWeight: FontWeight.w600,
+                  child: Transform(
+                    transform: Matrix4.identity()..scale(1.1),
+                    child: Text(
+                      'history'.tr,
+                      style: TextStyle(
+                        color: Colors.white70,
+                        fontSize: ResponsiveSize.fontSize(18),
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                 ),
@@ -52,7 +55,7 @@ class HistoryView extends GetView<HistoryController> {
               Container(
                 padding: ResponsiveSize.padding(vertical: 12, horizontal: 16),
                 decoration: BoxDecoration(
-                  color: Color(0xFF0f0f0f),
+                  color: Colors.black54,
                   borderRadius: BorderRadius.circular(ResponsiveSize.radius(8)),
                 ),
                 child: Row(
@@ -61,8 +64,6 @@ class HistoryView extends GetView<HistoryController> {
                     Expanded(
                       child: Obx(() {
                         String cardNumber = storageService.cardNumber;
-
-
                         if (cardNumber.isEmpty &&
                             historyController.redeemHistory.isNotEmpty) {
                           cardNumber =
@@ -74,14 +75,17 @@ class HistoryView extends GetView<HistoryController> {
                           cardNumber = '678543';
                         }
 
-                        return Text(
-                          'card_number'.tr + ' $cardNumber',
-                          style: TextStyle(
-                            color: Colors.white70,
-                            fontSize: ResponsiveSize.fontSize(14),
-                            fontWeight: FontWeight.w500,
+                        return Transform(
+                          transform: Matrix4.identity()..scale(1.1),
+                          child: Text(
+                            'card_number'.tr + ' $cardNumber',
+                            style: TextStyle(
+                              color: Colors.white70,
+                              fontSize: ResponsiveSize.fontSize(14),
+                              fontWeight: FontWeight.w500,
+                            ),
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          overflow: TextOverflow.ellipsis,
                         );
                       }),
                     ),
@@ -96,16 +100,19 @@ class HistoryView extends GetView<HistoryController> {
                           ),
                         ),
                         minimumSize: Size(
-                          ResponsiveSize.width(100),
-                          ResponsiveSize.height(45),
+                          ResponsiveSize.width(90),
+                          ResponsiveSize.height(50),
                         ),
                       ),
-                      child: Text(
-                        'my_profile'.tr,
-                        style: TextStyle(
-                          color: Color(0xFF288c25),
-                          fontSize: ResponsiveSize.fontSize(13),
-                          fontWeight: FontWeight.w500,
+                      child: Transform(
+                        transform: Matrix4.identity()..scale(1.1),
+                        child: Text(
+                          'my_profile'.tr,
+                          style: TextStyle(
+                            color: Color(0xFF227522),
+                            fontSize: ResponsiveSize.fontSize(14),
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
                     ),
@@ -117,17 +124,20 @@ class HistoryView extends GetView<HistoryController> {
                 height: 50,
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  color: Color(0xFF0f0f0f),
+                  color: Colors.black54,
                   borderRadius: BorderRadius.circular(ResponsiveSize.radius(8)),
                 ),
                 child: Padding(
                   padding: ResponsiveSize.padding(horizontal: 17, vertical: 14),
-                  child: Text(
-                    'points_history'.tr,
-                    style: TextStyle(
-                      color: Colors.white70,
-                      fontSize: ResponsiveSize.fontSize(15),
-                      fontWeight: FontWeight.w500,
+                  child: Transform(
+                    transform: Matrix4.identity()..scale(1.1),
+                    child: Text(
+                      'points_history'.tr,
+                      style: TextStyle(
+                        color: Colors.white70,
+                        fontSize: ResponsiveSize.fontSize(15),
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ),
                 ),
@@ -173,8 +183,6 @@ class HistoryView extends GetView<HistoryController> {
                       ),
                     );
                   }
-
-
                   return RefreshIndicator(
                     onRefresh: historyController.refreshHistory,
                     child: ListView.builder(

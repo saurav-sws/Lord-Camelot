@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../../services/storage_service.dart';
 import '../../../utils/responsive_size.dart';
 import '../controllers/news_controller.dart';
 import '../../../models/news_model.dart';
@@ -10,7 +11,7 @@ class NewsView extends GetView<NewsController> {
   @override
   Widget build(BuildContext context) {
     final newsController = Get.put(NewsController());
-
+    final storageService = Get.find<StorageService>();
     return Scaffold(
       body: Container(
         width: double.infinity,
@@ -22,12 +23,13 @@ class NewsView extends GetView<NewsController> {
             colors: [Color(0xFF001e16), Color(0xFF000000)],
           ),
         ),
-        child: SafeArea(
+        child: Padding(
+          padding: ResponsiveSize.padding(vertical: 16, horizontal: 10),
           child: Column(
             children: [
-              SizedBox(height: ResponsiveSize.height(20)),
+              SizedBox(height: ResponsiveSize.height(30)),
               Container(
-                height: ResponsiveSize.height(70),
+                height: ResponsiveSize.height(80),
                 width: double.infinity,
                 decoration: BoxDecoration(
                   color: Colors.black54,
@@ -36,16 +38,78 @@ class NewsView extends GetView<NewsController> {
                   ),
                 ),
                 child: Center(
-                  child: Text(
-                    'news'.tr,
-                    style: TextStyle(
-                      color: Colors.white70,
-                      fontSize: ResponsiveSize.fontSize(18),
-                      fontWeight: FontWeight.w600,
+                  child: Transform(
+                    transform: Matrix4.identity()..scale(1.1),
+                    child: Text(
+                      'news'.tr,
+                      style: TextStyle(
+                        color: Colors.white70,
+                        fontSize: ResponsiveSize.fontSize(18),
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                 ),
               ),
+              SizedBox(height: ResponsiveSize.height(30)),
+              Container(
+                padding: ResponsiveSize.padding(vertical: 12, horizontal: 16),
+                decoration: BoxDecoration(
+                  color: Colors.black54,
+                  borderRadius: BorderRadius.circular(ResponsiveSize.radius(20)),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Obx(() {
+                        String cardNumber = storageService.cardNumber;
+
+                        return Transform(
+                          transform: Matrix4.identity()..scale(1.1),
+                          child: Text(
+                            'card_number'.tr + ' $cardNumber',
+                            style: TextStyle(
+                              color: Colors.white70,
+                              fontSize: ResponsiveSize.fontSize(14),
+                              fontWeight: FontWeight.w500,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        );
+                      }),
+                    ),
+                    SizedBox(width: ResponsiveSize.width(8)),
+                    OutlinedButton(
+                      onPressed: () => Get.toNamed('/profile'),
+                      style: OutlinedButton.styleFrom(
+                        side: const BorderSide(color: Color(0xFF288c25)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                            ResponsiveSize.radius(20),
+                          ),
+                        ),
+                        minimumSize: Size(
+                          ResponsiveSize.width(90),
+                          ResponsiveSize.height(50),
+                        ),
+                      ),
+                      child: Transform(
+                        transform: Matrix4.identity()..scale(1.1),
+                        child: Text(
+                          'my_profile'.tr,
+                          style: TextStyle(
+                            color: Color(0xFF227522),
+                            fontSize: ResponsiveSize.fontSize(14),
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
               SizedBox(height: ResponsiveSize.height(20)),
               Expanded(
                 child: Obx(() {
@@ -126,12 +190,22 @@ class NewsView extends GetView<NewsController> {
                       child: ListView.builder(
                         padding: ResponsiveSize.padding(
                           horizontal: 16,
-                          vertical: 8,
+                          vertical: 20,
                         ),
                         itemCount: newsController.newsList.length,
                         itemBuilder: (context, index) {
                           final news = newsController.newsList[index];
-                          return _buildNewsCard(news, newsController);
+                          return Column(
+                            children: [
+                              _buildNewsCard(news, newsController),
+                              if (index < newsController.newsList.length - 1)
+                                Container(
+                                  margin: ResponsiveSize.margin(vertical: 8),
+                                  height: 10,
+
+                                ),
+                            ],
+                          );
                         },
                       ),
                     );
@@ -149,7 +223,7 @@ class NewsView extends GetView<NewsController> {
     return GestureDetector(
       onTap: () => controller.showNewsDetail(news),
       child: Container(
-        margin: ResponsiveSize.margin(vertical: 8),
+        margin: ResponsiveSize.margin(vertical: 16),
         decoration: BoxDecoration(
           color: Colors.black54,
           borderRadius: BorderRadius.circular(ResponsiveSize.radius(12)),
@@ -185,7 +259,7 @@ class NewsView extends GetView<NewsController> {
                 ),
               ),
             Padding(
-              padding: ResponsiveSize.padding(all: 16),
+              padding: ResponsiveSize.padding(horizontal: 20, vertical: 20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -199,7 +273,7 @@ class NewsView extends GetView<NewsController> {
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  SizedBox(height: ResponsiveSize.height(8)),
+                  SizedBox(height: ResponsiveSize.height(14)),
                   Text(
                     _getPlainText(news.description),
                     style: TextStyle(
@@ -209,7 +283,7 @@ class NewsView extends GetView<NewsController> {
                     maxLines: 3,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  SizedBox(height: ResponsiveSize.height(12)),
+                  SizedBox(height: ResponsiveSize.height(20)),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -227,11 +301,9 @@ class NewsView extends GetView<NewsController> {
                       ),
                     ],
                   ),
-
                 ],
               ),
             ),
-
           ],
         ),
       ),
@@ -239,7 +311,6 @@ class NewsView extends GetView<NewsController> {
   }
 
   String _getPlainText(String htmlString) {
-
     return htmlString.replaceAll(RegExp(r'<[^>]*>'), '');
   }
 }

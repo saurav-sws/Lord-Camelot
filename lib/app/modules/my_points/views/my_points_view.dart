@@ -26,12 +26,12 @@ class MyPointsView extends GetView<MyPointsController> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: ResponsiveSize.height(60)),
+              SizedBox(height: ResponsiveSize.height(30)),
               Container(
                 width: double.infinity,
                 height: ResponsiveSize.height(80),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF121212),
+                  color: Colors.black54,
                   borderRadius: BorderRadius.circular(
                     ResponsiveSize.radius(15),
                   ),
@@ -66,25 +66,28 @@ class MyPointsView extends GetView<MyPointsController> {
                   ],
                 ),
               ),
-              SizedBox(height: ResponsiveSize.height(20)),
+              SizedBox(height: ResponsiveSize.height(30)),
 
               Container(
                 padding: ResponsiveSize.padding(vertical: 12, horizontal: 16),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF121212),
+                  color: Colors.black54,
                   borderRadius: BorderRadius.circular(ResponsiveSize.radius(8)),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Obx(
-                      () => Text(
-                        'card_number'.tr +
-                            ' ${myPointsController.cardNumber.value}',
-                        style: TextStyle(
-                          color: Colors.white70,
-                          fontSize: ResponsiveSize.fontSize(14),
-                          fontWeight: FontWeight.w500,
+                    Transform(
+                      transform: Matrix4.identity()..scale(1.1),
+                      child: Obx(
+                        () => Text(
+                          'card_number'.tr +
+                              ' ${myPointsController.cardNumber.value}',
+                          style: TextStyle(
+                            color: Colors.white70,
+                            fontSize: ResponsiveSize.fontSize(14),
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
                       ),
                     ),
@@ -98,16 +101,19 @@ class MyPointsView extends GetView<MyPointsController> {
                           ),
                         ),
                         minimumSize: Size(
-                          ResponsiveSize.width(100),
-                          ResponsiveSize.height(45),
+                          ResponsiveSize.width(90),
+                          ResponsiveSize.height(50),
                         ),
                       ),
-                      child: Text(
-                        'my_profile'.tr,
-                        style: TextStyle(
-                          color: Color(0xFF288c25),
-                          fontSize: ResponsiveSize.fontSize(14),
-                          fontWeight: FontWeight.w500,
+                      child: Transform(
+                        transform: Matrix4.identity()..scale(1.1),
+                        child: Text(
+                          'my_profile'.tr,
+                          style: TextStyle(
+                            color: Color(0xFF227522),
+                            fontSize: ResponsiveSize.fontSize(14),
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
                     ),
@@ -192,7 +198,7 @@ class MyPointsView extends GetView<MyPointsController> {
                           margin: ResponsiveSize.margin(bottom: 16),
                           padding: ResponsiveSize.padding(all: 16),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF121212),
+                            color:  Color(0xFF0f0f0f),
                             borderRadius: BorderRadius.circular(
                               ResponsiveSize.radius(10),
                             ),
@@ -257,7 +263,7 @@ class MyPointsView extends GetView<MyPointsController> {
                                           shape: BoxShape.circle,
                                           color:
                                               record.isRedeemed
-                                                  ? Colors.green
+                                                  ?  Color(0xFF288c25)
                                                   : Colors.red,
                                         ),
                                       ),

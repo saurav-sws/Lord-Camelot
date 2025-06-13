@@ -90,4 +90,10 @@ final Map<String, String> jaJP = {
   'try_again': '再試行',
   'no_news': '現在、ニュースはありません',
   'news_error': 'ニュースの読み込みエラー',
+
+  // Redeem related strings
+  'cancel': 'キャンセル',
+  'discount_tier1': '¥50,000 - ¥99,999 = ¥2,000 割引またはギフト',
+  'discount_tier2': '¥100,000 - ¥199,999 = ¥5,000 割引またはギフト',
+  'discount_tier3': '¥200,000+ = ¥10,000 割引またはギフト',
 };
