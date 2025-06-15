@@ -97,4 +97,5 @@ final Map<String, String> jaJP = {
   'discount_tier2': '¥100,000 - ¥199,999 = ¥5,000 割引またはギフト',
   'discount_tier3': '¥200,000+ = ¥10,000 割引またはギフト',
   'points_redeemed_success': 'ポイントの引き換えが成功しました！',
+  'not_set': '未設定',
 };

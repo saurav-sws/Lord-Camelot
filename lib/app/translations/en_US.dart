@@ -102,4 +102,5 @@ final Map<String, String> enUS = {
   'discount_tier2': '¥100,000 - ¥199,999 = ¥5,000 discount or gift',
   'discount_tier3': '¥200,000+ = ¥10,000 discount or gift',
   'points_redeemed_success': 'Points redeemed successfully!',
+  'not_set': 'Not set',
 };

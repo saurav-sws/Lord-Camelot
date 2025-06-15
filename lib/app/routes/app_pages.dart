@@ -4,6 +4,7 @@ import '../modules/history/views/history_view.dart';
 import '../modules/login/views/login_view.dart';
 import '../modules/main/views/main_view.dart';
 import '../modules/my_points/views/my_points_view.dart';
+import '../modules/news/views/news_detail_view.dart';
 import '../modules/otp_verification/bindings/otp_verification_binding.dart';
 import '../modules/otp_verification/views/otp_verification_view.dart';
 import '../modules/profile/views/profile_view.dart';
@@ -70,6 +71,12 @@ class AppPages {
     GetPage(
       name: Routes.HISTORY,
       page: () => const HistoryView(),
+      transition: Transition.rightToLeft,
+      transitionDuration: const Duration(milliseconds: 300),
+    ),
+    GetPage(
+      name: Routes.NEWS_DETAIL,
+      page: () => const NewsDetailView(),
       transition: Transition.rightToLeft,
       transitionDuration: const Duration(milliseconds: 300),
     ),

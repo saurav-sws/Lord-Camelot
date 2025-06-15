@@ -362,7 +362,10 @@ class ProfileView extends GetView<ProfileController> {
                         textAlign: TextAlign.right,
                         decoration: InputDecoration(
                           border: InputBorder.none,
-                          hintText: 'Enter $label',
+                          hintText:
+                              label == 'Birth Date'
+                                  ? 'YYYY-MM-DD'
+                                  : 'Enter $label',
                           hintStyle: TextStyle(
                             color: Colors.white38,
                             fontSize: ResponsiveSize.fontSize(13),
@@ -379,9 +382,14 @@ class ProfileView extends GetView<ProfileController> {
                         autofocus: true,
                       )
                       : Text(
-                        value,
+                        (label == 'Birth Date' && value.isEmpty)
+                            ? 'not_set'.tr
+                            : value,
                         style: TextStyle(
-                          color: Colors.white70,
+                          color:
+                              (label == 'Birth Date' && value.isEmpty)
+                                  ? Colors.white38
+                                  : Colors.white70,
                           fontSize: ResponsiveSize.fontSize(13),
                           fontWeight: FontWeight.w500,
                         ),

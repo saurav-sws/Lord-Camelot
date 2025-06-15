@@ -4,6 +4,7 @@ import 'package:flutter_html/flutter_html.dart';
 import '../../../models/news_model.dart';
 import '../../../../services/api_service.dart';
 import '../../../utils/dialog_helper.dart';
+import '../../../routes/app_pages.dart';
 
 class NewsController extends GetxController {
   final ApiService _apiService = ApiService();
@@ -49,112 +50,7 @@ class NewsController extends GetxController {
   }
 
   void showNewsDetail(News news) {
-    Get.dialog(
-      Dialog(
-        backgroundColor: Colors.transparent,
-        child: Container(
-          width: double.infinity,
-          constraints: BoxConstraints(maxHeight: Get.height * 0.8),
-          decoration: BoxDecoration(
-            color: Color(0xFF1E1E1E),
-            borderRadius: BorderRadius.circular(15),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        news.title,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.close, color: Colors.white),
-                      onPressed: () => Get.back(),
-                    ),
-                  ],
-                ),
-              ),
-              Divider(color: Colors.grey.shade800),
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        if (news.image.isNotEmpty)
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(8),
-                            child: Image.network(
-                              news.image,
-                              width: double.infinity,
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) {
-                                return Container(
-                                  height: 200,
-                                  color: Colors.grey.shade800,
-                                  child: Center(
-                                    child: Icon(
-                                      Icons.image_not_supported,
-                                      color: Colors.white,
-                                      size: 50,
-                                    ),
-                                  ),
-                                );
-                              },
-                              loadingBuilder: (
-                                context,
-                                child,
-                                loadingProgress,
-                              ) {
-                                if (loadingProgress == null) return child;
-                                return Container(
-                                  height: 200,
-                                  color: Colors.grey.shade800,
-                                  child: Center(
-                                    child: CircularProgressIndicator(
-                                      color: Color(0xFF288c25),
-                                      value:
-                                          loadingProgress.expectedTotalBytes !=
-                                                  null
-                                              ? loadingProgress
-                                                      .cumulativeBytesLoaded /
-                                                  loadingProgress
-                                                      .expectedTotalBytes!
-                                              : null,
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
-                        SizedBox(height: 16),
-                        Text(
-                          '${'posted_on'.tr}: ${news.createdAt}',
-                          style: TextStyle(color: Colors.grey, fontSize: 14),
-                        ),
-                        SizedBox(height: 16),
-                        _buildHtmlContent(news.description),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+    Get.toNamed(Routes.NEWS_DETAIL, arguments: news);
   }
 
   Widget _buildHtmlContent(String htmlContent) {
