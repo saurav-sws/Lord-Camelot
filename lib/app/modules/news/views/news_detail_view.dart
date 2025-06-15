@@ -11,7 +11,7 @@ class NewsDetailView extends StatelessWidget {
   Widget build(BuildContext context) {
     final News news = Get.arguments as News;
 
-    // Format the date
+
     String formattedDate = '';
     try {
       final DateTime date = DateTime.parse(news.createdAt);
@@ -35,7 +35,7 @@ class NewsDetailView extends StatelessWidget {
         child: SafeArea(
           child: Column(
             children: [
-              // Custom App Bar
+
               Container(
                 padding: ResponsiveSize.padding(horizontal: 16, vertical: 12),
                 child: Row(
@@ -61,12 +61,12 @@ class NewsDetailView extends StatelessWidget {
                     ),
                     SizedBox(
                       width: ResponsiveSize.width(48),
-                    ), // Balance the back button
+                    ),
                   ],
                 ),
               ),
 
-              // Content
+
               Expanded(
                 child: SingleChildScrollView(
                   child: Padding(
@@ -74,8 +74,9 @@ class NewsDetailView extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Date
+
                         Container(
+                          margin:  ResponsiveSize.margin(left: 10),
                           padding: ResponsiveSize.padding(
                             horizontal: 12,
                             vertical: 6,
@@ -102,20 +103,21 @@ class NewsDetailView extends StatelessWidget {
 
                         SizedBox(height: ResponsiveSize.height(20)),
 
-                        // Title
-                        Text(
-                          news.title,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: ResponsiveSize.fontSize(22),
-                            fontWeight: FontWeight.bold,
-                            height: 1.3,
+
+                        Container(
+                          margin:  ResponsiveSize.margin(left: 10),
+                          child: Text(
+                            news.title,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: ResponsiveSize.fontSize(20),
+                              fontWeight: FontWeight.bold,
+                              height: 1.3,
+                            ),
                           ),
                         ),
 
                         SizedBox(height: ResponsiveSize.height(20)),
-
-                        // Image
                         if (news.image.isNotEmpty)
                           Container(
                             margin: ResponsiveSize.margin(bottom: 20),
