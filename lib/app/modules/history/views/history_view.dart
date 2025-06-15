@@ -4,12 +4,37 @@ import '../../../utils/responsive_size.dart';
 import '../controllers/history_controller.dart';
 import '../../../../services/storage_service.dart';
 
-class HistoryView extends GetView<HistoryController> {
+class HistoryView extends StatefulWidget {
   const HistoryView({Key? key}) : super(key: key);
 
   @override
+  State<HistoryView> createState() => _HistoryViewState();
+}
+
+class _HistoryViewState extends State<HistoryView> {
+  late HistoryController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = Get.put(HistoryController());
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (ModalRoute.of(context)?.isCurrent == true) {
+
+        controller.onResume();
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final historyController = Get.put(HistoryController());
+    final historyController = controller;
     final storageService = Get.find<StorageService>();
 
     return Scaffold(

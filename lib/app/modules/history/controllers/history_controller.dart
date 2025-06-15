@@ -18,13 +18,18 @@ class HistoryController extends GetxController {
     fetchRedeemHistory();
   }
 
+  // This method will be called when the view is resumed (becomes visible again)
+  void onResume() {
+    print('History view resumed - refreshing data');
+    refreshHistory();
+  }
+
   Future<void> fetchRedeemHistory() async {
     isLoading.value = true;
     hasError.value = false;
     errorMessage.value = '';
 
     try {
-
       if (!_storageService.hasUser) {
         hasError.value = true;
         errorMessage.value =
@@ -65,10 +70,8 @@ class HistoryController extends GetxController {
   }
 
   Future<void> refreshHistory() async {
-
     hasError.value = false;
     errorMessage.value = '';
-
 
     await fetchRedeemHistory();
     return;

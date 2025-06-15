@@ -34,6 +34,12 @@ class MyPointsController extends GetxController {
     fetchPoints();
   }
 
+  // This method will be called when the view is resumed (becomes visible again)
+  void onResume() {
+    print('My Points view resumed - refreshing data');
+    refreshPoints();
+  }
+
   void _setupCardNumberListener() {
     // Initial setup
     cardNumber.value = _storageService.cardNumber;

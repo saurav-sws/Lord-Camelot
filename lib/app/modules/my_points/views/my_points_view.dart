@@ -3,12 +3,37 @@ import 'package:get/get.dart';
 import '../../../utils/responsive_size.dart';
 import '../controllers/my_points_controller.dart';
 
-class MyPointsView extends GetView<MyPointsController> {
+class MyPointsView extends StatefulWidget {
   const MyPointsView({Key? key}) : super(key: key);
 
   @override
+  State<MyPointsView> createState() => _MyPointsViewState();
+}
+
+class _MyPointsViewState extends State<MyPointsView> {
+  late MyPointsController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = Get.put(MyPointsController());
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // This will be called when the route is pushed or popped
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (ModalRoute.of(context)?.isCurrent == true) {
+        // This view is now the current view, refresh data
+        controller.onResume();
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final myPointsController = Get.put(MyPointsController());
+    final myPointsController = controller;
 
     return Scaffold(
       body: Container(
@@ -198,7 +223,7 @@ class MyPointsView extends GetView<MyPointsController> {
                           margin: ResponsiveSize.margin(bottom: 16),
                           padding: ResponsiveSize.padding(all: 16),
                           decoration: BoxDecoration(
-                            color:  Color(0xFF0f0f0f),
+                            color: Color(0xFF0f0f0f),
                             borderRadius: BorderRadius.circular(
                               ResponsiveSize.radius(10),
                             ),
@@ -206,7 +231,6 @@ class MyPointsView extends GetView<MyPointsController> {
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-
                               Expanded(
                                 flex: 2,
                                 child: Column(
@@ -263,7 +287,7 @@ class MyPointsView extends GetView<MyPointsController> {
                                           shape: BoxShape.circle,
                                           color:
                                               record.isRedeemed
-                                                  ?  Color(0xFF288c25)
+                                                  ? Color(0xFF288c25)
                                                   : Colors.red,
                                         ),
                                       ),
