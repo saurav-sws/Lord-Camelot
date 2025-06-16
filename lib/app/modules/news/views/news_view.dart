@@ -67,14 +67,17 @@ class NewsView extends GetView<NewsController> {
                             storageService.currentUser.value?.cardNumber ??
                             storageService.cardNumber;
 
-                        return Text(
-                          'card_number'.tr + ' $cardNumber',
-                          style: TextStyle(
-                            color: Colors.white70,
-                            fontSize: ResponsiveSize.fontSize(13),
-                            fontWeight: FontWeight.w600,
+                        return Transform(
+                          transform: Matrix4.identity()..scale(1.1),
+                          child: Text(
+                            'card_number'.tr + ' $cardNumber',
+                            style: TextStyle(
+                              color: Colors.white70,
+                              fontSize: ResponsiveSize.fontSize(13),
+                              fontWeight: FontWeight.w600,
+                            ),
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          overflow: TextOverflow.ellipsis,
                         );
                       }),
                     ),

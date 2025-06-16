@@ -30,7 +30,7 @@ class SignupView extends GetView<SignupController> {
             padding: ResponsiveSize.padding(horizontal: 30),
             child: Column(
               children: [
-                SizedBox(height: ResponsiveSize.height(80)),
+                SizedBox(height: ResponsiveSize.height(50)),
                 Center(
                   child: Image.asset(
                     'assets/images/Splash.png',
@@ -238,7 +238,7 @@ class SignupView extends GetView<SignupController> {
                     ],
                   ),
                 ),
-                SizedBox(height: ResponsiveSize.height(20)),
+
               ],
             ),
           ),

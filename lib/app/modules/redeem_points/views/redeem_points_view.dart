@@ -39,10 +39,10 @@ class _RedeemPointsViewState extends State<RedeemPointsView>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // This will be called when the route is pushed or popped
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (ModalRoute.of(context)?.isCurrent == true) {
-        // This view is now the current view, refresh data
+
         controller.onResume();
       }
     });
@@ -94,14 +94,14 @@ class _RedeemPointsViewState extends State<RedeemPointsView>
                 decoration: BoxDecoration(
                   color: Colors.black54,
                   borderRadius: BorderRadius.circular(
-                    ResponsiveSize.radius(20),
+                    ResponsiveSize.radius(8),
                   ),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Transform(
-                      transform: Matrix4.identity()..scale(1.0),
+                      transform: Matrix4.identity()..scale(1.1),
                       child: Obx(
                         () => Text(
                           'card_number'.tr + ' ${controller.cardNumber.value}',
@@ -186,7 +186,7 @@ class _RedeemPointsViewState extends State<RedeemPointsView>
                   ),
                 ],
               ),
-
+              SizedBox(height: ResponsiveSize.height(10)),
               Expanded(
                 child: Obx(() {
                   if (controller.isLoading.value) {
@@ -235,10 +235,12 @@ class _RedeemPointsViewState extends State<RedeemPointsView>
                                     'dealer_number'.tr,
                                     pointHistory.dealerNumber,
                                   ),
+                                  SizedBox(height: ResponsiveSize.height(5)),
                                   _buildInfoRow(
                                     'date'.tr,
                                     pointHistory.formattedPurchaseDate,
                                   ),
+                                  SizedBox(height: ResponsiveSize.height(5)),
                                   _buildInfoRow(
                                     'item_code'.tr,
                                     pointHistory.itemCode,
@@ -256,6 +258,7 @@ class _RedeemPointsViewState extends State<RedeemPointsView>
                                           'total'.tr,
                                           pointHistory.formattedTotal,
                                         ),
+                                        SizedBox(height: ResponsiveSize.height(5)),
                                         _buildInfoRow(
                                           'point_receive'.tr,
                                           '${pointHistory.point}',
@@ -518,12 +521,12 @@ class _RedeemPointsViewState extends State<RedeemPointsView>
             '$label',
             style: TextStyle(
               color: Colors.white70,
-              fontSize: ResponsiveSize.fontSize(11),
+              fontSize: ResponsiveSize.fontSize(12),
               fontWeight: FontWeight.w500,
             ),
           ),
         ),
-        SizedBox(width: ResponsiveSize.width(12)),
+        SizedBox(width: ResponsiveSize.width(13)),
         Expanded(
           child: Text(
             value,

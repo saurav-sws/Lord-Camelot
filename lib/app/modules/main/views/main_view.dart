@@ -10,17 +10,19 @@ class MainView extends GetView<MainController> {
   Widget build(BuildContext context) {
     final mainController = Get.put(MainController());
 
-    return Scaffold(
-      body: Obx(() => mainController.pages[mainController.currentIndex.value]),
-      bottomNavigationBar: Container(
-        decoration: const BoxDecoration(
-          color: Colors.black,
-
-        ),
-        child: Obx(
-          () => CustomBottomNavigationBar(
-            currentIndex: mainController.currentIndex.value,
-            onTap: mainController.changePage,
+    return SafeArea(
+      child: Scaffold(
+        body: Obx(() => mainController.pages[mainController.currentIndex.value]),
+        bottomNavigationBar: Container(
+          decoration: const BoxDecoration(
+            color: Colors.black,
+      
+          ),
+          child: Obx(
+            () => CustomBottomNavigationBar(
+              currentIndex: mainController.currentIndex.value,
+              onTap: mainController.changePage,
+            ),
           ),
         ),
       ),

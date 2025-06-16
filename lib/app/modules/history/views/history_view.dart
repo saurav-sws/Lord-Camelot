@@ -106,7 +106,7 @@ class _HistoryViewState extends State<HistoryView> {
                         }
 
                         return Transform(
-                          transform: Matrix4.identity()..scale(1.0),
+                          transform: Matrix4.identity()..scale(1.1),
                           child: Text(
                             'card_number'.tr + ' $cardNumber',
                             style: TextStyle(

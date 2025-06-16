@@ -79,15 +79,18 @@ class ProfileView extends GetView<ProfileController> {
                   ),
                   child: Center(
                     child: Obx(
-                      () => Text(
-                        '${'card_number'.tr} ${profileController.cardNumber.value}',
-                        style: TextStyle(
-                          color: Colors.white70,
-                          fontSize: ResponsiveSize.fontSize(13),
-                          fontWeight: FontWeight.w600,
+                      () => Transform(
+                        transform: Matrix4.identity()..scale(1.1),
+                        child: Text(
+                          '${'card_number'.tr} ${profileController.cardNumber.value}',
+                          style: TextStyle(
+                            color: Colors.white70,
+                            fontSize: ResponsiveSize.fontSize(13),
+                            fontWeight: FontWeight.w600,
+                          ),
+                          textAlign: TextAlign.center,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                        textAlign: TextAlign.center,
-                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ),

@@ -29,7 +29,7 @@ class LoginView extends GetView<LoginController> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              SizedBox(height: ResponsiveSize.height(80)),
+              SizedBox(height: ResponsiveSize.height(50)),
               Center(
                 child: Image.asset(
                   'assets/images/Splash.png',

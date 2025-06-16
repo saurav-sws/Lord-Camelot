@@ -102,7 +102,7 @@ class _MyPointsViewState extends State<MyPointsView> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Transform(
-                      transform: Matrix4.identity()..scale(1.0),
+                      transform: Matrix4.identity()..scale(1.1),
                       child: Obx(
                         () => Text(
                           'card_number'.tr +
@@ -356,7 +356,7 @@ class _MyPointsViewState extends State<MyPointsView> {
             label,
             style: TextStyle(
               color: Colors.white70,
-              fontSize: ResponsiveSize.fontSize(11),
+              fontSize: ResponsiveSize.fontSize(12),
               fontWeight: FontWeight.w500,
             ),
           ),

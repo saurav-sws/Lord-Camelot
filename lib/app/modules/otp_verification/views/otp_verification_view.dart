@@ -141,8 +141,8 @@ class OtpVerificationView extends GetView<OtpVerificationController> {
                                   style: AppTextStyles.linkText.copyWith(
                                     color:
                                     controller.canResend.value
-                                        ? Color(0xFF227522)
-                                        : Color(0xFF227522)
+                                        ? Color(0xFF237220)
+                                        : Color(0xFF237220)
                                   ),
                                 ),
                               ),
@@ -157,7 +157,7 @@ class OtpVerificationView extends GetView<OtpVerificationController> {
                         child: ElevatedButton(
                           onPressed: controller.verifyOTP,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.green,
+                            backgroundColor: Color(0xFF237220),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(
                                 ResponsiveSize.radius(14),
