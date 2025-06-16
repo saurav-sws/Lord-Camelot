@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import '../../../utils/dialog_helper.dart';
 import '../../login/views/login_view.dart';
@@ -32,7 +33,6 @@ class ProfileController extends GetxController {
   void onInit() {
     super.onInit();
 
-
     fetchProfileData();
 
     final locale = Get.locale;
@@ -52,15 +52,12 @@ class ProfileController extends GetxController {
     try {
       isLoading.value = true;
 
-
       _loadUserDataFromStorage();
-
 
       final response = await _apiService.getProfile();
 
       if (response['success'] == true && response['data'] != null) {
         final profileData = response['data'];
-
 
         fullName.value = profileData['name'] ?? fullName.value;
         cardNumber.value = profileData['card_number'] ?? cardNumber.value;
@@ -68,7 +65,6 @@ class ProfileController extends GetxController {
 
         String apiDob = profileData['dob'] ?? '';
         birthDate.value = (apiDob.isNotEmpty) ? apiDob : birthDate.value;
-
 
         final currentUser = _storageService.currentUser.value;
         if (currentUser != null) {
@@ -88,7 +84,7 @@ class ProfileController extends GetxController {
 
         print('ProfileController - Loaded user data from API:');
         print('Name: ${fullName.value}');
-        print('Card Number: ${cardNumber.value}');
+        print('Card Number ${cardNumber.value}');
         print('Mobile: ${mobileNumber.value}');
         print('DOB: ${birthDate.value}');
       } else {
@@ -99,6 +95,20 @@ class ProfileController extends GetxController {
     } catch (e) {
       print('Error fetching profile data: $e');
 
+      String errorMsg = e.toString().toLowerCase();
+      if (errorMsg.contains('unauthenticated') ||
+          errorMsg.contains('unauthorized') ||
+          errorMsg.contains('token') ||
+          errorMsg.contains('not found') ||
+          errorMsg.contains('user not exist')) {
+        print('Authentication error detected, redirecting to login screen');
+
+        await _storageService.clearUser();
+
+        Get.offAllNamed('/login');
+
+        return;
+      }
     } finally {
       isLoading.value = false;
     }
@@ -117,7 +127,6 @@ class ProfileController extends GetxController {
           (user.dob != null && user.dob!.isNotEmpty) ? user.dob! : '';
       totalPoints.value = user.totalPoint ?? 0;
     } else {
-
       fullName.value = 'John Doe';
       cardNumber.value = _storageService.cardNumber;
       mobileNumber.value = '+81 90-1234-5678';
@@ -151,7 +160,6 @@ class ProfileController extends GetxController {
   void editField(String field) {
     print('editField called with field: $field');
 
-
     switch (field) {
       case 'Full Name':
         nameController.text = fullName.value;
@@ -178,7 +186,6 @@ class ProfileController extends GetxController {
         return;
     }
 
-
     currentlyEditingField.value = field;
     isEditingField.value = true;
     print('Set currentlyEditingField to: $field, isEditingField to: true');
@@ -195,7 +202,6 @@ class ProfileController extends GetxController {
           fullName.value = newValue;
           print('Updated fullName to: $newValue');
 
-
           _updateUserInStorage(name: newValue);
         }
         break;
@@ -204,7 +210,6 @@ class ProfileController extends GetxController {
         if (newValue.isNotEmpty) {
           mobileNumber.value = newValue;
           print('Updated mobileNumber to: $newValue');
-
 
           _updateUserInStorage(mobile: newValue);
         }
@@ -215,7 +220,6 @@ class ProfileController extends GetxController {
         birthDate.value = newValue;
         print('Updated birthDate to: $newValue');
 
-
         _updateUserInStorage(dob: newValue);
         break;
       case 'Card Number':
@@ -224,12 +228,10 @@ class ProfileController extends GetxController {
           cardNumber.value = newValue;
           print('Updated cardNumber to: $newValue');
 
-
           _updateUserInStorage(cardNumber: newValue);
         }
         break;
     }
-
 
     currentlyEditingField.value = '';
     isEditingField.value = false;
@@ -338,7 +340,6 @@ class ProfileController extends GetxController {
     Get.toNamed('/about-points');
   }
 
-
   void _updateUserInStorage({
     String? name,
     String? mobile,
@@ -358,9 +359,7 @@ class ProfileController extends GetxController {
         totalPoint: currentUser.totalPoint,
       );
 
-
       _storageService.saveUser(updatedUser);
-
 
       Get.find<StorageService>().updateCurrentUser(updatedUser);
     }

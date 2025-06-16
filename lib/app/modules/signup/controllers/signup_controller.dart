@@ -6,7 +6,7 @@ import '../../../../services/api_service.dart';
 import '../../../../services/fcm_service.dart';
 
 class SignupController extends GetxController {
-  final ApiService _apiService = ApiService();
+  late final ApiService _apiService;
 
   // We'll create these controllers when they're needed
   Rx<TextEditingController?> fullNameController = Rx<TextEditingController?>(
@@ -18,20 +18,31 @@ class SignupController extends GetxController {
   Rx<TextEditingController?> phoneNumberController = Rx<TextEditingController?>(
     null,
   );
+  Rx<TextEditingController?> dobController = Rx<TextEditingController?>(null);
 
   // Observable variables
   final RxBool isLoading = false.obs;
   final RxBool isFullNameValid = false.obs;
   final RxBool isCardNumberValid = false.obs;
   final RxBool isPhoneNumberValid = false.obs;
+  final RxBool isDobValid =
+      true.obs; // DOB is optional, so it's valid by default
 
   @override
   void onInit() {
     super.onInit();
+
+    // Get the ApiService instance or create one if it doesn't exist
+    if (!Get.isRegistered<ApiService>()) {
+      Get.put(ApiService(), permanent: true);
+    }
+    _apiService = Get.find<ApiService>();
+
     // Initialize controllers
     fullNameController.value = TextEditingController();
     cardNumberController.value = TextEditingController();
     phoneNumberController.value = TextEditingController();
+    dobController.value = TextEditingController();
   }
 
   @override
@@ -45,6 +56,9 @@ class SignupController extends GetxController {
 
     phoneNumberController.value?.dispose();
     phoneNumberController.value = null;
+
+    dobController.value?.dispose();
+    dobController.value = null;
 
     super.onClose();
   }
@@ -64,11 +78,25 @@ class SignupController extends GetxController {
     isPhoneNumberValid.value = value.isNotEmpty;
   }
 
+  // Validate DOB (optional)
+  void validateDob(String value) {
+    // DOB is optional, but if provided it must be in the correct format
+    if (value.isEmpty) {
+      isDobValid.value = true;
+      return;
+    }
+
+    // Check if the format is YYYY-MM-DD
+    final RegExp dateFormat = RegExp(r'^\d{4}-\d{2}-\d{2}$');
+    isDobValid.value = dateFormat.hasMatch(value);
+  }
+
   // Handle get OTP
   Future<void> getOTP() async {
     if (!isFullNameValid.value ||
         !isCardNumberValid.value ||
-        !isPhoneNumberValid.value) {
+        !isPhoneNumberValid.value ||
+        !isDobValid.value) {
       DialogHelper.showErrorDialog(
         title: 'missing_information'.tr,
         message: 'fill_all_fields'.tr,
@@ -79,6 +107,7 @@ class SignupController extends GetxController {
     final phoneNumber = phoneNumberController.value?.text ?? '';
     final fullName = fullNameController.value?.text ?? '';
     final cardNumber = cardNumberController.value?.text ?? '';
+    final dob = dobController.value?.text ?? '';
     final fcmToken = FCMService.to.fcmToken.value;
 
     // Show loading dialog
@@ -110,6 +139,7 @@ class SignupController extends GetxController {
           'phoneNumber': phoneNumber,
           'fullName': fullName,
           'cardNumber': cardNumber,
+          'dob': dob,
           'fcmToken': fcmToken,
           'otpValue': otpValue, // Pass the OTP value if available (for testing)
         },

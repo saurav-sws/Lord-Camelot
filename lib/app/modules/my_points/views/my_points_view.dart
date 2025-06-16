@@ -22,10 +22,9 @@ class _MyPointsViewState extends State<MyPointsView> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // This will be called when the route is pushed or popped
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (ModalRoute.of(context)?.isCurrent == true) {
-        // This view is now the current view, refresh data
         controller.onResume();
       }
     });
@@ -119,7 +118,7 @@ class _MyPointsViewState extends State<MyPointsView> {
                     OutlinedButton(
                       onPressed: myPointsController.goToProfile,
                       style: OutlinedButton.styleFrom(
-                        side: const BorderSide(color: Color(0xFF288c25)),
+                        side: const BorderSide(color:  Color(0xFF237220)),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(
                             ResponsiveSize.radius(20),
@@ -135,7 +134,7 @@ class _MyPointsViewState extends State<MyPointsView> {
                         child: Text(
                           'my_profile'.tr,
                           style: TextStyle(
-                            color: Color(0xFF227522),
+                            color:  Color(0xFF237220),
                             fontSize: ResponsiveSize.fontSize(14),
                             fontWeight: FontWeight.w600,
                           ),
@@ -221,18 +220,18 @@ class _MyPointsViewState extends State<MyPointsView> {
                         final record = myPointsController.pointRecords[index];
                         return Container(
                           margin: ResponsiveSize.margin(bottom: 16),
-                          padding: ResponsiveSize.padding(all: 16),
+                          padding: ResponsiveSize.padding(all: 14),
                           decoration: BoxDecoration(
                             color: Color(0xFF0f0f0f),
                             borderRadius: BorderRadius.circular(
                               ResponsiveSize.radius(10),
                             ),
                           ),
-                          child: Row(
+                          child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Expanded(
-                                flex: 2,
+                              Padding(
+                                padding: ResponsiveSize.padding(bottom: 8),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -250,57 +249,83 @@ class _MyPointsViewState extends State<MyPointsView> {
                                       'item_code'.tr,
                                       record.itemCode,
                                     ),
-                                    SizedBox(height: ResponsiveSize.height(6)),
-                                    _buildEntryField(
-                                      'total'.tr,
-                                      record.total.toString(),
-                                    ),
-                                    SizedBox(height: ResponsiveSize.height(6)),
-                                    _buildEntryField(
-                                      'point_receive'.tr,
-                                      record.pointReceive,
-                                    ),
                                   ],
                                 ),
                               ),
 
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                              Row(
                                 children: [
-                                  SizedBox(height: ResponsiveSize.height(78)),
-                                  Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Text(
-                                        'point_redeemed'.tr,
-                                        style: TextStyle(
-                                          color: Colors.white70,
-                                          fontSize: ResponsiveSize.fontSize(12),
-                                          fontWeight: FontWeight.w500,
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        _buildEntryField(
+                                          'total'.tr,
+                                          record.total.toString(),
                                         ),
-                                      ),
-                                      SizedBox(width: ResponsiveSize.width(8)),
-                                      Container(
-                                        width: ResponsiveSize.width(12),
-                                        height: ResponsiveSize.height(12),
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color:
-                                              record.isRedeemed
-                                                  ? Color(0xFF288c25)
-                                                  : Colors.red,
+                                        SizedBox(
+                                          height: ResponsiveSize.height(6),
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(height: ResponsiveSize.height(6)),
-                                  Text(
-                                    'Date: ${record.isRedeemed && record.redemptionDate != null ? _formatDateTime(record.redemptionDate!) : ''}',
-                                    style: TextStyle(
-                                      color: Colors.white70,
-                                      fontSize: ResponsiveSize.fontSize(13),
-                                      fontWeight: FontWeight.w500,
+                                        _buildEntryField(
+                                          'point_receive'.tr,
+                                          record.pointReceive,
+                                        ),
+                                      ],
                                     ),
+                                  ),
+
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+
+                                    children: [
+                                      Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Text(
+                                            'point_redeemed'.tr,
+                                            style: TextStyle(
+                                              color: Colors.white70,
+                                              fontSize: ResponsiveSize.fontSize(
+                                                12,
+                                              ),
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            width: ResponsiveSize.width(8),
+                                          ),
+                                          Container(
+                                            width: ResponsiveSize.width(12),
+                                            height: ResponsiveSize.height(12),
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color:
+                                                  record.isRedeemed
+                                                      ? Color(0xFF288c25)
+                                                      : Colors.red,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      if (record.isRedeemed &&
+                                          record.redemptionDate != null)
+                                        Padding(
+                                          padding: ResponsiveSize.padding(
+                                            top: 6,
+                                          ),
+                                          child: Text(
+                                            'Date: ${_formatDateTime(record.redemptionDate!)}',
+                                            style: TextStyle(
+                                              color: Colors.white70,
+                                              fontSize: ResponsiveSize.fontSize(
+                                                12,
+                                              ),
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        ),
+                                    ],
                                   ),
                                 ],
                               ),
@@ -320,7 +345,10 @@ class _MyPointsViewState extends State<MyPointsView> {
   }
 
   Widget _buildEntryField(String label, String value) {
+    bool isItemCode = label == 'item_code'.tr;
+
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Transform(
           transform: Matrix4.identity()..scale(1.1),
@@ -328,14 +356,13 @@ class _MyPointsViewState extends State<MyPointsView> {
             label,
             style: TextStyle(
               color: Colors.white70,
-              fontSize: ResponsiveSize.fontSize(12),
+              fontSize: ResponsiveSize.fontSize(11),
               fontWeight: FontWeight.w500,
             ),
           ),
         ),
-        SizedBox(width: ResponsiveSize.width(15)),
-        Transform(
-          transform: Matrix4.identity()..scale(1.1),
+        SizedBox(width: ResponsiveSize.width(12)),
+        Expanded(
           child: Text(
             value,
             style: TextStyle(
@@ -343,6 +370,8 @@ class _MyPointsViewState extends State<MyPointsView> {
               fontSize: ResponsiveSize.fontSize(12),
               fontWeight: FontWeight.w500,
             ),
+            overflow: TextOverflow.ellipsis,
+            maxLines: isItemCode ? 1 : 2,
           ),
         ),
       ],

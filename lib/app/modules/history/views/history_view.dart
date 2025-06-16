@@ -123,7 +123,7 @@ class _HistoryViewState extends State<HistoryView> {
                     OutlinedButton(
                       onPressed: () => Get.toNamed('/profile'),
                       style: OutlinedButton.styleFrom(
-                        side: const BorderSide(color: Color(0xFF288c25)),
+                        side: const BorderSide(color: Color(0xFF237220)),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(
                             ResponsiveSize.radius(20),
@@ -139,7 +139,7 @@ class _HistoryViewState extends State<HistoryView> {
                         child: Text(
                           'my_profile'.tr,
                           style: TextStyle(
-                            color: Color(0xFF227522),
+                            color:  Color(0xFF237220),
                             fontSize: ResponsiveSize.fontSize(14),
                             fontWeight: FontWeight.w600,
                           ),
@@ -231,8 +231,9 @@ class _HistoryViewState extends State<HistoryView> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Wrap(
-                                spacing: ResponsiveSize.width(20),
+                                  Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
                                 children: [
                                   Text(
                                     'date'.tr + ' ${record.formattedDate}',
@@ -256,6 +257,7 @@ class _HistoryViewState extends State<HistoryView> {
                               Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
+
                                 children: [
                                   Expanded(
                                     child: Text(

@@ -10,6 +10,8 @@ final Map<String, String> jaJP = {
   'sign_upl': 'サインアップ',
   'signup_desc': 'カード番号と電話番号を入力して新規登録',
   'enter_name': '氏名を入力',
+  'enter_dob_optional': '生年月日を入力',
+  'optional': '任意',
   'get_otp': '認証コードを取得',
   'have_account': 'すでにアカウントをお持ちですか?',
   'otp_verification': '認証コード確認',
@@ -21,7 +23,7 @@ final Map<String, String> jaJP = {
   'resend': '再送信',
   'seconds': '秒',
   'my_points': 'マイポイント',
-  'card_number': 'カード番号',
+  'card_number': 'カード番号：',
   'my_profile': 'マイプロフィール',
   'dealer_number': '販売店番号：',
   'date': '日付：',
@@ -84,7 +86,7 @@ final Map<String, String> jaJP = {
   'otp_resent': '認証コード再送信',
   'new_otp_sent': '新しい認証コードが電話番号に送信されました',
   'refresh': '更新',
-
+  'No unreedeem': '償還されない利用可能なポイント',
   // News related strings
   'posted_on': '投稿日',
   'try_again': '再試行',

@@ -1,8 +1,10 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:lordcamelot_point/services/api_service.dart';
 import 'package:lordcamelot_point/services/fcm_service.dart';
 import 'package:lordcamelot_point/services/firebase_options.dart';
 import 'package:lordcamelot_point/services/storage_service.dart';
@@ -18,13 +20,18 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Set preferred orientations to portrait only
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
+
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
-
   await testSharedPreferences();
-
 
   await initServices();
 
@@ -37,7 +44,6 @@ Future<void> testSharedPreferences() async {
   try {
     print('Testing SharedPreferences functionality...');
     final prefs = await SharedPreferences.getInstance();
-
 
     final testKey = 'test_key_${DateTime.now().millisecondsSinceEpoch}';
     final testValue = 'test_value_${DateTime.now().millisecondsSinceEpoch}';
@@ -53,7 +59,6 @@ Future<void> testSharedPreferences() async {
       );
     }
 
-
     await prefs.remove(testKey);
   } catch (e) {
     print('SharedPreferences test error: $e');
@@ -61,11 +66,12 @@ Future<void> testSharedPreferences() async {
 }
 
 Future<void> initServices() async {
-
   await Get.putAsync(() => StorageService().init());
 
-
   await Get.putAsync(() => FCMService().init());
+
+  // Register ApiService as a permanent dependency
+  Get.put(ApiService(), permanent: true);
 
   print('All services initialized');
 }
@@ -125,6 +131,7 @@ class MyApp extends StatelessWidget {
       designSize: const Size(360, 800),
       minTextAdapt: true,
       splitScreenMode: true,
+      useInheritedMediaQuery: true,
       builder: (context, child) {
         return GetMaterialApp(
           title: 'Lord Camelot',

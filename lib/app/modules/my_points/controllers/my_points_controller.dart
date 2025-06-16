@@ -110,6 +110,24 @@ class MyPointsController extends GetxController {
       hasError.value = true;
       errorMessage.value = 'Error fetching points: $e';
       print('Error fetching points: $e');
+
+      // Check if the error is related to authentication
+      String errorMsg = e.toString().toLowerCase();
+      if (errorMsg.contains('unauthenticated') ||
+          errorMsg.contains('unauthorized') ||
+          errorMsg.contains('token') ||
+          errorMsg.contains('not found') ||
+          errorMsg.contains('user not exist')) {
+        print('Authentication error detected, redirecting to login screen');
+
+        // Clear user data
+        await _storageService.clearUser();
+
+        // Navigate to login screen
+        Get.offAllNamed('/login');
+
+        return;
+      }
     } finally {
       isLoading.value = false;
     }

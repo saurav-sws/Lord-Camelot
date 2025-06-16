@@ -162,6 +162,7 @@ class ApiService {
     required String cardNumber,
     required String fcmToken,
     required String otp,
+    String? dob,
   }) async {
     try {
       final response = await _dio.post(
@@ -172,6 +173,7 @@ class ApiService {
           'card_number': cardNumber,
           'fcm_token': fcmToken,
           'otp': otp,
+          'dob': dob ?? '',
         },
       );
 

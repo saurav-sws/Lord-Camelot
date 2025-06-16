@@ -122,6 +122,25 @@ class RedeemPointsController extends GetxController {
       }
     } catch (e) {
       print('Error loading points data: $e');
+
+      // Check if the error is related to authentication
+      String errorMsg = e.toString().toLowerCase();
+      if (errorMsg.contains('unauthenticated') ||
+          errorMsg.contains('unauthorized') ||
+          errorMsg.contains('token') ||
+          errorMsg.contains('not found') ||
+          errorMsg.contains('user not exist')) {
+        print('Authentication error detected, redirecting to login screen');
+
+        // Clear user data
+        await _storageService.clearUser();
+
+        // Navigate to login screen
+        Get.offAllNamed('/login');
+
+        return;
+      }
+
       DialogHelper.showErrorDialog(
         title: 'Error',
         message: 'Failed to load points data. Please try again.',

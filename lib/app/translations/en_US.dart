@@ -10,6 +10,8 @@ final Map<String, String> enUS = {
   'sign_upl': 'Sign Up',
   'signup_desc': 'Enter your Card-No and phone-No to Sign Up',
   'enter_name': 'Enter your Full Name',
+  'enter_dob_optional': 'Enter your Date of Birth',
+  'optional': 'Optional',
   'get_otp': 'Get OTP',
   'have_account': 'Already have an account?',
   'otp_verification': 'OTP Verification',
@@ -21,7 +23,7 @@ final Map<String, String> enUS = {
   'resend': 'Re-send',
   'seconds': 'seconds',
   'my_points': 'My Points',
-  'card_number': 'Card Number:',
+  'card_number': 'Card Number :',
   'my_profile': 'My Profile',
   'dealer_number': 'Dealer Number :',
   'date': 'Date:',
@@ -89,6 +91,7 @@ final Map<String, String> enUS = {
   'otp_resent': 'OTP Resent',
   'new_otp_sent': 'A new OTP has been sent to your phone number',
   'refresh': 'Refresh',
+  'No unreedeem': 'No unredeemed points available',
 
   // News related strings
   'posted_on': 'Posted on',

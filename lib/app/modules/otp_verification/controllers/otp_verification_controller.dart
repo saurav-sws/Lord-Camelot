@@ -8,13 +8,14 @@ import '../../../../services/api_service.dart';
 import '../../../../services/storage_service.dart';
 
 class OtpVerificationController extends GetxController {
-  final ApiService _apiService = ApiService();
+  final ApiService _apiService = Get.find<ApiService>();
   final StorageService _storageService = Get.find<StorageService>();
 
   final String phoneNumber;
   final String fullName;
   final String cardNumber;
   final String fcmToken;
+  final String? dob; // Optional DOB field
   final String? otpValue; // OTP value for auto-fill (testing only)
 
   OtpVerificationController({
@@ -22,10 +23,11 @@ class OtpVerificationController extends GetxController {
     required this.fullName,
     required this.cardNumber,
     required this.fcmToken,
+    this.dob,
     this.otpValue,
   });
 
-  final TextEditingController pinController = TextEditingController();
+  final TextEditingController otpController = TextEditingController();
 
   final RxBool isLoading = false.obs;
   final RxBool isResending = false.obs;
@@ -41,28 +43,28 @@ class OtpVerificationController extends GetxController {
   void onInit() {
     super.onInit();
 
-    formattedPhoneNumber.value = formatPhoneNumber(phoneNumber);
+    formatPhoneNumber();
 
     startResendTimer();
 
     // Auto-fill OTP if available (for testing purposes)
     if (otpValue != null && otpValue!.isNotEmpty) {
+      otpController.text = otpValue!;
       pin.value = otpValue!;
-      pinController.text = otpValue!;
     }
   }
 
   @override
   void onClose() {
-    pinController.dispose();
+    otpController.dispose();
     focusNode.dispose();
     _timer?.cancel();
     super.onClose();
   }
 
-  String formatPhoneNumber(String number) {
-    String cleanNumber = number.replaceAll(RegExp(r'[^\d]'), '');
-    return cleanNumber;
+  void formatPhoneNumber() {
+    String cleaned = phoneNumber.replaceAll(RegExp(r'[^0-9]'), '');
+    formattedPhoneNumber.value = cleaned;
   }
 
   void updatePin(String value) {
@@ -83,11 +85,11 @@ class OtpVerificationController extends GetxController {
     });
   }
 
-  Future<void> verifyOTP() async {
+  void verifyOTP() async {
     if (pin.value.length != 4) {
       DialogHelper.showErrorDialog(
-        title: 'invalid_otp'.tr,
-        message: 'enter_valid_otp'.tr,
+        title: 'error'.tr,
+        message: 'invalid_otp'.tr,
       );
       return;
     }
@@ -95,113 +97,90 @@ class OtpVerificationController extends GetxController {
     DialogHelper.showLoading(message: 'verifying_otp'.tr);
 
     try {
-      print('Verifying OTP: ${pin.value}');
       final response = await _apiService.verifyOtpAndRegister(
         mobile: phoneNumber,
         name: fullName,
         cardNumber: cardNumber,
         fcmToken: fcmToken,
         otp: pin.value,
+        dob: dob ?? '',
       );
 
-      print('Verification response: $response');
+      print('OTP verification response: $response');
+
+      // Check if response contains the expected data
+      if (!response.containsKey('user') || !response.containsKey('token')) {
+        print('ERROR: Response does not contain user or token data');
+        print('Response keys: ${response.keys.toList()}');
+        throw Exception('Invalid response from server. Registration failed.');
+      }
+
+      // Extract user data and token
+      final userData = response['user'];
+      final token = response['token'];
+
+      print('User data: $userData');
+      print(
+        'Token: ${token.toString().substring(0, min(10, token.toString().length))}...',
+      );
+
+      // Create a complete user object with token
+      Map<String, dynamic> completeUserData = {
+        'user': userData,
+        'access_token': token,
+        'token_type': 'Bearer',
+      };
+
+      // Create user object
+      final user = User.fromJson(completeUserData);
+
+      print(
+        'Created user object: ${user.userId}, token: ${user.accessToken.substring(0, min(10, user.accessToken.length))}...',
+      );
+
+      // Save user data
+      await _storageService.saveUser(user);
+
+      // Verify login status
+      final loggedIn = _storageService.hasUser;
+      print('After registration - Is user logged in: $loggedIn');
+      print(
+        'Current user in storage: ${_storageService.currentUser.value?.userId}',
+      );
+
       DialogHelper.hideLoading();
 
-      try {
-        // Create a user from the response
-        final user = User.fromJson(response);
-        print('User created: ${user.userId} with token: ${user.accessToken}');
-
-        // Save user data (this might fail but we'll continue anyway)
-        try {
-          await _storageService.saveUser(user);
-          print('User data saved successfully');
-        } catch (saveError) {
-          // If saving fails, we'll still proceed with the registration
-          print(
-            'Error saving user but proceeding with registration: $saveError',
-          );
-
-          // Ensure the user is at least available in memory
-          _storageService.currentUser.value = user;
-          _storageService.isLoggedIn.value = true;
-        }
-
-        // Navigate directly to the main screen without showing success dialog
-        print('Navigating directly to MAIN route');
-        Get.offAllNamed(Routes.MAIN);
-      } catch (userError) {
-        print('Error creating user object: $userError');
-        print(
-          'Registration was successful, but user parsing failed. Navigating anyway.',
-        );
-
-        // Even if user object creation fails, navigate directly to main screen
-        print('Forced direct navigation to MAIN route');
-        Get.offAllNamed(Routes.MAIN);
-      }
+      // Navigate directly to main screen with redeem points view
+      Get.offAllNamed(Routes.MAIN);
     } catch (e) {
-      print('Error during OTP verification: $e');
+      print('OTP verification error: $e');
       DialogHelper.hideLoading();
-
-      String errorMessage = e.toString();
-      // Simplify error message if it's too technical
-      if (errorMessage.contains('Exception: Error:')) {
-        errorMessage = errorMessage.replaceAll('Exception: Error: ', '');
-      }
-
-      DialogHelper.showErrorDialog(
-        title: 'error'.tr,
-        message: errorMessage,
-        buttonText: 'OK',
-        onConfirm: () {
-          // Ensure that the error dialog is properly dismissed
-          if (Get.isDialogOpen ?? false) {
-            Get.back();
-          }
-        },
-      );
+      DialogHelper.showErrorDialog(title: 'error'.tr, message: e.toString());
     }
   }
 
-  Future<void> resendOTP() async {
-    if (!canResend.value) return;
+  int min(int a, int b) => a < b ? a : b;
 
-    isResending.value = true;
-
+  void resendOTP() async {
     DialogHelper.showLoading(message: 'sending_otp'.tr);
 
     try {
-      // Call the API to resend OTP
-      final response = await _apiService.resendOTP(mobile: phoneNumber);
+      await _apiService.sendOTP(
+        mobile: phoneNumber,
+        name: fullName,
+        cardNumber: cardNumber,
+        fcmToken: fcmToken,
+      );
 
       DialogHelper.hideLoading();
-      isResending.value = false;
       startResendTimer();
-
-      // Auto-fill OTP if available (for testing purposes)
-      if (response.containsKey('otp')) {
-        String newOtp = response['otp'].toString();
-        pin.value = newOtp;
-        pinController.text = newOtp;
-        print('New OTP received: $newOtp');
-      }
-
       DialogHelper.showSuccessDialog(
-        title: 'otp_resent'.tr,
-        message: 'new_otp_sent'.tr,
+        title: 'success'.tr,
+        message: 'otp_sent'.tr,
       );
     } catch (e) {
       DialogHelper.hideLoading();
-      isResending.value = false;
-
-      String errorMessage = e.toString();
-      // Simplify error message if it's too technical
-      if (errorMessage.contains('Exception: Error:')) {
-        errorMessage = errorMessage.replaceAll('Exception: Error: ', '');
-      }
-
-      DialogHelper.showErrorDialog(title: 'error'.tr, message: errorMessage);
+      DialogHelper.showErrorDialog(title: 'error'.tr, message: e.toString());
     }
   }
 }

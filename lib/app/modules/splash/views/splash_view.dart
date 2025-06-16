@@ -17,23 +17,17 @@ class SplashView extends GetView<SplashController> {
         width: size.width,
         height: size.height,
         decoration: BoxDecoration(
-          gradient: RadialGradient(
-            center: Alignment.topRight,
-            radius: 0.8,
-            colors: [Color(0xFF001e16), Color(0xFF000000),],
+          image: DecorationImage(
+            image: AssetImage('assets/images/background.png'),
+           fit: BoxFit. fill
           ),
         ),
         child: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-
-              Image.asset(
-                'assets/images/Splash.png',
-                width: size.width * 0.40,
-              ),
+              Image.asset('assets/images/Splash.png', width: size.width * 0.40),
               const SizedBox(height: 20),
-
               Text(
                 '𝕷𝖔𝖗𝖉 𝕮𝖆𝖒𝖊𝖑𝖔𝖙',
                 style: TextStyle(

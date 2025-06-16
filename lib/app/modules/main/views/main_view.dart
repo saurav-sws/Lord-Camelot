@@ -15,7 +15,7 @@ class MainView extends GetView<MainController> {
       bottomNavigationBar: Container(
         decoration: const BoxDecoration(
           color: Colors.black,
-          border: Border(top: BorderSide(color: Color(0xFF151515), width: 1.0)),
+
         ),
         child: Obx(
           () => CustomBottomNavigationBar(
@@ -41,7 +41,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 65,
+
       width: double.infinity,
       color: Colors.black,
       child: Row(
@@ -58,7 +58,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
 
   Widget _buildNavItem(int index, IconData icon, String label) {
     final isSelected = currentIndex == index;
-    final Color iconColor = isSelected ? Color(0xFF288c25) : Colors.white70;
+    final Color? iconColor = isSelected ? null : Colors.white70;
     final Color textColor = isSelected ? Color(0xFF288c25) : Colors.white70;
 
     return InkWell(
@@ -76,9 +76,9 @@ class CustomBottomNavigationBar extends StatelessWidget {
           children: [
             Image.asset(
               'assets/images/Splash.png',
-              width: ResponsiveSize.width(30),
-              height: ResponsiveSize.height(30),
-              color: isSelected ? const Color(0xFF288c25) : Colors.white70,
+              width: ResponsiveSize.width(32),
+              height: ResponsiveSize.height(35),
+               color: iconColor,
             ),
             SizedBox(height: ResponsiveSize.height(3)),
             Text(

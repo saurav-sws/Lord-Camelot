@@ -116,7 +116,7 @@ class _RedeemPointsViewState extends State<RedeemPointsView>
                     OutlinedButton(
                       onPressed: controller.goToProfile,
                       style: OutlinedButton.styleFrom(
-                        side: const BorderSide(color: Color(0xFF288c25)),
+                        side: const BorderSide(color: Color(0xFF237220),),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(
                             ResponsiveSize.radius(20),
@@ -132,7 +132,7 @@ class _RedeemPointsViewState extends State<RedeemPointsView>
                         child: Text(
                           'my_profile'.tr,
                           style: TextStyle(
-                            color: Color(0xFF227522),
+                            color:  Color(0xFF237220),
                             fontSize: ResponsiveSize.fontSize(14),
                             fontWeight: FontWeight.w600,
                           ),
@@ -194,7 +194,6 @@ class _RedeemPointsViewState extends State<RedeemPointsView>
                       child: CircularProgressIndicator(color: Colors.green),
                     );
                   }
-
                   final unredeemedPoints =
                       controller.pointHistoryList
                           .where((point) => !point.isAlreadyRedeemed)
@@ -203,7 +202,7 @@ class _RedeemPointsViewState extends State<RedeemPointsView>
                   if (unredeemedPoints.isEmpty) {
                     return Center(
                       child: Text(
-                        'No unredeemed points available',
+                        'No unreedeem'.tr,
                         style: TextStyle(
                           color: Colors.white70,
                           fontSize: ResponsiveSize.fontSize(16),
@@ -211,7 +210,6 @@ class _RedeemPointsViewState extends State<RedeemPointsView>
                       ),
                     );
                   }
-
                   return RefreshIndicator(
                     onRefresh: controller.refreshData,
                     child: ListView.builder(
@@ -220,83 +218,96 @@ class _RedeemPointsViewState extends State<RedeemPointsView>
                         final pointHistory = unredeemedPoints[index];
                         return Container(
                           margin: ResponsiveSize.margin(bottom: 12),
-                          padding: ResponsiveSize.padding(all: 12),
+                          padding: ResponsiveSize.padding(all: 10),
                           decoration: BoxDecoration(
                             color: Color(0xFF0f0f0f),
                             borderRadius: BorderRadius.circular(
                               ResponsiveSize.radius(10),
                             ),
                           ),
-                          child: Row(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    _buildInfoRow(
-                                      'dealer_number'.tr,
-                                      pointHistory.dealerNumber,
-                                    ),
-                                    _buildInfoRow(
-                                      'date'.tr,
-                                      pointHistory.formattedPurchaseDate,
-                                    ),
-                                    _buildInfoRow(
-                                      'item_code'.tr,
-                                      pointHistory.itemCode,
-                                    ),
-                                    _buildInfoRow(
-                                      'total'.tr,
-                                      pointHistory.formattedTotal,
-                                    ),
-                                    _buildInfoRow(
-                                      'point_receive'.tr,
-                                      '${pointHistory.point}',
-                                    ),
-                                  ],
-                                ),
-                              ),
                               Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
-                                    'redeeme'.tr,
-                                    style: TextStyle(
-                                      color: Colors.white70,
-                                      fontSize: ResponsiveSize.fontSize(12),
-                                      fontWeight: FontWeight.w600,
+                                  _buildInfoRow(
+                                    'dealer_number'.tr,
+                                    pointHistory.dealerNumber,
+                                  ),
+                                  _buildInfoRow(
+                                    'date'.tr,
+                                    pointHistory.formattedPurchaseDate,
+                                  ),
+                                  _buildInfoRow(
+                                    'item_code'.tr,
+                                    pointHistory.itemCode,
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        _buildInfoRow(
+                                          'total'.tr,
+                                          pointHistory.formattedTotal,
+                                        ),
+                                        _buildInfoRow(
+                                          'point_receive'.tr,
+                                          '${pointHistory.point}',
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                  SizedBox(height: 5),
-                                  GestureDetector(
-                                    onTap:
-                                        () => controller.togglePointSelection(
-                                          controller.pointHistoryList.indexOf(
-                                            pointHistory,
-                                          ),
-                                        ),
-                                    child: Container(
-                                      width: ResponsiveSize.width(24),
-                                      height: ResponsiveSize.height(24),
-                                      decoration: BoxDecoration(
-                                        color:
-                                            pointHistory.isSelected
-                                                ? Color(0xFF288c25)
-                                                : Colors.black,
-                                        border: Border.all(
-                                          color: Color(0xFF288c25),
-                                          width: 1.5,
+
+
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        'redeeme'.tr,
+                                        style: TextStyle(
+                                          color: Colors.white70,
+                                          fontSize: ResponsiveSize.fontSize(12),
+                                          fontWeight: FontWeight.w600,
                                         ),
                                       ),
-                                      child:
-                                          pointHistory.isSelected
-                                              ? Icon(
-                                                Icons.check,
-                                                color: Colors.white,
-                                                size: 18,
-                                              )
-                                              : null,
-                                    ),
+                                      SizedBox(height: 5),
+                                      GestureDetector(
+                                        onTap:
+                                            () =>
+                                                controller.togglePointSelection(
+                                                  controller.pointHistoryList
+                                                      .indexOf(pointHistory),
+                                                ),
+                                        child: Container(
+                                          width: ResponsiveSize.width(24),
+                                          height: ResponsiveSize.height(24),
+                                          decoration: BoxDecoration(
+                                            color:
+                                                pointHistory.isSelected
+                                                    ? Colors.black
+                                                    : Colors.black,
+                                            border: Border.all(
+                                              color: Color(0xFF288c25),
+                                              width: 1.5,
+                                            ),
+                                          ),
+                                          child:
+                                              pointHistory.isSelected
+                                                  ? Icon(
+                                                    Icons.check,
+                                                color: Color(0xFF288c25),
+                                                    size: 20,
+                                                  )
+                                                  : null,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),
@@ -335,7 +346,7 @@ class _RedeemPointsViewState extends State<RedeemPointsView>
                         ),
                       ),
                       SizedBox(height: 10),
-                      // Discount explanation
+
                       Container(
                         padding: ResponsiveSize.padding(all: 8),
                         decoration: BoxDecoration(
@@ -495,33 +506,34 @@ class _RedeemPointsViewState extends State<RedeemPointsView>
   }
 
   Widget _buildInfoRow(String label, String value) {
+
+    bool isItemCode = label == 'item_code'.tr;
+
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(
-          width: ResponsiveSize.width(120),
-          child: Transform(
-            transform: Matrix4.identity()..scale(1.1),
-            child: Text(
-              '$label',
-              style: TextStyle(
-                color: Colors.white70,
-                fontSize: ResponsiveSize.fontSize(12),
-                fontWeight: FontWeight.w500,
-              ),
+        Transform(
+          transform: Matrix4.identity()..scale(1.1),
+          child: Text(
+            '$label',
+            style: TextStyle(
+              color: Colors.white70,
+              fontSize: ResponsiveSize.fontSize(11),
+              fontWeight: FontWeight.w500,
             ),
           ),
         ),
+        SizedBox(width: ResponsiveSize.width(12)),
         Expanded(
-          child: Transform(
-            transform: Matrix4.identity()..scale(1.1),
-            child: Text(
-              value,
-              style: TextStyle(
-                color: Colors.white70,
-                fontSize: ResponsiveSize.fontSize(12),
-                fontWeight: FontWeight.w600,
-              ),
+          child: Text(
+            value,
+            style: TextStyle(
+              color: Colors.white70,
+              fontSize: ResponsiveSize.fontSize(12),
+              fontWeight: FontWeight.w500,
             ),
+            overflow: TextOverflow.ellipsis,
+            maxLines: isItemCode ? 1 : 2,
           ),
         ),
       ],
