@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "284467535125",
-    "project_id": "lordcamelot-point",
-    "storage_bucket": "lordcamelot-point.firebasestorage.app"
+    "project_number": "894646663100",
+    "project_id": "lord-camelot-9099f",
+    "storage_bucket": "lord-camelot-9099f.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:284467535125:android:f8b8e68326c4d9ac7d1d1c",
+        "mobilesdk_app_id": "1:894646663100:android:bf0565f41504b025aa5db9",
         "android_client_info": {
           "package_name": "com.example.lordcamelot_point"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyCkvUS85tHgtm6iNs2RvACVFSMuqixJjVY"
+          "current_key": "AIzaSyCajsR59_Me6eXmxEc13LpiKWoQL9JX5sw"
         }
       ],
       "services": {

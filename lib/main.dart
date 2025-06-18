@@ -14,7 +14,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  // Ensure Firebase is initialized for background messages
+  if (Firebase.apps.isEmpty) {
+    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  }
   print('Handling a background message: ${message.messageId}');
 }
 
@@ -27,17 +30,56 @@ Future<void> main() async {
     DeviceOrientation.portraitDown,
   ]);
 
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  // Initialize Firebase first - with robust error handling
+  await _initializeFirebase();
 
+  // Set up background message handler AFTER Firebase is initialized
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
+  // Test SharedPreferences (doesn't require Firebase)
   await testSharedPreferences();
 
+  // Initialize services AFTER Firebase is ready
   await initServices();
 
+  // Initialize FCM last (requires Firebase + services to be ready)
   await initializeFCM();
 
   runApp(const MyApp());
+}
+
+Future<void> _initializeFirebase() async {
+  int attempts = 0;
+  const maxAttempts = 3;
+
+  while (attempts < maxAttempts) {
+    try {
+      if (Firebase.apps.isEmpty) {
+        await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+        print('Firebase initialized successfully on attempt ${attempts + 1}');
+        return;
+      } else {
+        print('Firebase already initialized');
+        return;
+      }
+    } catch (e) {
+      attempts++;
+      print('Firebase initialization attempt $attempts failed: $e');
+
+      if (e.toString().contains('duplicate-app')) {
+        print('Firebase already initialized (duplicate app detected)');
+        return;
+      }
+
+      if (attempts >= maxAttempts) {
+        print('Failed to initialize Firebase after $maxAttempts attempts');
+        rethrow;
+      }
+
+      // Wait a bit before retrying
+      await Future.delayed(Duration(milliseconds: 500));
+    }
+  }
 }
 
 Future<void> testSharedPreferences() async {
@@ -66,59 +108,102 @@ Future<void> testSharedPreferences() async {
 }
 
 Future<void> initServices() async {
-  await Get.putAsync(() => StorageService().init());
+  try {
+    print('Initializing services...');
 
-  await Get.putAsync(() => FCMService().init());
+    // Initialize StorageService first (doesn't depend on Firebase)
+    await Get.putAsync(() => StorageService().init());
+    print('StorageService initialized');
 
-  // Register ApiService as a permanent dependency
-  Get.put(ApiService(), permanent: true);
+    // Initialize FCMService (depends on Firebase being ready)
+    await Get.putAsync(() => FCMService().init());
+    print('FCMService initialized');
 
-  print('All services initialized');
+    // Register ApiService as a permanent dependency
+    Get.put(ApiService(), permanent: true);
+    print('ApiService initialized');
+
+    print('All services initialized successfully');
+  } catch (e) {
+    print('Error initializing services: $e');
+    rethrow;
+  }
 }
 
 Future<void> initializeFCM() async {
-  FirebaseMessaging messaging = FirebaseMessaging.instance;
-  NotificationSettings settings = await messaging.requestPermission(
-    alert: true,
-    announcement: false,
-    badge: true,
-    carPlay: false,
-    criticalAlert: false,
-    provisional: false,
-    sound: true,
-  );
+  try {
+    print('Setting up FCM listeners...');
 
-  print('User granted permission: ${settings.authorizationStatus}');
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
 
-  String? token = await messaging.getToken();
-  print('FCM Token: $token');
+    // Request permissions
+    NotificationSettings settings = await messaging.requestPermission(
+      alert: true,
+      announcement: false,
+      badge: true,
+      carPlay: false,
+      criticalAlert: false,
+      provisional: false,
+      sound: true,
+    );
 
-  FirebaseMessaging.instance.onTokenRefresh
-      .listen((fcmToken) {
-        print('FCM Token refreshed: $fcmToken');
-      })
-      .onError((err) {
-        print('Error refreshing FCM token: $err');
-      });
+    print('User granted permission: ${settings.authorizationStatus}');
 
-  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-    print('Got a message whilst in the foreground!');
-    print('Message data: ${message.data}');
+    // The FCM token is already handled by FCMService.init()
+    // So we don't need to get it again here
 
-    if (message.notification != null) {
-      print('Message also contained a notification: ${message.notification}');
+    // Set up listeners for token refresh
+    FirebaseMessaging.instance.onTokenRefresh
+        .listen((fcmToken) {
+      print('🔄 FCM Token refreshed!');
+      print('🆕 NEW FCM TOKEN: $fcmToken');
+      print('═══════════════════════════════════════');
+      print('COPY THIS REFRESHED FCM TOKEN:');
+      print(fcmToken);
+      print('═══════════════════════════════════════');
+
+      // Update the token in FCMService
+      if (Get.isRegistered<FCMService>()) {
+        FCMService.to.fcmToken.value = fcmToken;
+      }
+    })
+        .onError((err) {
+      print('❌ Error refreshing FCM token: $err');
+    });
+
+    // Handle foreground messages
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      print('Got a message whilst in the foreground!');
+      print('Message data: ${message.data}');
+
+      if (message.notification != null) {
+        print('Message also contained a notification: ${message.notification}');
+      }
+    });
+
+    // Handle messages when app is opened from notification
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      print('A new onMessageOpenedApp event was published!');
+      print('Message data: ${message.data}');
+    });
+
+    // Handle initial message if app was opened from notification
+    RemoteMessage? initialMessage = await messaging.getInitialMessage();
+    if (initialMessage != null) {
+      print('App opened from terminated state via notification');
+      print('Initial message data: ${initialMessage.data}');
     }
-  });
 
-  FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-    print('A new onMessageOpenedApp event was published!');
-    print('Message data: ${message.data}');
-  });
+    print('FCM setup completed successfully');
 
-  RemoteMessage? initialMessage = await messaging.getInitialMessage();
-  if (initialMessage != null) {
-    print('App opened from terminated state via notification');
-    print('Initial message data: ${initialMessage.data}');
+    // Print final token status
+    if (Get.isRegistered<FCMService>()) {
+      print('📱 FINAL FCM TOKEN CHECK:');
+      FCMService.to.printTokenStatus();
+    }
+  } catch (e) {
+    print('Error setting up FCM: $e');
+    // Don't rethrow here as FCM issues shouldn't crash the app
   }
 }
 

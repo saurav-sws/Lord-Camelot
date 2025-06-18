@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>API_KEY</key>
+	<string>AIzaSyDGaDFJ1nC6UnJTBEuoWRHt55za3jLb3cg</string>
+	<key>GCM_SENDER_ID</key>
+	<string>894646663100</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.lordcamelotPoint</string>
+	<key>PROJECT_ID</key>
+	<string>lord-camelot-9099f</string>
+	<key>STORAGE_BUCKET</key>
+	<string>lord-camelot-9099f.firebasestorage.app</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:894646663100:ios:80dfc4f03e8df02caa5db9</string>
+</dict>
+</plist>
