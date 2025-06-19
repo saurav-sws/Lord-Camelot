@@ -5,12 +5,50 @@ import '../../../utils/responsive_size.dart';
 import '../controllers/news_controller.dart';
 import '../../../models/news_model.dart';
 
-class NewsView extends GetView<NewsController> {
+class NewsView extends StatefulWidget {
   const NewsView({Key? key}) : super(key: key);
 
   @override
+  State<NewsView> createState() => _NewsViewState();
+}
+
+class _NewsViewState extends State<NewsView> with WidgetsBindingObserver {
+  late NewsController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = Get.put(NewsController());
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      // Refresh data when app is resumed
+      controller.fetchNews();
+    }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (ModalRoute.of(context)?.isCurrent == true) {
+        controller.onResume();
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final newsController = Get.put(NewsController());
     final storageService = Get.find<StorageService>();
     return Scaffold(
       body: Container(
@@ -85,7 +123,7 @@ class NewsView extends GetView<NewsController> {
                     OutlinedButton(
                       onPressed: () => Get.toNamed('/profile'),
                       style: OutlinedButton.styleFrom(
-                        side: const BorderSide(color:  Color(0xFF237220)),
+                        side: const BorderSide(color: Color(0xFF237220)),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(
                             ResponsiveSize.radius(20),
@@ -101,7 +139,7 @@ class NewsView extends GetView<NewsController> {
                         child: Text(
                           'my_profile'.tr,
                           style: TextStyle(
-                            color:  Color(0xFF237220),
+                            color: Color(0xFF237220),
                             fontSize: ResponsiveSize.fontSize(14),
                             fontWeight: FontWeight.w600,
                           ),
@@ -115,13 +153,13 @@ class NewsView extends GetView<NewsController> {
               SizedBox(height: ResponsiveSize.height(20)),
               Expanded(
                 child: Obx(() {
-                  if (newsController.isLoading.value) {
+                  if (controller.isLoading.value) {
                     return Center(
                       child: CircularProgressIndicator(
                         color: Color(0xFF288c25),
                       ),
                     );
-                  } else if (newsController.hasError.value) {
+                  } else if (controller.hasError.value) {
                     return Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -133,7 +171,7 @@ class NewsView extends GetView<NewsController> {
                           ),
                           SizedBox(height: ResponsiveSize.height(16)),
                           Text(
-                            newsController.errorMessage.value,
+                            controller.errorMessage.value,
                             style: TextStyle(
                               color: Colors.white70,
                               fontSize: ResponsiveSize.fontSize(16),
@@ -142,7 +180,7 @@ class NewsView extends GetView<NewsController> {
                           ),
                           SizedBox(height: ResponsiveSize.height(24)),
                           ElevatedButton(
-                            onPressed: () => newsController.fetchNews(),
+                            onPressed: () => controller.fetchNews(),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Color(0xFF227522),
                               shape: RoundedRectangleBorder(
@@ -162,7 +200,7 @@ class NewsView extends GetView<NewsController> {
                         ],
                       ),
                     );
-                  } else if (newsController.newsList.isEmpty) {
+                  } else if (controller.newsList.isEmpty) {
                     return Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -186,7 +224,7 @@ class NewsView extends GetView<NewsController> {
                     );
                   } else {
                     return RefreshIndicator(
-                      onRefresh: () => newsController.fetchNews(),
+                      onRefresh: () => controller.fetchNews(),
                       color: Color(0xFF288c25),
                       backgroundColor: Color(0xFF1E1E1E),
                       child: ListView.builder(
@@ -194,13 +232,13 @@ class NewsView extends GetView<NewsController> {
                           horizontal: 16,
                           vertical: 20,
                         ),
-                        itemCount: newsController.newsList.length,
+                        itemCount: controller.newsList.length,
                         itemBuilder: (context, index) {
-                          final news = newsController.newsList[index];
+                          final news = controller.newsList[index];
                           return Column(
                             children: [
-                              _buildNewsCard(news, newsController),
-                              if (index < newsController.newsList.length - 1)
+                              _buildNewsCard(news, controller),
+                              if (index < controller.newsList.length - 1)
                                 Container(
                                   margin: ResponsiveSize.margin(vertical: 8),
                                   height: 10,

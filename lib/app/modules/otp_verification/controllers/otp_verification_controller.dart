@@ -6,10 +6,12 @@ import '../../../routes/app_pages.dart';
 import '../../../utils/dialog_helper.dart';
 import '../../../../services/api_service.dart';
 import '../../../../services/storage_service.dart';
+import '../../../../services/fcm_service.dart';
 
 class OtpVerificationController extends GetxController {
   final ApiService _apiService = Get.find<ApiService>();
   final StorageService _storageService = Get.find<StorageService>();
+  final FCMService _fcmService = Get.find<FCMService>();
 
   final String phoneNumber;
   final String fullName;
@@ -140,6 +142,9 @@ class OtpVerificationController extends GetxController {
 
       // Save user data
       await _storageService.saveUser(user);
+
+      // Subscribe to FCM topic for all users
+      await _fcmService.subscribeToAllUsersTopic();
 
       // Verify login status
       final loggedIn = _storageService.hasUser;

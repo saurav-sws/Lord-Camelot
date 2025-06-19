@@ -6,17 +6,20 @@ import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lordcamelot_point/services/api_service.dart';
 import 'package:lordcamelot_point/services/fcm_service.dart';
-import 'package:lordcamelot_point/services/firebase_options.dart';
+
 import 'package:lordcamelot_point/services/storage_service.dart';
 import 'app/routes/app_pages.dart';
 import 'app/translations/app_translations.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
+
+import 'services/firebase_options.dart';
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-
   if (Firebase.apps.isEmpty) {
-    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
   }
   print('Handling a background message: ${message.messageId}');
 }
@@ -33,11 +36,7 @@ Future<void> main() async {
 
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
-
-
-
   await initServices();
-
 
   await initializeFCM();
 
@@ -51,7 +50,9 @@ Future<void> _initializeFirebase() async {
   while (attempts < maxAttempts) {
     try {
       if (Firebase.apps.isEmpty) {
-        await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+        await Firebase.initializeApp(
+          options: DefaultFirebaseOptions.currentPlatform,
+        );
         print('Firebase initialized successfully on attempt ${attempts + 1}');
         return;
       } else {
@@ -72,26 +73,20 @@ Future<void> _initializeFirebase() async {
         rethrow;
       }
 
-
       await Future.delayed(Duration(milliseconds: 500));
     }
   }
 }
 
-
-
 Future<void> initServices() async {
   try {
     print('Initializing services...');
 
-
     await Get.putAsync(() => StorageService().init());
     print('StorageService initialized');
 
-
     await Get.putAsync(() => FCMService().init());
     print('FCMService initialized');
-
 
     Get.put(ApiService(), permanent: true);
     print('ApiService initialized');
@@ -109,7 +104,6 @@ Future<void> initializeFCM() async {
 
     FirebaseMessaging messaging = FirebaseMessaging.instance;
 
-
     NotificationSettings settings = await messaging.requestPermission(
       alert: true,
       announcement: false,
@@ -122,26 +116,22 @@ Future<void> initializeFCM() async {
 
     print('User granted permission: ${settings.authorizationStatus}');
 
-
-
     FirebaseMessaging.instance.onTokenRefresh
         .listen((fcmToken) {
-      print('🔄 FCM Token refreshed!');
-      print('🆕 NEW FCM TOKEN: $fcmToken');
-      print('═══════════════════════════════════════');
-      print('COPY THIS REFRESHED FCM TOKEN:');
-      print(fcmToken);
-      print('═══════════════════════════════════════');
+          print('FCM Token refreshed!');
+          print('NEW FCM TOKEN: $fcmToken');
+          print('═══════════════════════════════════════');
+          print('COPY THIS REFRESHED FCM TOKEN:');
+          print(fcmToken);
+          print('═══════════════════════════════════════');
 
-
-      if (Get.isRegistered<FCMService>()) {
-        FCMService.to.fcmToken.value = fcmToken;
-      }
-    })
+          if (Get.isRegistered<FCMService>()) {
+            FCMService.to.fcmToken.value = fcmToken;
+          }
+        })
         .onError((err) {
-      print('❌ Error refreshing FCM token: $err');
-    });
-
+          print('❌ Error refreshing FCM token: $err');
+        });
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       print('Got a message whilst in the foreground!');
@@ -151,7 +141,6 @@ Future<void> initializeFCM() async {
         print('Message also contained a notification: ${message.notification}');
       }
     });
-
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       print('A new onMessageOpenedApp event was published!');
@@ -166,14 +155,12 @@ Future<void> initializeFCM() async {
 
     print('FCM setup completed successfully');
 
-
     if (Get.isRegistered<FCMService>()) {
       print('📱 FINAL FCM TOKEN CHECK:');
       FCMService.to.printTokenStatus();
     }
   } catch (e) {
     print('Error setting up FCM: $e');
-
   }
 }
 

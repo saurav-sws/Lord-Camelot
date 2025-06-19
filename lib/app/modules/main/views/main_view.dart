@@ -8,20 +8,15 @@ class MainView extends GetView<MainController> {
 
   @override
   Widget build(BuildContext context) {
-    final mainController = Get.put(MainController());
-
     return SafeArea(
       child: Scaffold(
-        body: Obx(() => mainController.pages[mainController.currentIndex.value]),
+        body: Obx(() => controller.pages[controller.currentIndex.value]),
         bottomNavigationBar: Container(
-          decoration: const BoxDecoration(
-            color: Colors.black,
-      
-          ),
+          decoration: const BoxDecoration(color: Colors.black),
           child: Obx(
             () => CustomBottomNavigationBar(
-              currentIndex: mainController.currentIndex.value,
-              onTap: mainController.changePage,
+              currentIndex: controller.currentIndex.value,
+              onTap: controller.changePage,
             ),
           ),
         ),
@@ -43,7 +38,6 @@ class CustomBottomNavigationBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-
       width: double.infinity,
       color: Colors.black,
       child: Row(
@@ -69,10 +63,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
       highlightColor: Colors.transparent,
       borderRadius: BorderRadius.circular(ResponsiveSize.radius(8)),
       child: Container(
-        padding: EdgeInsets.symmetric(
-
-          vertical: ResponsiveSize.height(6),
-        ),
+        padding: EdgeInsets.symmetric(vertical: ResponsiveSize.height(6)),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -80,7 +71,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
               'assets/images/Splash.png',
               width: ResponsiveSize.width(32),
               height: ResponsiveSize.height(34),
-               color: iconColor,
+              color: iconColor,
             ),
             SizedBox(height: ResponsiveSize.height(5)),
             Text(

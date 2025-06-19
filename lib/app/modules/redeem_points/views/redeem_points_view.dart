@@ -153,7 +153,7 @@ class _RedeemPointsViewState extends State<RedeemPointsView>
                           Row(
                             children: [
                               Text(
-                                'unredeemable_points'.tr + '= ',
+                                'unredeemable_points'.tr + ' = ',
                                 style: TextStyle(
                                   color: Colors.white70,
                                   fontSize: ResponsiveSize.fontSize(13),

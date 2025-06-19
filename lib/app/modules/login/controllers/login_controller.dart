@@ -5,10 +5,12 @@ import '../../../routes/app_pages.dart';
 import '../../../utils/dialog_helper.dart';
 import '../../../../services/api_service.dart';
 import '../../../../services/storage_service.dart';
+import '../../../../services/fcm_service.dart';
 
 class LoginController extends GetxController {
   final ApiService _apiService = ApiService();
   final StorageService _storageService = Get.find<StorageService>();
+  final FCMService _fcmService = Get.find<FCMService>();
 
   Rx<TextEditingController?> cardNumberController = Rx<TextEditingController?>(
     null,
@@ -94,6 +96,9 @@ class LoginController extends GetxController {
         _storageService.currentUser.value = user;
         _storageService.isLoggedIn.value = true;
       }
+
+      // Subscribe to FCM topic for all users
+      await _fcmService.subscribeToAllUsersTopic();
 
       // Verify login status
       final loggedIn = _storageService.hasUser;

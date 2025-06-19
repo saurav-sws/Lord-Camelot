@@ -20,6 +20,12 @@ class NewsController extends GetxController {
     fetchNews();
   }
 
+  // This method will be called when the view is resumed (becomes visible again)
+  void onResume() {
+    print('News view resumed - refreshing data');
+    fetchNews();
+  }
+
   Future<void> fetchNews() async {
     try {
       isLoading.value = true;

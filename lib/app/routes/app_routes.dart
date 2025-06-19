@@ -14,5 +14,6 @@ abstract class Routes {
   static const MY_POINTS = '/my-points';
   static const HISTORY = '/history';
   static const REDEEM_POINTS = '/redeem-points';
+  static const NEWS = '/news';
   static const NEWS_DETAIL = '/news-detail';
 }

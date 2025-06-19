@@ -22,6 +22,8 @@ class MainController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    // We don't need to register the controller again as it's already registered by the binding
+
     // Verify authentication
     verifyAuthentication();
   }
