@@ -42,7 +42,6 @@ class _RedeemPointsViewState extends State<RedeemPointsView>
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (ModalRoute.of(context)?.isCurrent == true) {
-
         controller.onResume();
       }
     });
@@ -88,14 +87,12 @@ class _RedeemPointsViewState extends State<RedeemPointsView>
                   ),
                 ),
               ),
-              SizedBox(height: 30),
+              SizedBox(height: 15),
               Container(
                 padding: ResponsiveSize.padding(vertical: 12, horizontal: 16),
                 decoration: BoxDecoration(
                   color: Colors.black54,
-                  borderRadius: BorderRadius.circular(
-                    ResponsiveSize.radius(8),
-                  ),
+                  borderRadius: BorderRadius.circular(ResponsiveSize.radius(8)),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -116,7 +113,7 @@ class _RedeemPointsViewState extends State<RedeemPointsView>
                     OutlinedButton(
                       onPressed: controller.goToProfile,
                       style: OutlinedButton.styleFrom(
-                        side: const BorderSide(color: Color(0xFF237220),),
+                        side: const BorderSide(color: Color(0xFF237220)),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(
                             ResponsiveSize.radius(20),
@@ -132,7 +129,7 @@ class _RedeemPointsViewState extends State<RedeemPointsView>
                         child: Text(
                           'my_profile'.tr,
                           style: TextStyle(
-                            color:  Color(0xFF237220),
+                            color: Color(0xFF237220),
                             fontSize: ResponsiveSize.fontSize(14),
                             fontWeight: FontWeight.w600,
                           ),
@@ -143,42 +140,67 @@ class _RedeemPointsViewState extends State<RedeemPointsView>
                 ),
               ),
 
-              SizedBox(height: ResponsiveSize.height(16)),
+
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Obx(
                     () => Transform(
                       transform: Matrix4.identity()..scale(1.1),
-                      child: Row(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            'redeem_minimum'.tr.replaceFirst(
-                              '5',
-                              '${controller.minimumPoints}',
-                            ),
-                            style: TextStyle(
-                              color: Colors.white70,
-                              fontSize: ResponsiveSize.fontSize(13),
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                              bottom: 5.0,
-                              right: 40,
-                            ),
-                            child: Transform(
-                              transform: Matrix4.identity()..scale(1.1),
-                              child: Text(
-                                ' ${controller.totalSelectedPoints.value}',
+                          Row(
+                            children: [
+                              Text(
+                                'unredeemable_points'.tr + '= ',
                                 style: TextStyle(
-                                  color: Color(0xFF227522),
-                                  fontSize: ResponsiveSize.fontSize(22),
+                                  color: Colors.white70,
+                                  fontSize: ResponsiveSize.fontSize(13),
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              Text(
+                                '${controller.availablePoints.value}',
+                                style: TextStyle(
+                                  color: Colors.red,
+                                  fontSize: ResponsiveSize.fontSize(18),
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                            ),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              Text(
+                                'redeem_minimum'.tr.replaceFirst(
+                                  '5',
+                                  '${controller.minimumPoints}',
+                                ),
+                                style: TextStyle(
+                                  color: Colors.white70,
+                                  fontSize: ResponsiveSize.fontSize(13),
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  bottom: 5.0,
+                                  right: 40,
+                                ),
+                                child: Transform(
+                                  transform: Matrix4.identity()..scale(1.1),
+                                  child: Text(
+                                    ' ${controller.totalSelectedPoints.value}',
+                                    style: TextStyle(
+                                      color: Color(0xFF227522),
+                                      fontSize: ResponsiveSize.fontSize(22),
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
@@ -258,7 +280,9 @@ class _RedeemPointsViewState extends State<RedeemPointsView>
                                           'total'.tr,
                                           pointHistory.formattedTotal,
                                         ),
-                                        SizedBox(height: ResponsiveSize.height(5)),
+                                        SizedBox(
+                                          height: ResponsiveSize.height(5),
+                                        ),
                                         _buildInfoRow(
                                           'point_receive'.tr,
                                           '${pointHistory.point}',
@@ -266,7 +290,6 @@ class _RedeemPointsViewState extends State<RedeemPointsView>
                                       ],
                                     ),
                                   ),
-
 
                                   Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
@@ -304,7 +327,7 @@ class _RedeemPointsViewState extends State<RedeemPointsView>
                                               pointHistory.isSelected
                                                   ? Icon(
                                                     Icons.check,
-                                                color: Color(0xFF288c25),
+                                                    color: Color(0xFF288c25),
                                                     size: 20,
                                                   )
                                                   : null,
@@ -509,7 +532,6 @@ class _RedeemPointsViewState extends State<RedeemPointsView>
   }
 
   Widget _buildInfoRow(String label, String value) {
-
     bool isItemCode = label == 'item_code'.tr;
 
     return Row(

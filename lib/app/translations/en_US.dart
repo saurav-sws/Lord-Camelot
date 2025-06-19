@@ -92,6 +92,7 @@ final Map<String, String> enUS = {
   'new_otp_sent': 'A new OTP has been sent to your phone number',
   'refresh': 'Refresh',
   'No unreedeem': 'No unredeemed points available',
+  'unredeemable_points': 'Unredeemed points',
 
   // News related strings
   'posted_on': 'Posted on',

@@ -87,6 +87,7 @@ final Map<String, String> jaJP = {
   'new_otp_sent': '新しい認証コードが電話番号に送信されました',
   'refresh': '更新',
   'No unreedeem': '償還されない利用可能なポイント',
+  'unredeemable_points': '未交換ポイント',
   // News related strings
   'posted_on': '投稿日',
   'try_again': '再試行',

@@ -171,8 +171,12 @@ class RedeemPointsController extends GetxController {
 
     if (updatedPoint.isSelected) {
       selectedPoints.add(updatedPoint);
+      // Decrease available points when a point is selected
+      availablePoints.value -= updatedPoint.point;
     } else {
       selectedPoints.removeWhere((item) => item.id == updatedPoint.id);
+      // Increase available points when a point is deselected
+      availablePoints.value += updatedPoint.point;
     }
 
     _calculateSummary();
@@ -367,5 +371,10 @@ class RedeemPointsController extends GetxController {
     totalSelectedPoints.value = 0;
     totalAmount.value = 0.0;
     totalDiscount.value = 0.0;
+
+    // Reset availablePoints to the total of all unredeemed points
+    availablePoints.value = pointHistoryList
+        .where((point) => !point.isAlreadyRedeemed)
+        .fold(0, (sum, point) => sum + point.point);
   }
 }
