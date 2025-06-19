@@ -47,7 +47,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
       width: double.infinity,
       color: Colors.black,
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           _buildNavItem(0, Icons.newspaper, 'news'.tr),
           _buildNavItem(1, Icons.card_giftcard, 'my_points'.tr),
@@ -70,7 +70,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
       borderRadius: BorderRadius.circular(ResponsiveSize.radius(8)),
       child: Container(
         padding: EdgeInsets.symmetric(
-          horizontal: ResponsiveSize.width(12),
+
           vertical: ResponsiveSize.height(6),
         ),
         child: Column(
@@ -79,15 +79,15 @@ class CustomBottomNavigationBar extends StatelessWidget {
             Image.asset(
               'assets/images/Splash.png',
               width: ResponsiveSize.width(32),
-              height: ResponsiveSize.height(35),
+              height: ResponsiveSize.height(34),
                color: iconColor,
             ),
-            SizedBox(height: ResponsiveSize.height(3)),
+            SizedBox(height: ResponsiveSize.height(5)),
             Text(
               label,
               style: TextStyle(
                 color: textColor,
-                fontSize: ResponsiveSize.fontSize(11),
+                fontSize: ResponsiveSize.fontSize(11.5),
                 fontWeight: FontWeight.w600,
               ),
             ),

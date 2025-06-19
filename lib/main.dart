@@ -14,7 +14,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  // Ensure Firebase is initialized for background messages
+
   if (Firebase.apps.isEmpty) {
     await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   }
@@ -24,25 +24,21 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Set preferred orientations to portrait only
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
 
-  // Initialize Firebase first - with robust error handling
   await _initializeFirebase();
 
-  // Set up background message handler AFTER Firebase is initialized
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
-  // Test SharedPreferences (doesn't require Firebase)
-  await testSharedPreferences();
 
-  // Initialize services AFTER Firebase is ready
+
+
   await initServices();
 
-  // Initialize FCM last (requires Firebase + services to be ready)
+
   await initializeFCM();
 
   runApp(const MyApp());
@@ -76,50 +72,27 @@ Future<void> _initializeFirebase() async {
         rethrow;
       }
 
-      // Wait a bit before retrying
+
       await Future.delayed(Duration(milliseconds: 500));
     }
   }
 }
 
-Future<void> testSharedPreferences() async {
-  try {
-    print('Testing SharedPreferences functionality...');
-    final prefs = await SharedPreferences.getInstance();
 
-    final testKey = 'test_key_${DateTime.now().millisecondsSinceEpoch}';
-    final testValue = 'test_value_${DateTime.now().millisecondsSinceEpoch}';
-
-    await prefs.setString(testKey, testValue);
-    final readValue = prefs.getString(testKey);
-
-    if (readValue == testValue) {
-      print('SharedPreferences test passed: write/read successful');
-    } else {
-      print(
-        'SharedPreferences test failed: value mismatch. Expected $testValue, got $readValue',
-      );
-    }
-
-    await prefs.remove(testKey);
-  } catch (e) {
-    print('SharedPreferences test error: $e');
-  }
-}
 
 Future<void> initServices() async {
   try {
     print('Initializing services...');
 
-    // Initialize StorageService first (doesn't depend on Firebase)
+
     await Get.putAsync(() => StorageService().init());
     print('StorageService initialized');
 
-    // Initialize FCMService (depends on Firebase being ready)
+
     await Get.putAsync(() => FCMService().init());
     print('FCMService initialized');
 
-    // Register ApiService as a permanent dependency
+
     Get.put(ApiService(), permanent: true);
     print('ApiService initialized');
 
@@ -136,7 +109,7 @@ Future<void> initializeFCM() async {
 
     FirebaseMessaging messaging = FirebaseMessaging.instance;
 
-    // Request permissions
+
     NotificationSettings settings = await messaging.requestPermission(
       alert: true,
       announcement: false,
@@ -149,10 +122,8 @@ Future<void> initializeFCM() async {
 
     print('User granted permission: ${settings.authorizationStatus}');
 
-    // The FCM token is already handled by FCMService.init()
-    // So we don't need to get it again here
 
-    // Set up listeners for token refresh
+
     FirebaseMessaging.instance.onTokenRefresh
         .listen((fcmToken) {
       print('🔄 FCM Token refreshed!');
@@ -162,7 +133,7 @@ Future<void> initializeFCM() async {
       print(fcmToken);
       print('═══════════════════════════════════════');
 
-      // Update the token in FCMService
+
       if (Get.isRegistered<FCMService>()) {
         FCMService.to.fcmToken.value = fcmToken;
       }
@@ -171,7 +142,7 @@ Future<void> initializeFCM() async {
       print('❌ Error refreshing FCM token: $err');
     });
 
-    // Handle foreground messages
+
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       print('Got a message whilst in the foreground!');
       print('Message data: ${message.data}');
@@ -181,13 +152,12 @@ Future<void> initializeFCM() async {
       }
     });
 
-    // Handle messages when app is opened from notification
+
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       print('A new onMessageOpenedApp event was published!');
       print('Message data: ${message.data}');
     });
 
-    // Handle initial message if app was opened from notification
     RemoteMessage? initialMessage = await messaging.getInitialMessage();
     if (initialMessage != null) {
       print('App opened from terminated state via notification');
@@ -196,14 +166,14 @@ Future<void> initializeFCM() async {
 
     print('FCM setup completed successfully');
 
-    // Print final token status
+
     if (Get.isRegistered<FCMService>()) {
       print('📱 FINAL FCM TOKEN CHECK:');
       FCMService.to.printTokenStatus();
     }
   } catch (e) {
     print('Error setting up FCM: $e');
-    // Don't rethrow here as FCM issues shouldn't crash the app
+
   }
 }
 

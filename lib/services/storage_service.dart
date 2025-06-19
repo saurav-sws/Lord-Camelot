@@ -62,21 +62,21 @@ class StorageService extends GetxService {
 
   Future<void> clearUser() async {
     try {
-      // Update reactive state
+
       currentUser.value = null;
       isLoggedIn.value = false;
 
-      // Clear in-memory fallback
+
       _inMemoryToken = null;
       _inMemoryTokenType = null;
       _inMemoryUserId = null;
       _inMemoryCardNumber = null;
 
-      // Try to clear SharedPreferences
+
       try {
         final prefs = await SharedPreferences.getInstance();
 
-        // Clear user data
+
         await prefs.remove(_userKey);
         await prefs.remove(_tokenKey);
         await prefs.remove(_isLoggedInKey);
@@ -95,10 +95,10 @@ class StorageService extends GetxService {
 
   bool get hasUser => currentUser.value != null && isLoggedIn.value;
 
-  // Get the stored access token
+
   Future<String?> getAccessToken() async {
     try {
-      // Try SharedPreferences first
+
       try {
         final prefs = await SharedPreferences.getInstance();
         final token = prefs.getString(_tokenKey);
@@ -109,7 +109,6 @@ class StorageService extends GetxService {
         print('SharedPreferences error getting token: $prefError');
       }
 
-      // Fall back to in-memory token if available
       return _inMemoryToken;
     } catch (e) {
       print('Error getting access token: $e');
@@ -117,10 +116,9 @@ class StorageService extends GetxService {
     }
   }
 
-  // Get full authorization header for API requests
   Future<String?> getAuthHeader() async {
     try {
-      // Try SharedPreferences first
+
       try {
         final prefs = await SharedPreferences.getInstance();
         final token = prefs.getString(_tokenKey);
@@ -133,7 +131,7 @@ class StorageService extends GetxService {
         print('SharedPreferences error getting auth header: $prefError');
       }
 
-      // Fall back to in-memory token if available
+
       if (_inMemoryToken != null && _inMemoryToken!.isNotEmpty) {
         return '${_inMemoryTokenType ?? 'Bearer'} $_inMemoryToken';
       }
@@ -145,15 +143,14 @@ class StorageService extends GetxService {
     }
   }
 
-  // Get the stored card number
   Future<String?> getCardNumber() async {
     try {
-      // Return from current user if available
+
       if (currentUser.value != null) {
         return currentUser.value!.cardNumber;
       }
 
-      // Try SharedPreferences
+
       try {
         final prefs = await SharedPreferences.getInstance();
         final cardNumber = prefs.getString(_cardNumberKey);
@@ -164,7 +161,7 @@ class StorageService extends GetxService {
         print('SharedPreferences error getting card number: $prefError');
       }
 
-      // Fall back to in-memory card number if available
+
       return _inMemoryCardNumber;
     } catch (e) {
       print('Error getting card number: $e');
@@ -172,16 +169,16 @@ class StorageService extends GetxService {
     }
   }
 
-  // Get card number synchronously
+
   String get cardNumber =>
       currentUser.value?.cardNumber ?? _inMemoryCardNumber ?? '';
 
-  // Update current user without saving to storage
+
   void updateCurrentUser(User user) {
-    // Update reactive state only
+
     currentUser.value = user;
 
-    // This will trigger all Obx widgets that depend on currentUser to rebuild
+
     print(
       'Updated current user in StorageService: ${user.name}, ${user.cardNumber}',
     );
@@ -190,28 +187,28 @@ class StorageService extends GetxService {
   Future<StorageService> init() async {
     try {
       print('Initializing StorageService...');
-      // Try to initialize from SharedPreferences
+
       try {
         final prefs = await SharedPreferences.getInstance();
 
-        // Check if user is logged in
+
         final isUserLoggedIn = prefs.getBool(_isLoggedInKey) ?? false;
         print('SharedPreferences - Is user logged in: $isUserLoggedIn');
 
         if (isUserLoggedIn) {
-          // Get stored user data
+
           final userData = prefs.getString(_userKey);
           print('SharedPreferences - User data exists: ${userData != null}');
 
           if (userData != null) {
-            // Parse user data
+
             final Map<String, dynamic> userMap = jsonDecode(userData);
 
-            // Update reactive state
+
             currentUser.value = User.fromJson(userMap);
             isLoggedIn.value = true;
 
-            // Update in-memory fallback
+
             _inMemoryToken = currentUser.value?.accessToken;
             _inMemoryTokenType = currentUser.value?.tokenType;
             _inMemoryUserId = currentUser.value?.userId;
@@ -221,7 +218,7 @@ class StorageService extends GetxService {
               'User loaded from SharedPreferences: ID=${currentUser.value?.userId}, Token=${currentUser.value?.accessToken?.substring(0, 10)}...',
             );
           } else {
-            // Fallback if we have login state but no user data
+
             final token = prefs.getString(_tokenKey);
             final type = prefs.getString(_tokenType) ?? 'Bearer';
             final id = prefs.getInt(_userId) ?? 0;
@@ -240,7 +237,7 @@ class StorageService extends GetxService {
               );
               isLoggedIn.value = true;
 
-              // Update in-memory fallback
+
               _inMemoryToken = token;
               _inMemoryTokenType = type;
               _inMemoryUserId = id;
@@ -251,7 +248,7 @@ class StorageService extends GetxService {
               );
             } else {
               print('No valid token found despite isLoggedIn flag being true');
-              // Reset login state since we don't have valid credentials
+
               isLoggedIn.value = false;
               await prefs.setBool(_isLoggedInKey, false);
             }

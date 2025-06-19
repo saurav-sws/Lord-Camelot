@@ -11,12 +11,12 @@ class FCMService extends GetxService {
   @override
   void onInit() {
     super.onInit();
-    // Don't call getToken() here - let init() handle it
+
   }
 
   Future<void> getToken() async {
     try {
-      // Check if Firebase is initialized first
+
       if (Firebase.apps.isEmpty) {
         print('❌ Firebase not initialized yet, cannot get FCM token');
         fcmToken.value = 'firebase_not_ready';
@@ -33,7 +33,7 @@ class FCMService extends GetxService {
         print('📋 TOKEN PREVIEW: ${token.substring(0, 20)}...');
         print('📏 TOKEN LENGTH: ${token.length} characters');
 
-        // Also print to make it easy to copy
+
         print('═══════════════════════════════════════');
         print('COPY THIS FCM TOKEN:');
         print(token);
@@ -52,10 +52,10 @@ class FCMService extends GetxService {
     try {
       print('Initializing FCMService...');
 
-      // Wait a bit to ensure Firebase is fully ready
+
       await Future.delayed(Duration(milliseconds: 100));
 
-      // Verify Firebase is initialized
+
       if (Firebase.apps.isEmpty) {
         print('Warning: Firebase not initialized when FCMService.init() called');
         isInitialized.value = false;
@@ -74,7 +74,7 @@ class FCMService extends GetxService {
     return this;
   }
 
-  // Method to retry getting token if it failed initially
+
   Future<void> retryGetToken() async {
     if (!isInitialized.value || fcmToken.value.startsWith('token_') || fcmToken.value == 'firebase_not_ready') {
       print('🔄 Retrying FCM token retrieval...');
@@ -82,7 +82,7 @@ class FCMService extends GetxService {
     }
   }
 
-  // Method to print current token status
+
   void printTokenStatus() {
     print('📊 FCM SERVICE STATUS:');
     print('   Initialized: ${isInitialized.value}');
@@ -92,6 +92,6 @@ class FCMService extends GetxService {
     }
   }
 
-  // Get token as a getter for easy access
+
   String get currentToken => fcmToken.value;
 }
