@@ -465,26 +465,94 @@ class NewsDetailView extends StatelessWidget {
 
   Future<void> _launchUrl(String url) async {
     try {
-      final Uri uri = Uri.parse(url);
+      // Ensure the URL has a proper scheme
+      String processedUrl = url;
+      if (!url.startsWith('http://') && !url.startsWith('https://')) {
+        processedUrl = 'https://$url';
+      }
+
+      final Uri uri = Uri.parse(processedUrl);
+
+      // Try different launch modes for better compatibility
+      bool launched = false;
+
+      // First try: External application mode (opens in browser)
       if (await canLaunchUrl(uri)) {
-        await launchUrl(uri, mode: LaunchMode.externalApplication);
-      } else {
-        print('Could not launch $url');
-        Get.snackbar(
-          'Error',
-          'Could not open link: $url',
-          backgroundColor: Colors.red.withOpacity(0.8),
-          colorText: Colors.white,
+        try {
+          launched = await launchUrl(uri, mode: LaunchMode.externalApplication);
+        } catch (e) {
+          print('External launch failed: $e');
+        }
+      }
+
+      // Second try: Platform default mode
+      if (!launched && await canLaunchUrl(uri)) {
+        try {
+          launched = await launchUrl(uri, mode: LaunchMode.platformDefault);
+        } catch (e) {
+          print('Platform default launch failed: $e');
+        }
+      }
+
+      // Third try: External non-browser mode
+      if (!launched && await canLaunchUrl(uri)) {
+        try {
+          launched = await launchUrl(
+            uri,
+            mode: LaunchMode.externalNonBrowserApplication,
+          );
+        } catch (e) {
+          print('External non-browser launch failed: $e');
+        }
+      }
+
+      // If all methods fail, show error
+      if (!launched) {
+        print('Could not launch $processedUrl');
+        _showLinkError(
+          'Could not open link. Please copy and paste the URL manually: $processedUrl',
         );
       }
     } catch (e) {
       print('Error launching URL: $e');
-      Get.snackbar(
-        'Error',
-        'Invalid link format',
-        backgroundColor: Colors.red.withOpacity(0.8),
-        colorText: Colors.white,
+      _showLinkError(
+        'Invalid link format. Please check the URL and try again.',
       );
     }
+  }
+
+  void _showLinkError(String message) {
+    // Show error in a dialog instead of snackbar for better visibility
+    Get.dialog(
+      AlertDialog(
+        backgroundColor: Color(0xFF1a1a1a),
+        title: Text('Link Error', style: TextStyle(color: Colors.white)),
+        content: SelectableText(
+          message,
+          style: TextStyle(color: Colors.white70),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: Text('OK', style: TextStyle(color: Color(0xFF288c25))),
+          ),
+          if (message.contains('copy and paste'))
+            TextButton(
+              onPressed: () {
+                // Extract URL from message and copy it
+                final urlMatch = RegExp(r'https?://[^\s]+').firstMatch(message);
+                if (urlMatch != null) {
+                  Clipboard.setData(ClipboardData(text: urlMatch.group(0)!));
+                }
+                Get.back();
+              },
+              child: Text(
+                'Copy URL',
+                style: TextStyle(color: Color(0xFF288c25)),
+              ),
+            ),
+        ],
+      ),
+    );
   }
 }
