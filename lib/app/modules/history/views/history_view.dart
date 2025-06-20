@@ -151,7 +151,7 @@ class _HistoryViewState extends State<HistoryView> {
               ),
               SizedBox(height: ResponsiveSize.height(30)),
               Container(
-                height: 50,
+                height: ResponsiveSize.height(50),
                 width: double.infinity,
                 decoration: BoxDecoration(
                   color: Colors.black54,
