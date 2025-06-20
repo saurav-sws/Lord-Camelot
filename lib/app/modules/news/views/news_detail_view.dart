@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter/gestures.dart';
 import 'package:get/get.dart';
-import 'package:flutter_html/flutter_html.dart';
+
 import '../../../utils/responsive_size.dart';
 import '../../../models/news_model.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:html/parser.dart' as html_parser;
+import 'package:html/dom.dart' as html_dom;
 
 class NewsDetailView extends StatelessWidget {
   const NewsDetailView({Key? key}) : super(key: key);
@@ -10,7 +15,6 @@ class NewsDetailView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final News news = Get.arguments as News;
-
 
     String formattedDate = '';
     try {
@@ -35,7 +39,6 @@ class NewsDetailView extends StatelessWidget {
         child: SafeArea(
           child: Column(
             children: [
-
               Container(
                 padding: ResponsiveSize.padding(horizontal: 16, vertical: 12),
                 child: Row(
@@ -59,13 +62,10 @@ class NewsDetailView extends StatelessWidget {
                         textAlign: TextAlign.center,
                       ),
                     ),
-                    SizedBox(
-                      width: ResponsiveSize.width(48),
-                    ),
+                    SizedBox(width: ResponsiveSize.width(48)),
                   ],
                 ),
               ),
-
 
               Expanded(
                 child: SingleChildScrollView(
@@ -74,9 +74,8 @@ class NewsDetailView extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-
                         Container(
-                          margin:  ResponsiveSize.margin(left: 10),
+                          margin: ResponsiveSize.margin(left: 10),
                           padding: ResponsiveSize.padding(
                             horizontal: 12,
                             vertical: 6,
@@ -102,11 +101,9 @@ class NewsDetailView extends StatelessWidget {
                         ),
 
                         SizedBox(height: ResponsiveSize.height(20)),
-
-
                         Container(
-                          margin:  ResponsiveSize.margin(left: 10),
-                          child: Text(
+                          margin: ResponsiveSize.margin(left: 10),
+                          child: SelectableText(
                             news.title,
                             style: TextStyle(
                               color: Colors.white,
@@ -114,6 +111,13 @@ class NewsDetailView extends StatelessWidget {
                               fontWeight: FontWeight.bold,
                               height: 1.3,
                             ),
+                            contextMenuBuilder: (context, editableTextState) {
+                              return _buildContextMenu(
+                                context,
+                                editableTextState,
+                                news.title,
+                              );
+                            },
                           ),
                         ),
 
@@ -211,7 +215,6 @@ class NewsDetailView extends StatelessWidget {
                             ),
                           ),
 
-                        // Content
                         Container(
                           padding: ResponsiveSize.padding(all: 20),
                           decoration: BoxDecoration(
@@ -220,7 +223,7 @@ class NewsDetailView extends StatelessWidget {
                               ResponsiveSize.radius(12),
                             ),
                           ),
-                          child: _buildHtmlContent(news.description),
+                          child: _buildSelectableHtmlContent(news.description),
                         ),
 
                         SizedBox(height: ResponsiveSize.height(30)),
@@ -236,63 +239,252 @@ class NewsDetailView extends StatelessWidget {
     );
   }
 
-  Widget _buildHtmlContent(String htmlContent) {
-    return Html(
-      data: htmlContent,
-      style: {
-        "body": Style(
-          color: Colors.white,
-          fontSize: FontSize(16),
-          fontFamily: 'Roboto',
-          margin: Margins.zero,
-          padding: HtmlPaddings.zero,
-        ),
-        "p": Style(
-          margin: Margins.only(bottom: 16),
-          color: Colors.white70,
-          fontSize: FontSize(16),
-          lineHeight: LineHeight(1.5),
-        ),
-        "h1": Style(
-          color: Colors.white,
-          fontSize: FontSize(24),
-          fontWeight: FontWeight.bold,
-          margin: Margins.only(bottom: 16, top: 16),
-        ),
-        "h2": Style(
-          color: Colors.white,
-          fontSize: FontSize(20),
-          fontWeight: FontWeight.bold,
-          margin: Margins.only(bottom: 12, top: 16),
-        ),
-        "h3": Style(
-          color: Colors.white,
-          fontSize: FontSize(18),
-          fontWeight: FontWeight.bold,
-          margin: Margins.only(bottom: 8, top: 12),
-        ),
-        "a": Style(
-          color: Color(0xFF288c25),
-          textDecoration: TextDecoration.underline,
-        ),
-        "ul": Style(
-          margin: Margins.only(bottom: 16),
-          padding: HtmlPaddings.only(left: 20),
-        ),
-        "ol": Style(
-          margin: Margins.only(bottom: 16),
-          padding: HtmlPaddings.only(left: 20),
-        ),
-        "li": Style(
-          color: Colors.white70,
-          fontSize: FontSize(16),
-          margin: Margins.only(bottom: 8),
-        ),
-        "strong": Style(color: Colors.white, fontWeight: FontWeight.bold),
-        "b": Style(color: Colors.white, fontWeight: FontWeight.bold),
-        "em": Style(color: Colors.white70, fontStyle: FontStyle.italic),
-        "i": Style(color: Colors.white70, fontStyle: FontStyle.italic),
+  Widget _buildSelectableHtmlContent(String htmlContent) {
+    final document = html_parser.parse(htmlContent);
+    final textSpans = <TextSpan>[];
+
+    _parseNode(document.body!, textSpans);
+
+    return SelectableText.rich(
+      TextSpan(children: textSpans),
+      style: TextStyle(
+        color: Colors.white70,
+        fontSize: ResponsiveSize.fontSize(16),
+        height: 1.5,
+      ),
+      contextMenuBuilder: (context, editableTextState) {
+        return _buildContextMenu(context, editableTextState, htmlContent);
       },
+      onTap: () {},
     );
+  }
+
+  void _parseNode(html_dom.Node node, List<TextSpan> textSpans) {
+    if (node.nodeType == html_dom.Node.TEXT_NODE) {
+      final text = node.text?.trim();
+      if (text != null && text.isNotEmpty) {
+        textSpans.add(
+          TextSpan(text: text, style: TextStyle(color: Colors.white70)),
+        );
+      }
+    } else if (node.nodeType == html_dom.Node.ELEMENT_NODE) {
+      final element = node as html_dom.Element;
+
+      switch (element.localName) {
+        case 'h1':
+          textSpans.add(TextSpan(text: '\n\n'));
+          for (var child in element.nodes) {
+            _parseNodeWithStyle(
+              child,
+              textSpans,
+              TextStyle(
+                color: Colors.white,
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+            );
+          }
+          textSpans.add(TextSpan(text: '\n'));
+          break;
+        case 'h2':
+          textSpans.add(TextSpan(text: '\n\n'));
+          for (var child in element.nodes) {
+            _parseNodeWithStyle(
+              child,
+              textSpans,
+              TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            );
+          }
+          textSpans.add(TextSpan(text: '\n'));
+          break;
+        case 'h3':
+          textSpans.add(TextSpan(text: '\n\n'));
+          for (var child in element.nodes) {
+            _parseNodeWithStyle(
+              child,
+              textSpans,
+              TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            );
+          }
+          textSpans.add(TextSpan(text: '\n'));
+          break;
+        case 'p':
+          textSpans.add(TextSpan(text: '\n\n'));
+          for (var child in element.nodes) {
+            _parseNode(child, textSpans);
+          }
+          break;
+        case 'br':
+          textSpans.add(TextSpan(text: '\n'));
+          break;
+        case 'strong':
+        case 'b':
+          for (var child in element.nodes) {
+            _parseNodeWithStyle(
+              child,
+              textSpans,
+              TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            );
+          }
+          break;
+        case 'em':
+        case 'i':
+          for (var child in element.nodes) {
+            _parseNodeWithStyle(
+              child,
+              textSpans,
+              TextStyle(color: Colors.white70, fontStyle: FontStyle.italic),
+            );
+          }
+          break;
+        case 'a':
+          final href = element.attributes['href'];
+          for (var child in element.nodes) {
+            _parseNodeWithStyle(
+              child,
+              textSpans,
+              TextStyle(
+                color: Color(0xFF288c25),
+                decoration: TextDecoration.none,
+              ),
+              onTap: href != null ? () => _launchUrl(href) : null,
+            );
+          }
+          break;
+        case 'ul':
+        case 'ol':
+          textSpans.add(TextSpan(text: '\n'));
+          for (var child in element.children) {
+            if (child.localName == 'li') {
+              textSpans.add(TextSpan(text: '\n• '));
+              for (var liChild in child.nodes) {
+                _parseNode(liChild, textSpans);
+              }
+            }
+          }
+          textSpans.add(TextSpan(text: '\n'));
+          break;
+        default:
+          for (var child in element.nodes) {
+            _parseNode(child, textSpans);
+          }
+      }
+    }
+  }
+
+  void _parseNodeWithStyle(
+    html_dom.Node node,
+    List<TextSpan> textSpans,
+    TextStyle style, {
+    VoidCallback? onTap,
+  }) {
+    if (node.nodeType == html_dom.Node.TEXT_NODE) {
+      final text = node.text?.trim();
+      if (text != null && text.isNotEmpty) {
+        textSpans.add(
+          TextSpan(
+            text: text,
+            style: style,
+            recognizer:
+                onTap != null ? (TapGestureRecognizer()..onTap = onTap) : null,
+          ),
+        );
+      }
+    } else if (node.nodeType == html_dom.Node.ELEMENT_NODE) {
+      for (var child in node.nodes) {
+        _parseNodeWithStyle(child, textSpans, style, onTap: onTap);
+      }
+    }
+  }
+
+  Widget _buildContextMenu(
+    BuildContext context,
+    EditableTextState editableTextState,
+    String fullText,
+  ) {
+    return AdaptiveTextSelectionToolbar.buttonItems(
+      anchors: editableTextState.contextMenuAnchors,
+      buttonItems: [
+        ContextMenuButtonItem(
+          label: 'Copy',
+          onPressed: () {
+            final selectedText = editableTextState.textEditingValue.selection
+                .textInside(editableTextState.textEditingValue.text);
+            if (selectedText.isNotEmpty) {
+              Clipboard.setData(ClipboardData(text: selectedText));
+              // Clear the selection after copying
+              editableTextState.userUpdateTextEditingValue(
+                editableTextState.textEditingValue.copyWith(
+                  selection: TextSelection.collapsed(
+                    offset: editableTextState.textEditingValue.selection.end,
+                  ),
+                ),
+                SelectionChangedCause.toolbar,
+              );
+            }
+            ContextMenuController.removeAny();
+          },
+        ),
+        ContextMenuButtonItem(
+          label: 'Copy All',
+          onPressed: () {
+            // Convert HTML to plain text for copying
+            final document = html_parser.parse(fullText);
+            final plainText = document.body?.text ?? fullText;
+            Clipboard.setData(ClipboardData(text: plainText));
+            // Clear the selection after copying
+            editableTextState.userUpdateTextEditingValue(
+              editableTextState.textEditingValue.copyWith(
+                selection: TextSelection.collapsed(
+                  offset: editableTextState.textEditingValue.selection.end,
+                ),
+              ),
+              SelectionChangedCause.toolbar,
+            );
+            ContextMenuController.removeAny();
+          },
+        ),
+        ContextMenuButtonItem(
+          label: 'Select All',
+          onPressed: () {
+            editableTextState.selectAll(SelectionChangedCause.toolbar);
+            ContextMenuController.removeAny();
+          },
+        ),
+      ],
+    );
+  }
+
+  Future<void> _launchUrl(String url) async {
+    try {
+      final Uri uri = Uri.parse(url);
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      } else {
+        print('Could not launch $url');
+        Get.snackbar(
+          'Error',
+          'Could not open link: $url',
+          backgroundColor: Colors.red.withOpacity(0.8),
+          colorText: Colors.white,
+        );
+      }
+    } catch (e) {
+      print('Error launching URL: $e');
+      Get.snackbar(
+        'Error',
+        'Invalid link format',
+        backgroundColor: Colors.red.withOpacity(0.8),
+        colorText: Colors.white,
+      );
+    }
   }
 }

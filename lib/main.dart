@@ -11,7 +11,6 @@ import 'package:lordcamelot_point/services/storage_service.dart';
 import 'app/routes/app_pages.dart';
 import 'app/translations/app_translations.dart';
 
-
 import 'services/firebase_options.dart';
 
 @pragma('vm:entry-point')
@@ -182,7 +181,7 @@ class MyApp extends StatelessWidget {
             fontFamily: 'Montserrat',
             scaffoldBackgroundColor: Colors.black,
           ),
-          // Translations
+
           translations: AppTranslations(),
           locale: Get.deviceLocale,
           fallbackLocale: const Locale('en', 'US'),

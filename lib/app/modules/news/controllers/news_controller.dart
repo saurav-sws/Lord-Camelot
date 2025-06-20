@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:flutter_html/flutter_html.dart';
 import '../../../models/news_model.dart';
 import '../../../../services/api_service.dart';
-import '../../../utils/dialog_helper.dart';
+
 import '../../../routes/app_pages.dart';
 
 class NewsController extends GetxController {
@@ -20,7 +20,7 @@ class NewsController extends GetxController {
     fetchNews();
   }
 
-  // This method will be called when the view is resumed (becomes visible again)
+
   void onResume() {
     print('News view resumed - refreshing data');
     fetchNews();

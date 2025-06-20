@@ -39,7 +39,7 @@ class FCMService extends GetxService {
     }
   }
 
-  // Unsubscribe from the all users topic (for logout)
+
   Future<void> unsubscribeFromAllUsersTopic() async {
     try {
       await FirebaseMessaging.instance.unsubscribeFromTopic(allUsersTopic);

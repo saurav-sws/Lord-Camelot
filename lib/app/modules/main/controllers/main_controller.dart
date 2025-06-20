@@ -8,8 +8,8 @@ import '../../../../services/storage_service.dart';
 import '../../../routes/app_pages.dart';
 
 class MainController extends GetxController {
-  // Default to redeem points view (index 2)
-  final RxInt currentIndex = 2.obs;
+  // Default to news view (index 0)
+  final RxInt currentIndex = 0.obs;
   final StorageService _storageService = Get.find<StorageService>();
 
   final List<Widget> pages = [
