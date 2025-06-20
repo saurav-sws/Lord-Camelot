@@ -436,11 +436,11 @@ class NewsDetailView extends StatelessWidget {
         ContextMenuButtonItem(
           label: 'Copy All',
           onPressed: () {
-            // Convert HTML to plain text for copying
+
             final document = html_parser.parse(fullText);
             final plainText = document.body?.text ?? fullText;
             Clipboard.setData(ClipboardData(text: plainText));
-            // Clear the selection after copying
+
             editableTextState.userUpdateTextEditingValue(
               editableTextState.textEditingValue.copyWith(
                 selection: TextSelection.collapsed(
@@ -465,7 +465,7 @@ class NewsDetailView extends StatelessWidget {
 
   Future<void> _launchUrl(String url) async {
     try {
-      // Ensure the URL has a proper scheme
+
       String processedUrl = url;
       if (!url.startsWith('http://') && !url.startsWith('https://')) {
         processedUrl = 'https://$url';
@@ -473,10 +473,10 @@ class NewsDetailView extends StatelessWidget {
 
       final Uri uri = Uri.parse(processedUrl);
 
-      // Try different launch modes for better compatibility
+
       bool launched = false;
 
-      // First try: External application mode (opens in browser)
+
       if (await canLaunchUrl(uri)) {
         try {
           launched = await launchUrl(uri, mode: LaunchMode.externalApplication);
@@ -485,7 +485,7 @@ class NewsDetailView extends StatelessWidget {
         }
       }
 
-      // Second try: Platform default mode
+
       if (!launched && await canLaunchUrl(uri)) {
         try {
           launched = await launchUrl(uri, mode: LaunchMode.platformDefault);
@@ -494,7 +494,7 @@ class NewsDetailView extends StatelessWidget {
         }
       }
 
-      // Third try: External non-browser mode
+
       if (!launched && await canLaunchUrl(uri)) {
         try {
           launched = await launchUrl(
@@ -506,7 +506,7 @@ class NewsDetailView extends StatelessWidget {
         }
       }
 
-      // If all methods fail, show error
+
       if (!launched) {
         print('Could not launch $processedUrl');
         _showLinkError(
@@ -522,7 +522,7 @@ class NewsDetailView extends StatelessWidget {
   }
 
   void _showLinkError(String message) {
-    // Show error in a dialog instead of snackbar for better visibility
+
     Get.dialog(
       AlertDialog(
         backgroundColor: Color(0xFF1a1a1a),
@@ -539,7 +539,7 @@ class NewsDetailView extends StatelessWidget {
           if (message.contains('copy and paste'))
             TextButton(
               onPressed: () {
-                // Extract URL from message and copy it
+
                 final urlMatch = RegExp(r'https?://[^\s]+').firstMatch(message);
                 if (urlMatch != null) {
                   Clipboard.setData(ClipboardData(text: urlMatch.group(0)!));
