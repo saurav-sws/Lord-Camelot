@@ -31,7 +31,6 @@ class _NewsViewState extends State<NewsView> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-
       controller.fetchNews();
     }
   }

@@ -53,5 +53,45 @@
 		<string>tel</string>
 		<string>sms</string>
 	</array>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+		<key>NSAllowsArbitraryLoadsInWebContent</key>
+		<true/>
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
+	</dict>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>background-fetch</string>
+		<string>background-processing</string>
+		<string>remote-notification</string>
+	</array>
+	<key>UIUserNotificationSettings</key>
+	<dict>
+		<key>UIUserNotificationTypeAlert</key>
+		<true/>
+		<key>UIUserNotificationTypeBadge</key>
+		<true/>
+		<key>UIUserNotificationTypeSound</key>
+		<true/>
+	</dict>
+	<key>UIRequiresFullScreen</key>
+	<false/>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app needs access to photo library to save images.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>This app needs access to camera to take photos.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>This app needs access to microphone for audio features.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>This app needs access to location for better user experience.</string>
+	<key>FirebaseAppDelegateProxyEnabled</key>
+	<false/>
+	<key>UIRequiredDeviceCapabilities</key>
+	<array>
+		<string>armv7</string>
+	</array>
 </dict>
 </plist>

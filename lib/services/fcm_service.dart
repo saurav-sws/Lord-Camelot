@@ -4,15 +4,10 @@ import 'package:get/get.dart';
 import '../app/routes/app_pages.dart';
 import '../app/modules/main/controllers/main_controller.dart';
 
-// Define the background message handler at the top level
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  // Initialize Firebase if needed
   await Firebase.initializeApp();
   print('Handling a background message: ${message.messageId}');
-
-  // We can't navigate in the background handler
-  // The app will handle this message when it's opened
 }
 
 class FCMService extends GetxService {
@@ -21,7 +16,6 @@ class FCMService extends GetxService {
   final RxString fcmToken = ''.obs;
   final RxBool isInitialized = false.obs;
 
-  // Topic name for all users
   final String allUsersTopic = 'all_users';
 
   @override
@@ -29,7 +23,6 @@ class FCMService extends GetxService {
     super.onInit();
   }
 
-  // Subscribe to the all users topic
   Future<void> subscribeToAllUsersTopic() async {
     try {
       await FirebaseMessaging.instance.subscribeToTopic(allUsersTopic);
@@ -38,7 +31,6 @@ class FCMService extends GetxService {
       print('❌ Error subscribing to topic: $e');
     }
   }
-
 
   Future<void> unsubscribeFromAllUsersTopic() async {
     try {
@@ -49,9 +41,7 @@ class FCMService extends GetxService {
     }
   }
 
-  // Setup notification handlers
   Future<void> setupNotificationHandlers() async {
-    // Set up foreground notification handler
     await FirebaseMessaging.instance
         .setForegroundNotificationPresentationOptions(
           alert: true,
@@ -59,7 +49,6 @@ class FCMService extends GetxService {
           sound: true,
         );
 
-    // Handle notifications when app is in foreground
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       print('Got a message whilst in the foreground!');
       print('Message data: ${message.data}');
@@ -71,13 +60,11 @@ class FCMService extends GetxService {
       }
     });
 
-    // Handle notification click when app is in background but open
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       print('A new onMessageOpenedApp event was published!');
       _handleNotification(message);
     });
 
-    // Handle notification click when app was terminated
     RemoteMessage? initialMessage =
         await FirebaseMessaging.instance.getInitialMessage();
     if (initialMessage != null) {
@@ -85,25 +72,20 @@ class FCMService extends GetxService {
       _handleNotification(initialMessage);
     }
 
-    // Set the background message handler
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   }
 
-  // Handle notification navigation
   void _handleNotification(RemoteMessage message) {
     print('Handling notification: ${message.messageId}');
     print('Notification data: ${message.data}');
 
-    // Navigate to main screen
     Get.offAllNamed(Routes.MAIN);
 
-    // Wait for the main screen to load, then navigate to the news tab (index 0)
     Future.delayed(Duration(milliseconds: 300), () {
       try {
-        // Try to find the MainController directly
         if (Get.isRegistered<MainController>()) {
           final mainController = Get.find<MainController>();
-          mainController.changePage(0); // 0 is the index for news tab
+          mainController.changePage(0);
         }
       } catch (e) {
         print('Error navigating to news tab: $e');
@@ -134,7 +116,6 @@ class FCMService extends GetxService {
         print(token);
         print('═══════════════════════════════════════');
 
-        // Subscribe to all_users topic after getting token
         await subscribeToAllUsersTopic();
       } else {
         print('❌ FCM token is null or empty');
@@ -160,10 +141,8 @@ class FCMService extends GetxService {
         return this;
       }
 
-      // Set up notification handlers
       await setupNotificationHandlers();
 
-      // Get token and subscribe to topic
       await getToken();
 
       isInitialized.value = true;
