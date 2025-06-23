@@ -173,7 +173,6 @@ class ProfileView extends GetView<ProfileController> {
                           ),
                           child: Row(
                             children: [
-
                               Container(
                                 width: 50,
                                 height: 35,
@@ -357,8 +356,7 @@ class ProfileView extends GetView<ProfileController> {
       }
 
       return Container(
-        height:
-            isEditing ? ResponsiveSize.height(70) : ResponsiveSize.height(50),
+        height: ResponsiveSize.height(50),
         padding: ResponsiveSize.padding(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
           color: const Color(0xFF1E1E1E),
@@ -410,6 +408,10 @@ class ProfileView extends GetView<ProfileController> {
                                 ? [BirthDateFormatter()]
                                 : null,
                         autofocus: true,
+                        onSubmitted:
+                            (value) => controller.saveFieldLocally(label),
+                        onTapOutside:
+                            (event) => controller.saveFieldLocally(label),
                       )
                       : Text(
                         (label == 'Birth Date' && value.isEmpty)
@@ -426,28 +428,7 @@ class ProfileView extends GetView<ProfileController> {
                         textAlign: TextAlign.right,
                       ),
             ),
-            if (isEditing) ...[
-              IconButton(
-                icon: Icon(
-                  Icons.check,
-                  color: Colors.green,
-                  size: ResponsiveSize.width(22),
-                ),
-                onPressed: () => controller.saveField(label),
-                padding: EdgeInsets.zero,
-                constraints: BoxConstraints(),
-              ),
-              IconButton(
-                icon: Icon(
-                  Icons.close,
-                  color: Colors.red,
-                  size: ResponsiveSize.width(22),
-                ),
-                onPressed: () => controller.cancelEditing(),
-                padding: EdgeInsets.zero,
-                constraints: BoxConstraints(),
-              ),
-            ] else if (hasEditIcon) ...[
+            if (!isEditing && hasEditIcon) ...[
               SizedBox(width: ResponsiveSize.width(10)),
               InkWell(
                 onTap: onEdit,

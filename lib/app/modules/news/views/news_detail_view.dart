@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/gestures.dart';
 import 'package:get/get.dart';
-
 import '../../../utils/responsive_size.dart';
 import '../../../models/news_model.dart';
 import 'package:url_launcher/url_launcher.dart';

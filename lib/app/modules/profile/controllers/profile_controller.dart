@@ -238,6 +238,38 @@ class ProfileController extends GetxController {
     print('Reset editing state');
   }
 
+  void saveFieldLocally(String field) {
+    print('saveFieldLocally called with field: $field');
+    String newValue = '';
+
+    switch (field) {
+      case 'Full Name':
+        newValue = nameController.text.trim();
+        fullName.value = newValue;
+        print('Updated fullName locally to: $newValue');
+        break;
+      case 'Mobile Number':
+        newValue = mobileController.text.trim();
+        mobileNumber.value = newValue;
+        print('Updated mobileNumber locally to: $newValue');
+        break;
+      case 'Birth Date':
+        newValue = dobController.text.trim();
+        birthDate.value = newValue;
+        print('Updated birthDate locally to: $newValue');
+        break;
+      case 'Card Number':
+        newValue = cardNumberController.text.trim();
+        cardNumber.value = newValue;
+        print('Updated cardNumber locally to: $newValue');
+        break;
+    }
+
+    currentlyEditingField.value = '';
+    isEditingField.value = false;
+    print('Reset editing state');
+  }
+
   void cancelEditing() {
     print('cancelEditing called');
 
@@ -249,6 +281,11 @@ class ProfileController extends GetxController {
   void updateProfile() async {
     try {
       isLoading.value = true;
+
+      // If any field is currently being edited, save it locally first
+      if (isEditingField.value && currentlyEditingField.value.isNotEmpty) {
+        saveFieldLocally(currentlyEditingField.value);
+      }
 
       if (fullName.value.trim().isEmpty) {
         DialogHelper.showErrorDialog(
