@@ -7,8 +7,9 @@ import '../../../utils/dialog_helper.dart';
 import '../../../../services/api_service.dart';
 import '../../../../services/storage_service.dart';
 import '../../../../services/fcm_service.dart';
+import 'package:sms_autofill/sms_autofill.dart';
 
-class OtpVerificationController extends GetxController {
+class OtpVerificationController extends GetxController with CodeAutoFill {
   final ApiService _apiService = Get.find<ApiService>();
   final StorageService _storageService = Get.find<StorageService>();
   final FCMService _fcmService = Get.find<FCMService>();
@@ -17,8 +18,8 @@ class OtpVerificationController extends GetxController {
   final String fullName;
   final String cardNumber;
   final String fcmToken;
-  final String? dob; // Optional DOB field
-  final String? otpValue; // OTP value for auto-fill (testing only)
+  final String? dob;
+  final String? otpValue;
 
   OtpVerificationController({
     required this.phoneNumber,
@@ -49,7 +50,8 @@ class OtpVerificationController extends GetxController {
 
     startResendTimer();
 
-    // Auto-fill OTP if available (for testing purposes)
+    listenForCode();
+
     if (otpValue != null && otpValue!.isNotEmpty) {
       otpController.text = otpValue!;
       pin.value = otpValue!;
@@ -61,6 +63,7 @@ class OtpVerificationController extends GetxController {
     otpController.dispose();
     focusNode.dispose();
     _timer?.cancel();
+    cancel();
     super.onClose();
   }
 
@@ -110,14 +113,13 @@ class OtpVerificationController extends GetxController {
 
       print('OTP verification response: $response');
 
-      // Check if response contains the expected data
+
       if (!response.containsKey('user') || !response.containsKey('token')) {
         print('ERROR: Response does not contain user or token data');
         print('Response keys: ${response.keys.toList()}');
         throw Exception('Invalid response from server. Registration failed.');
       }
 
-      // Extract user data and token
       final userData = response['user'];
       final token = response['token'];
 
@@ -126,27 +128,22 @@ class OtpVerificationController extends GetxController {
         'Token: ${token.toString().substring(0, min(10, token.toString().length))}...',
       );
 
-      // Create a complete user object with token
       Map<String, dynamic> completeUserData = {
         'user': userData,
         'access_token': token,
         'token_type': 'Bearer',
       };
 
-      // Create user object
       final user = User.fromJson(completeUserData);
 
       print(
         'Created user object: ${user.userId}, token: ${user.accessToken.substring(0, min(10, user.accessToken.length))}...',
       );
 
-      // Save user data
       await _storageService.saveUser(user);
 
-      // Subscribe to FCM topic for all users
       await _fcmService.subscribeToAllUsersTopic();
 
-      // Verify login status
       final loggedIn = _storageService.hasUser;
       print('After registration - Is user logged in: $loggedIn');
       print(
@@ -155,7 +152,6 @@ class OtpVerificationController extends GetxController {
 
       DialogHelper.hideLoading();
 
-      // Navigate directly to main screen with redeem points view
       Get.offAllNamed(Routes.MAIN);
     } catch (e) {
       print('OTP verification error: $e');
@@ -186,6 +182,14 @@ class OtpVerificationController extends GetxController {
     } catch (e) {
       DialogHelper.hideLoading();
       DialogHelper.showErrorDialog(title: 'error'.tr, message: e.toString());
+    }
+  }
+
+  @override
+  void codeUpdated() {
+    if (code != null && code!.isNotEmpty) {
+      otpController.text = code!;
+      pin.value = code!;
     }
   }
 }

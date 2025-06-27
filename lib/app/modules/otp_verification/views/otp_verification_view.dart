@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:pin_code_fields/pin_code_fields.dart';
+import 'package:sms_autofill/sms_autofill.dart';
 
 import '../../../controllers/language_controller.dart';
 import '../../../utils/responsive_size.dart';
@@ -52,7 +52,7 @@ class OtpVerificationView extends GetView<OtpVerificationController> {
                     children: [
                       Center(
                         child: Transform(
-                          transform: Matrix4.identity()..scale( 1.2,1.2),
+                          transform: Matrix4.identity()..scale(1.2, 1.2),
                           child: Text(
                             'verify_otp'.tr,
                             style: AppTextStyles.heading,
@@ -64,7 +64,7 @@ class OtpVerificationView extends GetView<OtpVerificationController> {
                         padding: const EdgeInsets.only(right: 30.0),
                         child: Center(
                           child: Transform(
-                            transform: Matrix4.identity()..scale( 1.2),
+                            transform: Matrix4.identity()..scale(1.2),
                             child: Text(
                               'enter_code'.tr,
                               style: AppTextStyles.subheading,
@@ -89,28 +89,19 @@ class OtpVerificationView extends GetView<OtpVerificationController> {
                       SizedBox(height: ResponsiveSize.height(30)),
                       Padding(
                         padding: ResponsiveSize.padding(horizontal: 20),
-                        child: PinCodeTextField(
-                          appContext: context,
-                          length: 4,
-                          onChanged: controller.updatePin,
-                          pinTheme: PinTheme(
-                            shape: PinCodeFieldShape.box,
-                            borderRadius: BorderRadius.circular(
-                              ResponsiveSize.radius(17),
+                        child: PinFieldAutoFill(
+                          controller: controller.otpController,
+                          codeLength: 4,
+                          onCodeChanged:
+                              (code) => controller.updatePin(code ?? ''),
+                          decoration: UnderlineDecoration(
+                            textStyle: AppTextStyles.inputText1.copyWith(
+                              fontSize: ResponsiveSize.fontSize(24),
+                              color: Colors.white,
                             ),
-                            fieldHeight: ResponsiveSize.height(60),
-                            fieldWidth: ResponsiveSize.width(60),
-                            activeFillColor: Color(0xFF000000),
-                            inactiveFillColor: Color(0xFF000000),
-                            selectedFillColor: Color(0xFF000000),
-                            activeColor: Colors.white60,
-                            inactiveColor: Colors.grey.shade800,
-                            selectedColor: Colors.grey.shade800,
+                            colorBuilder: FixedColorBuilder(Colors.white38),
                           ),
-                          cursorColor: Colors.white,
-                          enableActiveFill: true,
-                          keyboardType: TextInputType.number,
-                          textStyle: AppTextStyles.inputText1,
+                          currentCode: controller.pin.value,
                         ),
                       ),
                       SizedBox(height: ResponsiveSize.height(5)),
@@ -119,7 +110,7 @@ class OtpVerificationView extends GetView<OtpVerificationController> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Transform(
-                            transform: Matrix4.identity()..scale( 1.1,1.2),
+                            transform: Matrix4.identity()..scale(1.1, 1.2),
                             child: Text(
                               'no_otp_received'.tr,
                               style: AppTextStyles.grayLabel,
@@ -127,22 +118,22 @@ class OtpVerificationView extends GetView<OtpVerificationController> {
                           ),
                           SizedBox(width: ResponsiveSize.width(12)),
                           Obx(
-                                () => TextButton(
+                            () => TextButton(
                               onPressed:
-                              controller.canResend.value
-                                  ? controller.resendOTP
-                                  : null,
+                                  controller.canResend.value
+                                      ? controller.resendOTP
+                                      : null,
                               child: Transform(
-                                transform: Matrix4.identity()..scale( 1.1,1.2),
+                                transform: Matrix4.identity()..scale(1.1, 1.2),
                                 child: Text(
                                   controller.canResend.value
                                       ? 'resend'.tr
                                       : '${controller.resendTimer.value} ${'seconds'.tr}',
                                   style: AppTextStyles.linkText.copyWith(
                                     color:
-                                    controller.canResend.value
-                                        ? Color(0xFF237220)
-                                        : Color(0xFF237220)
+                                        controller.canResend.value
+                                            ? Color(0xFF237220)
+                                            : Color(0xFF237220),
                                   ),
                                 ),
                               ),
@@ -170,12 +161,10 @@ class OtpVerificationView extends GetView<OtpVerificationController> {
                           ),
                         ),
                       ),
-
                     ],
                   ),
                 ),
                 SizedBox(height: ResponsiveSize.height(30)),
-
               ],
             ),
           ),
@@ -183,5 +172,4 @@ class OtpVerificationView extends GetView<OtpVerificationController> {
       ),
     );
   }
-
 }
